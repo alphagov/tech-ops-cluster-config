@@ -1,0 +1,13 @@
+---
+id: 3
+name: testing
+contact: us
+auth:
+  github:
+    organisation: alphagov
+    team: team-government-paas-people
+pipelines:
+- name: hello-world
+  repository: https://github.com/alphagov/gsp-teams.git
+  branch: develop
+  file: ci/hello-world.yaml

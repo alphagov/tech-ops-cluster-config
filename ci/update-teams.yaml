@@ -1,0 +1,35 @@
+---
+resource_types:
+- name: concourse-teams-resource
+  type: docker-image
+  source:
+    repository: paroxp/concourse-teams-resource
+    tag: 0.0.1537516256
+
+resources:
+- name: gsp-teams
+  type: git
+  source:
+    uri: https://github.com/alphagov/gsp-teams.git
+    branch: develop
+
+- name: concourse-teams
+  type: concourse-teams-resource
+  source:
+    username: ((concourse.username))
+    password: ((concourse.password))
+    target: http://concourse-web:8080
+    insecure: true
+
+jobs:
+- name: setup-teams
+  plan:
+  - get: gsp-teams
+    trigger: true
+  - get: concourse-teams
+    trigger: true
+  - task: compose-concourse-teams-list
+    file: gsp-teams/ci/tasks/setup-teams/task.yaml
+  - put: concourse-teams
+    params:
+      file: concourse-teams/teams.json

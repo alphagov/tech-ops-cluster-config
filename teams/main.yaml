@@ -1,0 +1,21 @@
+---
+id: 1
+name: main
+contact: us
+auth:
+  github:
+    organisation: alphagov
+    team: team-government-paas-people
+pipelines:
+- name: build-docker-images
+  repository: https://github.com/alphagov/gsp-teams.git
+  branch: develop
+  file: ci/build-docker-images.yaml
+- name: update-pipelines
+  repository: https://github.com/alphagov/gsp-teams.git
+  branch: develop
+  file: ci/update-pipelines.yaml
+- name: update-teams
+  repository: https://github.com/alphagov/gsp-teams.git
+  branch: develop
+  file: ci/update-teams.yaml

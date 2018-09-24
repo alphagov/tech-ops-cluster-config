@@ -1,0 +1,22 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: paroxp/gsp-setup-pipelines
+    tag: 0.0.1537611317
+inputs:
+- name: gsp-teams
+outputs:
+- name: concourse-pipelines
+run:
+  path: /bin/ash
+  args: 
+  - -e
+  - -c 
+  - |
+    echo "Team '${SETUP_PIPELINE_TEAM_NAME}'"
+
+    /usr/local/bin/setup-pipelines "${SETUP_PIPELINE_ACTION:-deployer}"
+
+    cat concourse-pipelines/pipelines.json | jq
