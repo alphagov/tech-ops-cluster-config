@@ -1,4 +1,5 @@
 ---
+id: 2
 name: govuk-verify
 contact: team@gov.uk
 auth:
