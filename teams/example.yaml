@@ -7,6 +7,10 @@ auth:
     organisation: alphagov
     team: team-government-paas-people
 pipelines:
-- name: hello-world
+- name: deploy-application
   repository: https://github.com/alphagov/gsp-example.git
-  file: ci/hello-world.yaml
+  file: ci/deploy-application.yaml
+- name: build-docker-image
+  repository: https://github.com/alphagov/gsp-example.git
+  file: build-docker-image
+
