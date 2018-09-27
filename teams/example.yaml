@@ -12,5 +12,5 @@ pipelines:
   file: ci/deploy-application.yaml
 - name: build-docker-image
   repository: https://github.com/alphagov/gsp-example.git
-  file: build-docker-image
+  file: ci/build-docker-image.yaml
 
