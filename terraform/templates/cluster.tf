@@ -33,7 +33,7 @@ terraform {
 }
 
 module "cluster" {
-  source = "git::https://github.com/poseidon/typhoon//aws/container-linux/kubernetes?ref=v1.12.2"
+  source = "git::https://github.com/alphagov/gsp-typhoon//aws/container-linux/kubernetes?ref=v1.12.2"
 
   providers = {
     aws      = "aws.default"
