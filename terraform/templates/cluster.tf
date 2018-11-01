@@ -56,3 +56,15 @@ module "cluster" {
   worker_count = 2
   worker_type  = "t2.medium"
 }
+
+resource "aws_route53_record" "ingress" {
+  providers = {
+    aws = "aws.default"
+  }
+
+  zone_id = "(ZONE_ID)"
+  name    = "*.(ZONE_NAME)"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["${module.cluster.ingress_dns_name}"]
+}
