@@ -64,6 +64,19 @@
     kubectl get all --all-namespaces
     ```
 1. Share the
-   `terraform/clusters/cluster1.gds-re-run-production.aws.ext.govsvc.uk/secrets`
-   somehow... - TBC
+   `terraform/clusters/cluster1.gds-re-run-production.aws.ext.govsvc.uk/secrets/auth/kubeconfig`
+   ```
+   aws ssm put-parameter --name "/${domain}/kubeconfig" \
+     --type SecureString \
+     --value "$(cat secrets/auth/kubeconfig)"
+   ```
+
+   In order to read this out of AWS SSM later, run:
+
+   ```
+    aws ssm get-parameter --name "/${domain}/kubeconfig" \
+      --query Parameter.Value \
+      --output text \
+      --with-decryption > "~/.kube/${domain}/kubeconfig"
+   ```
 1. Commit and Push new `cluster.tf` file to keep the record.
