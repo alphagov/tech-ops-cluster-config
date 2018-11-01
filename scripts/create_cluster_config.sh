@@ -44,7 +44,7 @@ sed "s/(ZONE_ID)/${ZONE_ID}/g" | \
 sed "s/(ZONE_NAME)/${ZONE_NAME}/g" | \
 sed "s|(PUBLIC_SSH_KEY)|${public_key}|g" | \
 sed "s/(CLOUD)/${CLOUD}/g" | \
-sed "s/(SYSTEM_DOMAIN)/${SYSTEM_DOMAIN}/g" \
+sed "s/(SYSTEM_DOMAIN)/${SYSTEM_DOMAIN}/g" | \
 sed "s/(MAIN_PASSWORD)/${MAIN_PASSWORD}/g" \
   > "${dir}/cluster.tf"
 
