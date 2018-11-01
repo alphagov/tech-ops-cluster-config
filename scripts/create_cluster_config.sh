@@ -9,6 +9,8 @@ set -euo pipefail
 : "${ZONE_ID:?Required variable!}"
 : "${ZONE_NAME:?Required variable!}"
 
+: "${MAIN_PASSWORD:?Required variable!}"
+
 export CLOUD="aws"
 export SYSTEM_DOMAIN="ext.govsvc.uk"
 
@@ -43,6 +45,7 @@ sed "s/(ZONE_NAME)/${ZONE_NAME}/g" | \
 sed "s|(PUBLIC_SSH_KEY)|${public_key}|g" | \
 sed "s/(CLOUD)/${CLOUD}/g" | \
 sed "s/(SYSTEM_DOMAIN)/${SYSTEM_DOMAIN}/g" \
+sed "s/(MAIN_PASSWORD)/${MAIN_PASSWORD}/g" \
   > "${dir}/cluster.tf"
 
 echo "cluster file: Created!"
