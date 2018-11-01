@@ -3,29 +3,6 @@ nginx-ingress:
     service:
       annotations: 
         external-dns.alpha.kubernetes.io/hostname: "*.${cluster_domain}"
-prometheus:
-  server:
-    ingress:
-      annotations:
-        external-dns.alpha.kubernetes.io/hostname: prometheus.${cluster_domain}
-      hosts:
-      - prometheus.${cluster_domain}
-      tls:
-      - hosts:
-        - prometheus.${cluster_domain}
-        secretName: prometheus-tls-cert
-  alertmanager:
-    ingress:
-      annotations:
-        external-dns.alpha.kubernetes.io/hostname: alertmanager.${cluster_domain}
-      hosts:
-      - alertmanager.${cluster_domain}
-      tls:
-      - hosts:
-        - alertmanager.${cluster_domain}
-        secretName: alertmanager-tls-cert
-external-dns:
-    txtOwnerId: ${cluster_domain}
 concourse:
   secrets:
     localUsers: main:${main_password}
