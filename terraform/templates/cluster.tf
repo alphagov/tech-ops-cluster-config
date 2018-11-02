@@ -32,6 +32,10 @@ terraform {
   }
 }
 
+variable "concourse_password" {
+  description = "Concourse `main` user password"
+}
+
 module "cluster" {
   source = "../../modules/gsp-cluster"
 
@@ -51,5 +55,5 @@ module "cluster" {
   # configuration
   ssh_authorized_key = "(PUBLIC_SSH_KEY)"
 
-  concourse_main_password = "(MAIN_PASSWORD)"
+  concourse_main_password = "${var.concourse_password}"
 }
