@@ -1,0 +1,19 @@
+nginx-ingress:
+  controller:
+    service:
+      annotations: 
+        external-dns.alpha.kubernetes.io/hostname: "*.test.run-sandbox.aws.ext.govsvc.uk"
+concourse:
+  secrets:
+    localUsers: main:T3cvUpm90HGPUWGAHvSeZSU8pO8sPWPZouN3wPVfuA8=
+  web:
+    ingress:
+      hosts:
+      - concourse.test.run-sandbox.aws.ext.govsvc.uk
+      tls:
+      - hosts:
+        - concourse.test.run-sandbox.aws.ext.govsvc.uk
+        secretName: concourse-tls-cert
+  concourse:
+    web:
+      externalUrl: https://concourse.test.run-sandbox.aws.ext.govsvc.uk/
