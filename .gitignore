@@ -87,4 +87,6 @@ $RECYCLE.BIN/
 ## Project specific
 .terraform
 
+terraform/clusters/**/output
+terraform/clusters/**/bootkube-assets
 terraform/clusters/**/secrets.tfvars
