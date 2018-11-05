@@ -5,7 +5,7 @@ nginx-ingress:
         external-dns.alpha.kubernetes.io/hostname: "*.${cluster_domain}"
 concourse:
   secrets:
-    localUsers: main:${main_password}
+    localUsers: ${main_username}:${main_password}
   web:
     ingress:
       hosts:
@@ -17,3 +17,6 @@ concourse:
   concourse:
     web:
       externalUrl: https://concourse.${cluster_domain}/
+      auth:
+        mainTeam:
+          localUser: "${main_username}"

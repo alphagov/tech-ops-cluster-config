@@ -19,7 +19,7 @@ variable "concourse_main_password" {
 }
 
 module "cluster" {
-  source = "git::https://github.com/alphagov/gsp-typhoon//aws/container-linux/kubernetes?ref=v1.12.2"
+  source = "git::https://github.com/alphagov/gsp-typhoon//aws/container-linux/kubernetes?ref=gsp"
 
   # AWS
   cluster_name = "${var.cluster_name}"
@@ -49,7 +49,8 @@ data "template_file" "values_yaml" {
 
     vars {
         cluster_domain = "${var.cluster_name}.${var.zone_name}"
-        main_password = "${var.concourse_main_password}"
+        main_username  = "admin"
+        main_password  = "${var.concourse_main_password}"
     }
 }
 
