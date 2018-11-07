@@ -56,4 +56,14 @@ module "cluster" {
   ssh_authorized_key = "(PUBLIC_SSH_KEY)"
 
   concourse_main_password = "${var.concourse_password}"
+
+  codecommit_url = "${module.gsp-base-applier.repo_url}"
+}
+
+module "gsp-base-applier" {
+  source = "../../modules/codecommit-kube-applier"
+
+  repository_name = "(CLUSTER_NAME).(ZONE_NAME).gsp-base"
+  repository_description = "State of the gsp-base world!"
+  namespace = "gsp-base"
 }

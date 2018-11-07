@@ -18,6 +18,10 @@ variable "concourse_main_password" {
     type = "string"
 }
 
+variable "codecommit_url" {
+    type = "string"
+}
+
 module "cluster" {
   source = "git::https://github.com/alphagov/gsp-typhoon//aws/container-linux/kubernetes?ref=gsp"
 
@@ -59,6 +63,6 @@ resource "local_file" "values_yaml" {
     content = "${data.template_file.values_yaml.rendered}"
 
     provisioner "local-exec" {
-        command = "../../../scripts/render.sh"
+        command = "../../../scripts/render.sh \"${var.codecommit_url}\""
     }
 }
