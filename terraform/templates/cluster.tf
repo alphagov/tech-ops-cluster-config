@@ -67,3 +67,11 @@ module "gsp-base-applier" {
   repository_description = "State of the gsp-base world!"
   namespace = "gsp-base"
 }
+
+module "apps-applier" {
+  source = "../../modules/codecommit-kube-applier"
+
+  repository_name = "(CLUSTER_NAME).(ZONE_NAME).apps"
+  repository_description = "State of the apps world!"
+  namespace = "apps"
+}
