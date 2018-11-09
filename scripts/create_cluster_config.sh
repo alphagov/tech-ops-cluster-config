@@ -34,6 +34,7 @@ ssh-add "${domain}.rsa"
 
 aws ssm put-parameter --name "/${domain}/ssh-key" \
   --type SecureString \
+  --overwrite \
   --value "${private_key}"
 
 cat terraform/templates/cluster.tf | \
