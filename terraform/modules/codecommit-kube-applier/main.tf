@@ -13,7 +13,7 @@ data "template_file" "kube-applier-yaml" {
 }
 
 resource "local_file" "kube-applier-yaml" {
-  filename = "kube-applier.yaml"
+  filename = "kube-applier/${var.namespace}.yaml"
   content  = "${data.template_file.kube-applier-yaml.rendered}"
 }
 
