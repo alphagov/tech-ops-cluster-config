@@ -7,5 +7,6 @@ variable "repository_description" {
 }
 
 variable "namespace" {
-    type = "string"
+  type    = "string"
+  default = "default"
 }
