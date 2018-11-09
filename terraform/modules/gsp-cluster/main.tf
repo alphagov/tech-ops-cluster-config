@@ -1,25 +1,25 @@
 variable "cluster_name" {
-    type = "string"
+  type = "string"
 }
 
 variable "zone_name" {
-    type = "string"
+  type = "string"
 }
 
 variable "zone_id" {
-    type = "string"
+  type = "string"
 }
 
 variable "ssh_authorized_key" {
-    type = "string"
+  type = "string"
 }
 
 variable "concourse_main_password" {
-    type = "string"
+  type = "string"
 }
 
 variable "codecommit_url" {
-    type = "string"
+  type = "string"
 }
 
 module "cluster" {
@@ -49,20 +49,20 @@ resource "aws_route53_record" "ingress" {
 }
 
 data "template_file" "values_yaml" {
-    template = "${file("${path.module}/data/values.yaml")}"
+  template = "${file("${path.module}/data/values.yaml")}"
 
-    vars {
-        cluster_domain = "${var.cluster_name}.${var.zone_name}"
-        main_username  = "admin"
-        main_password  = "${var.concourse_main_password}"
-    }
+  vars {
+    cluster_domain = "${var.cluster_name}.${var.zone_name}"
+    main_username  = "admin"
+    main_password  = "${var.concourse_main_password}"
+  }
 }
 
 resource "local_file" "values_yaml" {
-    filename = "values.yaml"
-    content = "${data.template_file.values_yaml.rendered}"
+  filename = "values.yaml"
+  content  = "${data.template_file.values_yaml.rendered}"
 
-    provisioner "local-exec" {
-        command = "../../../scripts/render.sh \"${var.codecommit_url}\""
-    }
+  provisioner "local-exec" {
+    command = "../../../scripts/render.sh \"${var.codecommit_url}\""
+  }
 }

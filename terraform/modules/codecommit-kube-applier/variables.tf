@@ -1,9 +1,9 @@
 variable "repository_name" {
-    type = "string"
+  type = "string"
 }
 
 variable "repository_description" {
-    type = "string"
+  type = "string"
 }
 
 variable "namespace" {
