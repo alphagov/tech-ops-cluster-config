@@ -7,17 +7,17 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
- name: kube-applier
+ name: ${namespace}-kube-applier
  namespace: ${namespace}
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: kube-applier
+  name: ${namespace}-kube-applier
   namespace: ${namespace}
 subjects:
 - kind: ServiceAccount
-  name: kube-applier
+  name: ${namespace}-kube-applier
   namespace: ${namespace}
 roleRef:
   kind: ClusterRole
@@ -27,23 +27,23 @@ roleRef:
 apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
-  name: "kube-applier"
+  name: "${namespace}-kube-applier"
   namespace: "${namespace}"
   labels:
-    app: "kube-applier"
+    app: "${namespace}-kube-applier"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "kube-applier"
+      app: "${namespace}-kube-applier"
   template:
     metadata:
       labels:
-        app: "kube-applier"
+        app: "${namespace}-kube-applier"
     spec:
-      serviceAccountName: kube-applier
+      serviceAccountName: ${namespace}-kube-applier
       containers:
-        - name: "kube-applier"
+        - name: "${namespace}-kube-applier"
           command:
             - "/kube-applier"
           env:
@@ -78,7 +78,7 @@ spec:
 apiVersion: "v1"
 kind: "Service"
 metadata:
-  name: "kube-applier"
+  name: "${namespace}-kube-applier"
   namespace: "${namespace}"
 spec:
   ports:
@@ -86,4 +86,4 @@ spec:
       port: 80
       targetPort: 2020
   selector:
-    app: "kube-applier"
+    app: "${namespace}-kube-applier"
