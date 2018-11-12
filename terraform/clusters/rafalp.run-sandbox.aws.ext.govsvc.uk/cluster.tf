@@ -75,3 +75,11 @@ module "design-applier" {
   repository_description = "Node application we'd like to apply to the design namespace."
   namespace              = "design"
 }
+
+module "observe-applier" {
+  source = "../../modules/codecommit-kube-applier"
+
+  repository_name        = "rafalp.run-sandbox.aws.ext.govsvc.uk.gsp-observe"
+  repository_description = "Node application we'd like to apply to the observe namespace."
+  namespace              = "observe"
+}
