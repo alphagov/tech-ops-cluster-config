@@ -16,6 +16,8 @@ helm template \
 
 cd /tmp/gsp-base
 git init .
+git config --global user.name "Friendly neighbourhood Spider-Man"
+git config --global user.email "re-buildrun-team@digital.cabinet-office.gov.uk"
 git config --local credential.helper '!aws codecommit credential-helper $@'
 git config --local credential.UseHttpPath true
 git remote add origin "${repo_url}"

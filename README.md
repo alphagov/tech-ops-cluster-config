@@ -53,11 +53,12 @@
     This leaves you with a manual step of:
 
     ```sh
-    cd terraform/clusters/cluster1.gds-re-run-production.aws.ext.govsvc.uk
-    aws-vault exec run-production -- terraform init
-    aws-vault exec run-production -- terraform plan
-    aws-vault exec run-production -- terraform apply
+    export DOMAIN=cluster1.gds-re-run-production.aws.ext.govsvc.uk
+    cd terraform/clusters/${DOMAIN}
+    aws-vault exec run-production -- docker run -it --env AWS_DEFAULT_REGION --env AWS_REGION --env AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY --env AWS_SESSION_TOKEN --env AWS_SECURITY_TOKEN --env DOMAIN --volume=$(pwd)/../../../:/terraform -w /terraform/terraform/clusters/${DOMAIN} govsvc/terraform {init, plan, apply}
+    kubectl apply -Rf kube-applier/
     ```
+
 1. Test the connection to Kubernetes by executing the following:
     ```
     export KUBECONFIG="$(pwd)/secrets/auth/kubeconfig"
