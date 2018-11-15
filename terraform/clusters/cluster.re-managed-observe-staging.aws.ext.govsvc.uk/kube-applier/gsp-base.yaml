@@ -1,0 +1,89 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gsp-base
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+ name: gsp-base-kube-applier
+ namespace: gsp-base
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gsp-base-kube-applier
+  namespace: gsp-base
+subjects:
+- kind: ServiceAccount
+  name: gsp-base-kube-applier
+  namespace: gsp-base
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "gsp-base-kube-applier"
+  namespace: "gsp-base"
+  labels:
+    app: "gsp-base-kube-applier"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "gsp-base-kube-applier"
+  template:
+    metadata:
+      labels:
+        app: "gsp-base-kube-applier"
+    spec:
+      serviceAccountName: gsp-base-kube-applier
+      containers:
+        - name: "gsp-base-kube-applier"
+          command:
+            - "/kube-applier"
+          env:
+            - name: "REPO_PATH"
+              value: "/k8s/resources"
+            - name: "LISTEN_PORT"
+              value: "2020"
+          image: "govsvc/kube-applier:0.0.1541676847"
+          ports:
+            - containerPort: 2020
+          volumeMounts:
+            - name: "git-repo"
+              mountPath: "/k8s"
+        - name: "aws-git-sync"
+          command:
+            - "/git-sync"
+          env:
+            - name: "GIT_SYNC_REPO"
+              value: "https://git-codecommit.eu-west-2.amazonaws.com/v1/repos/cluster.re-managed-observe-staging.aws.ext.govsvc.uk.gsp-base"
+            - name: "GIT_SYNC_DEST"
+              value: "resources"
+          image: "govsvc/aws-git-sync:0.0.1541608150"
+          ports:
+            - containerPort: 2020
+          volumeMounts:
+            - name: "git-repo"
+              mountPath: "/git"
+      volumes:
+        - name: "git-repo"
+          emptyDir: {}
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "gsp-base-kube-applier"
+  namespace: "gsp-base"
+spec:
+  ports:
+    - name: "service"
+      port: 80
+      targetPort: 2020
+  selector:
+    app: "gsp-base-kube-applier"

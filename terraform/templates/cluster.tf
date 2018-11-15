@@ -26,7 +26,7 @@ provider "tls" {
 
 terraform {
   backend "s3" {
-    bucket = "gds-re-(AWS_ACCOUNT_NAME)-terraform-state"
+    bucket = "gds-(AWS_ACCOUNT_NAME)-terraform-state"
     region = "eu-west-2"
     key    = "(CLUSTER_NAME).(AWS_ACCOUNT_NAME).(CLOUD).(SYSTEM_DOMAIN)/cluster.tfstate"
   }
