@@ -56,28 +56,18 @@
     export DOMAIN=cluster1.gds-re-run-production.aws.ext.govsvc.uk
     cd terraform/clusters/${DOMAIN}
     aws-vault exec run-production -- docker run -it --env AWS_DEFAULT_REGION --env AWS_REGION --env AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY --env AWS_SESSION_TOKEN --env AWS_SECURITY_TOKEN --env DOMAIN --volume=$(pwd)/../../../:/terraform -w /terraform/terraform/clusters/${DOMAIN} govsvc/terraform {init, plan, apply}
-    kubectl apply -Rf kube-applier/
     ```
 
 1. Test the connection to Kubernetes by executing the following:
     ```
-    export KUBECONFIG="$(pwd)/secrets/auth/kubeconfig"
+    export KUBECONFIG="$(pwd)/bootkube-assets/auth/kubeconfig"
     kubectl get all --all-namespaces
     ```
+1. Add kube-applier to the cluster:
+   ```
+    kubectl apply -Rf kube-applier/
+   ```
 1. Share the
-   `terraform/clusters/cluster1.gds-re-run-production.aws.ext.govsvc.uk/secrets/auth/kubeconfig`
-   ```
-   aws ssm put-parameter --name "/${domain}/kubeconfig" \
-     --type SecureString \
-     --value "$(cat secrets/auth/kubeconfig)"
-   ```
+   `terraform/clusters/cluster1.gds-re-run-production.aws.ext.govsvc.uk/bootkube-assets/auth/kubeconfig`
 
-   In order to read this out of AWS SSM later, run:
-
-   ```
-    aws ssm get-parameter --name "/${domain}/kubeconfig" \
-      --query Parameter.Value \
-      --output text \
-      --with-decryption > "~/.kube/${domain}/kubeconfig"
-   ```
-1. Commit and Push new `cluster.tf` file to keep the record.
+1. Commit and Push new `cluster.tf` and the `kube-applier` yaml files file to keep the record.
