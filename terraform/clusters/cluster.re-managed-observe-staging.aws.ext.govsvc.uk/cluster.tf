@@ -67,3 +67,11 @@ module "gsp-base-applier" {
   repository_description = "State of the gsp-base world!"
   namespace              = "gsp-base"
 }
+
+module "observe-applier" {
+  source = "../../modules/codecommit-kube-applier"
+
+  repository_name        = "cluster.re-managed-observe-staging.aws.ext.govsvc.uk.gsp-observe"
+  repository_description = "Alertmanager et al"
+  namespace              = "observe"
+}
