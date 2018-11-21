@@ -2,6 +2,10 @@
 
 ...
 
+## Prerequisites
+
+- Docker installed and running locally
+
 ## How to register a new cluster
 
 1. Manualy `Create Bucket` in the Service Team's AWS account
@@ -29,11 +33,12 @@
 
     | Variable | Description | Example |
     |---|---|---|
-    | `AWS_ACCOUNT_NAME` | This should match your AWS account name or the account ID. | `gds-re-run-production` |
+    | `AWS_ACCOUNT_NAME` | This should match your AWS account name or the account ID. | `re-managed-observe-production` |
     | `AWS_REGION` | Should represent AWS region. Stick to London. | `eu-west-2` |
     | `CLUSTER_NAME` | The name of the cluster about to be created. Needs to be unique across your entire Hosted Zone. | `cluster1` |
-    | `ZONE_ID` | An AWS Hosted Zone ID which you've obtained from the first step of this guide. | `E00000000000` |
-    | `ZONE_NAME` | An AWS Hosted Zone name which you've obtained from the first step of this guide. | `gds-re-run-production.aws.ext.govsvc.uk` |
+    | `ZONE_ID` | An AWS Hosted Zone ID which you've obtained from the first step of this guide. | `Z00000000000` |
+    | `ZONE_NAME` | An AWS Hosted Zone name which you've obtained from the first step of this guide. | `re-managed-observe-production.aws.ext.govsvc.uk` |
+    | `MAIN_PASSWORD` | The password for the Concourse `admin` user created by the script. | `pwgen 40 1` |
 
     We've prepared a templater script to create the new cluster terraform
     declaration.
@@ -50,12 +55,18 @@
     terraform/clusters/cluster1.gds-re-run-production.aws.ext.govsvc.uk/cluster.tf
     ```
 
+    Pull in the gsp-base sub-module:
+    ```
+    git submodule init
+    git submodule update
+    ```
+
     This leaves you with a manual step of:
 
     ```sh
     export DOMAIN=cluster1.gds-re-run-production.aws.ext.govsvc.uk
     cd terraform/clusters/${DOMAIN}
-    aws-vault exec run-production -- docker run -it --env AWS_DEFAULT_REGION --env AWS_REGION --env AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY --env AWS_SESSION_TOKEN --env AWS_SECURITY_TOKEN --env DOMAIN --volume=$(pwd)/../../../:/terraform -w /terraform/terraform/clusters/${DOMAIN} govsvc/terraform {init, plan, apply}
+    aws-vault exec run-production -- docker run -it --env AWS_DEFAULT_REGION --env AWS_REGION --env AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY --env AWS_SESSION_TOKEN --env AWS_SECURITY_TOKEN --env DOMAIN --volume=$(pwd)/../../../:/terraform -w /terraform/terraform/clusters/${DOMAIN} govsvc/terraform {init, plan, apply} -var-file=secrets.tfvars
     ```
 
 1. Test the connection to Kubernetes by executing the following:
