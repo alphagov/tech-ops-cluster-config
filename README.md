@@ -5,6 +5,8 @@
 ## Prerequisites
 
 - Docker installed and running locally
+- aws cli
+- aws-iam-authenticator (`go get -u -v github.com/kubernetes-sigs/aws-iam-authenticator/cmd/aws-iam-authenticator`)
 
 ## How to register a new cluster
 
@@ -71,14 +73,13 @@
 
 1. Test the connection to Kubernetes by executing the following:
     ```
-    export KUBECONFIG="$(pwd)/bootkube-assets/auth/kubeconfig"
-    kubectl get all --all-namespaces
+    cp $(pwd)/bootkube-assets/auth/user-config ./kubeconfig
+    export KUBECONFIG="$(pwd)/kubeconfig"
+    aws-vault exec run-production -- kubectl get all --all-namespaces
     ```
 1. Add kube-applier to the cluster:
    ```
-    kubectl apply -Rf kube-applier/
+    aws-vault exec run-production -- kubectl apply -Rf kube-applier/
    ```
-1. Share the
-   `terraform/clusters/cluster1.gds-re-run-sandbox.aws.ext.govsvc.uk/bootkube-assets/auth/kubeconfig`
 
-1. Commit and Push new `cluster.tf` and the `kube-applier` yaml files file to keep the record.
+1. Commit and Push new `cluster.tf`, `kubeconfig`, and `kube-applier` yaml files to keep the record.
