@@ -10,7 +10,7 @@ mkdir -p /tmp/gsp-base
 helm template \
   --output-dir /tmp/gsp-base \
   --name gsp-base \
-  --namespace gsp-base \
+  --namespace kube-system \
   --values values.yaml \
   ../../../charts/gsp-base/charts/base
 

@@ -57,13 +57,13 @@ module "cluster" {
 
   concourse_main_password = "${var.concourse_password}"
 
-  codecommit_url = "${module.gsp-base-applier.repo_url}"
+  codecommit_url = "${module.kube-system-applier.repo_url}"
 }
 
-module "gsp-base-applier" {
+module "kube-system-applier" {
   source = "../../modules/codecommit-kube-applier"
 
-  repository_name        = "(CLUSTER_NAME).(ZONE_NAME).gsp-base"
-  repository_description = "State of the gsp-base world!"
-  namespace              = "gsp-base"
+  repository_name        = "(CLUSTER_NAME).(ZONE_NAME).kube-system"
+  repository_description = "State of the kube-system world!"
+  namespace              = "kube-system"
 }
