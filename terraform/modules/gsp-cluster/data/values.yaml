@@ -20,3 +20,5 @@ concourse:
       auth:
         mainTeam:
           localUser: "${main_username}"
+kube-dashboard:
+  fullnameOverride: kubernetes-dashboard
