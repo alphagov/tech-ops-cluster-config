@@ -57,15 +57,15 @@ module "cluster" {
 
   concourse_main_password = "${var.concourse_password}"
 
-  codecommit_url = "${module.gsp-base-applier.repo_url}"
+  codecommit_url = "${module.kube-system-applier.repo_url}"
 }
 
-module "gsp-base-applier" {
+module "kube-system-applier" {
   source = "../../modules/codecommit-kube-applier"
 
-  repository_name        = "rafalp.run-sandbox.aws.ext.govsvc.uk.gsp-base"
-  repository_description = "State of the gsp-base world!"
-  namespace              = "gsp-base"
+  repository_name        = "rafalp.run-sandbox.aws.ext.govsvc.uk.kube-system"
+  repository_description = "State of the kube-system world!"
+  namespace              = "kube-system"
 }
 
 module "design-applier" {

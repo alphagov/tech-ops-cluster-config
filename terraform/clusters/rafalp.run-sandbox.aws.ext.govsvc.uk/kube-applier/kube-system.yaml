@@ -2,23 +2,23 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: gsp-base
+  name: kube-system
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
- name: gsp-base-kube-applier
- namespace: gsp-base
+ name: kube-system-kube-applier
+ namespace: kube-system
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: gsp-base-kube-applier
-  namespace: gsp-base
+  name: kube-system-kube-applier
+  namespace: kube-system
 subjects:
 - kind: ServiceAccount
-  name: gsp-base-kube-applier
-  namespace: gsp-base
+  name: kube-system-kube-applier
+  namespace: kube-system
 roleRef:
   kind: ClusterRole
   name: cluster-admin
@@ -27,23 +27,23 @@ roleRef:
 apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
-  name: "gsp-base-kube-applier"
-  namespace: "gsp-base"
+  name: "kube-system-kube-applier"
+  namespace: "kube-system"
   labels:
-    app: "gsp-base-kube-applier"
+    app: "kube-system-kube-applier"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "gsp-base-kube-applier"
+      app: "kube-system-kube-applier"
   template:
     metadata:
       labels:
-        app: "gsp-base-kube-applier"
+        app: "kube-system-kube-applier"
     spec:
-      serviceAccountName: gsp-base-kube-applier
+      serviceAccountName: kube-system-kube-applier
       containers:
-        - name: "gsp-base-kube-applier"
+        - name: "kube-system-kube-applier"
           command:
             - "/kube-applier"
           env:
@@ -62,7 +62,7 @@ spec:
             - "/git-sync"
           env:
             - name: "GIT_SYNC_REPO"
-              value: "https://git-codecommit.eu-west-2.amazonaws.com/v1/repos/rafalp.run-sandbox.aws.ext.govsvc.uk.gsp-base"
+              value: "https://git-codecommit.eu-west-2.amazonaws.com/v1/repos/rafalp.run-sandbox.aws.ext.govsvc.uk.kube-system"
             - name: "GIT_SYNC_DEST"
               value: "resources"
           image: "govsvc/aws-git-sync:0.0.1541608150"
@@ -78,12 +78,12 @@ spec:
 apiVersion: "v1"
 kind: "Service"
 metadata:
-  name: "gsp-base-kube-applier"
-  namespace: "gsp-base"
+  name: "kube-system-kube-applier"
+  namespace: "kube-system"
 spec:
   ports:
     - name: "service"
       port: 80
       targetPort: 2020
   selector:
-    app: "gsp-base-kube-applier"
+    app: "kube-system-kube-applier"
