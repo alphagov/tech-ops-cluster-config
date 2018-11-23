@@ -52,7 +52,7 @@
     This should generate new file at the location:
 
     ```
-    terraform/clusters/cluster1.gds-re-run-production.aws.ext.govsvc.uk/cluster.tf
+    terraform/clusters/cluster1.gds-re-run-sandbox.aws.ext.govsvc.uk/cluster.tf
     ```
 
     Pull in the gsp-base sub-module:
@@ -64,9 +64,9 @@
     This leaves you with a manual step of:
 
     ```sh
-    export DOMAIN=cluster1.gds-re-run-production.aws.ext.govsvc.uk
+    export DOMAIN=cluster1.gds-re-run-sandbox.aws.ext.govsvc.uk
     cd terraform/clusters/${DOMAIN}
-    aws-vault exec run-production -- docker run -it --env AWS_DEFAULT_REGION --env AWS_REGION --env AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY --env AWS_SESSION_TOKEN --env AWS_SECURITY_TOKEN --env DOMAIN --volume=$(pwd)/../../../:/terraform -w /terraform/terraform/clusters/${DOMAIN} govsvc/terraform {init, plan, apply} -var-file=secrets.tfvars
+    aws-vault exec run-sandbox -- docker run -it --env AWS_DEFAULT_REGION --env AWS_REGION --env AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY --env AWS_SESSION_TOKEN --env AWS_SECURITY_TOKEN --env DOMAIN --volume=$(pwd)/../../../:/terraform -w /terraform/terraform/clusters/${DOMAIN} govsvc/terraform {init, plan, apply} -var-file=secrets.tfvars
     ```
 
 1. Test the connection to Kubernetes by executing the following:
@@ -79,6 +79,6 @@
     kubectl apply -Rf kube-applier/
    ```
 1. Share the
-   `terraform/clusters/cluster1.gds-re-run-production.aws.ext.govsvc.uk/bootkube-assets/auth/kubeconfig`
+   `terraform/clusters/cluster1.gds-re-run-sandbox.aws.ext.govsvc.uk/bootkube-assets/auth/kubeconfig`
 
 1. Commit and Push new `cluster.tf` and the `kube-applier` yaml files file to keep the record.
