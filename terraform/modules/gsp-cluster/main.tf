@@ -1,3 +1,17 @@
+variable "allowed_ips" {
+  type = "list"
+
+  default = [
+    "85.133.67.244/32",
+    "213.86.153.212/32",
+    "213.86.153.213/32",
+    "213.86.153.214/32",
+    "213.86.153.235/32",
+    "213.86.153.236/32",
+    "213.86.153.237/32",
+  ]
+}
+
 variable "cluster_name" {
   type = "string"
 }
@@ -35,6 +49,7 @@ module "cluster" {
   asset_dir          = "bootkube-assets"
 
   # optional
+  allowed_ips  = ["${var.allowed_ips}"]
   worker_count = 2
   worker_type  = "t2.medium"
 
