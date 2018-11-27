@@ -9,9 +9,11 @@ concourse:
   web:
     ingress:
       hosts:
+      - c.${cluster_domain}
       - concourse.${cluster_domain}
       tls:
       - hosts:
+        - c.${cluster_domain}
         - concourse.${cluster_domain}
         secretName: concourse-tls-cert
   concourse:
