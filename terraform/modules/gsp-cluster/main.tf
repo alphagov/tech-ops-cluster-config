@@ -22,6 +22,10 @@ variable "codecommit_url" {
   type = "string"
 }
 
+variable "admin_role_arns" {
+  type = "list"
+}
+
 module "cluster" {
   source = "git::https://github.com/alphagov/gsp-typhoon//aws/container-linux/kubernetes?ref=gsp"
 
@@ -37,6 +41,9 @@ module "cluster" {
   # optional
   worker_count = 2
   worker_type  = "t2.medium"
+
+  cluster_id = "${var.cluster_name}.${var.zone_name}"
+  admin_role_arns = "${var.admin_role_arns}"
 }
 
 # needed until externalDNS starts to work

@@ -36,6 +36,8 @@ variable "concourse_password" {
   description = "Concourse `main` user password"
 }
 
+data "aws_caller_identity" "current" {}
+
 module "cluster" {
   source = "../../modules/gsp-cluster"
 
@@ -58,6 +60,8 @@ module "cluster" {
   concourse_main_password = "${var.concourse_password}"
 
   codecommit_url = "${module.gsp-base-applier.repo_url}"
+
+  admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
 }
 
 module "gsp-base-applier" {
