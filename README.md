@@ -46,13 +46,13 @@
     With the above variables you can run:
 
     ```sh
-    ./scripts/create_cluster_config.sh
+    aws-vault exec run-sandbox -- ./scripts/create_cluster_config.sh
     ```
 
     This should generate new file at the location:
 
     ```
-    terraform/clusters/cluster1.gds-re-run-sandbox.aws.ext.govsvc.uk/cluster.tf
+    terraform/clusters/cluster1.run-sandbox.aws.ext.govsvc.uk/cluster.tf
     ```
 
     Pull in the gsp-base sub-module:
