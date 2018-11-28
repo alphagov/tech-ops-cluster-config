@@ -14,10 +14,6 @@ variable "ssh_authorized_key" {
   type = "string"
 }
 
-variable "concourse_main_password" {
-  type = "string"
-}
-
 variable "codecommit_url" {
   type = "string"
 }
@@ -61,7 +57,7 @@ data "template_file" "values_yaml" {
   vars {
     cluster_domain = "${var.cluster_name}.${var.zone_name}"
     main_username  = "admin"
-    main_password  = "${var.concourse_main_password}"
+    main_password  = "password"
   }
 }
 
