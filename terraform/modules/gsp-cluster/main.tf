@@ -37,7 +37,7 @@ variable "admin_role_arns" {
 }
 
 module "cluster" {
-  source = "git::https://github.com/alphagov/gsp-typhoon//aws/container-linux/kubernetes?ref=gsp"
+  source = "git::https://github.com/alphagov/gsp-typhoon//aws/container-linux/kubernetes?ref=restrict-api-access-2"
 
   # AWS
   cluster_name = "${var.cluster_name}"
