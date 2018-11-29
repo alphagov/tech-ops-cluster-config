@@ -1,3 +1,0 @@
-[submodule "charts/gsp-base"]
-	path = charts/gsp-base
-	url = git@github.com:alphagov/gsp-base.git
