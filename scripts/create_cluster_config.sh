@@ -48,8 +48,6 @@ sed "s/(CLOUD)/${CLOUD}/g" | \
 sed "s/(SYSTEM_DOMAIN)/${SYSTEM_DOMAIN}/g" \
   > "${dir}/cluster.tf"
 
-cp terraform/templates/variables.tfvars "${dir}/variables.tfvars"
-
 echo "cluster file: Created!"
 echo "You can continue by changing directory to:"
 echo "${dir}"
