@@ -32,11 +32,6 @@ terraform {
   }
 }
 
-variable "allowed_ips" {
-  description = "A list of IP addresses permitted to access Kubernetes API Server"
-  type        = "list"
-}
-
 variable "concourse_password" {
   description = "Concourse `main` user password"
 }
@@ -58,8 +53,6 @@ module "cluster" {
   zone_id      = "ZQQE7MLQRG73Z"
 
   # configuration
-  allowed_ips = "${var.allowed_ips}"
-
   ssh_authorized_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDcM1gMH937SSS+gyXBeC4Xbi5Q9JU5E/zOQ8qmEVKJrDpwCzkkt/7amVSFaeYooLDsrjGxBBgcLadoQ0z33GvDzS5D2a8tZWxtrQAvN4o4B2QSksq54ZCte/j8QjLbgrRbpt0WNScuhZiW7NVmbhqfSZORYNW+FtGp24HIRpazLHH5y+36n8YD8liTWELG0ckiUO4JEKs58u6fPOFDQ+GKeuKxIoQEOngG2nOmSpYABo6KJujZ3KH403i7B1FCf3Aao2gXUkj7Oa79YUprDDF0yw5fXsSD0aF8VbKbySkxErBgAwww+bT/UJPdU0udt+T4jbKFkgedYU5pGnBKEOKb0RAZhb1Cecis82jhNxYP5No9TtE/2ZJjjAz6UtPQjrTlFmXNkNvQqvINY/OVCnsMfOdXopOuLdzlGNrkvIvjmiZQhOWHrNuKkQuQG9HCsywVt7g9xrpfsbMpyVAJnGJIv6yn4WcfJmVWmAXY0uzXiY6fyF7d+42EvXrm5jcJG6IBQsTtBj+X+quu0aFA+pfzMFgKGIJon3PX/fEECiu55ATQRYqIlm0xZlbG9wA98TRSuc0wCkUIqVnIo4QZbghAdWBneLpF++8m+65XxdRaCdmy6XjKV8H5NKEe/k1FNTQiWkx4I/TnkggGStfkl8HFmf1lxV8Mh5dwcf2xjOatyw== cluster.re-managed-observe-staging.aws.ext.govsvc.uk"
 
   concourse_main_password = "${var.concourse_password}"
