@@ -6,19 +6,8 @@ nginx-ingress:
 concourse:
   secrets:
     localUsers: ${main_username}:${main_password}
-  web:
-    ingress:
-      hosts:
-      - c.${cluster_domain}
-      - concourse.${cluster_domain}
-      tls:
-      - hosts:
-        - c.${cluster_domain}
-        - concourse.${cluster_domain}
-        secretName: concourse-tls-cert
   concourse:
     web:
-      externalUrl: https://concourse.${cluster_domain}/
       auth:
         mainTeam:
           localUser: "${main_username}"
