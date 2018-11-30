@@ -1,0 +1,17 @@
+apiVersion: flux.weave.works/v1beta1
+kind: HelmRelease
+metadata:
+  name: gsp-base
+  namespace: gsp-base
+spec:
+  releaseName: gsp-base
+  chart:
+    git: https://github.com/alphagov/gsp-base.git
+    ref: flux-spike
+    path: charts/base
+  values:
+    nginx-ingress:
+      controller:
+        service:
+          annotations:
+            external-dns.alpha.kubernetes.io/hostname: "*.farms.run-sandbox.aws.ext.govsvc.uk"
