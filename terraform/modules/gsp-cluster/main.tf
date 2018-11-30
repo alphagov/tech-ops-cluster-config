@@ -47,15 +47,3 @@ resource "aws_route53_record" "ingress" {
   records = ["${module.cluster.ingress_dns_name}"]
 }
 
-data "template_file" "gsp-base-helm-release-yaml" {
-  template = "${file("${path.module}/data/gsp-base-helm-release.yaml")}"
-
-  vars {
-    cluster_domain = "${var.cluster_name}.${var.zone_name}"
-  }
-}
-
-resource "local_file" "gsp-base-helm-release-yaml" {
-  filename = "gsp-base-helm-release.yaml"
-  content  = "${data.template_file.gsp-base-helm-release-yaml.rendered}"
-}
