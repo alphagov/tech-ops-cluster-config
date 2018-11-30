@@ -56,8 +56,20 @@ module "cluster" {
   admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
 }
 
-module "gsp-base-flux-helm" {
+module "gsp-base-release" {
   source = "../../modules/github-flux"
 
-  namespace = "gsp-base"
+  namespace  = "gsp-base"
+  chart_git  = "https://github.com/alphagov/gsp-base.git"
+  chart_ref  = "flux-spike"
+  chart_path = "charts/base"
+}
+
+module "gsp-monitoring-release" {
+  source = "../../modules/github-flux"
+
+  namespace  = "monitoring-system"
+  chart_git  = "https://github.com/alphagov/gsp-monitoring.git"
+  chart_ref  = "master"
+  chart_path = "monitoring"
 }
