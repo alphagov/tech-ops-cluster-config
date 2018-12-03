@@ -10,4 +10,4 @@ spec:
     ref: "${chart_ref}"
     path: "${chart_path}"
   values:
-${values}
+    namespace: ${namespace} # unused/arbitary, but must be at least one "value" or this breaks
