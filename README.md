@@ -71,14 +71,9 @@
     aws-vault exec run-sandbox -- kubectl get all --all-namespaces
     ```
 
-1. Add flux to the cluster:
+1. Apply any generated resources to the cluster:
    ```
-    aws-vault exec run-sandbox -- kubectl apply -Rf flux-helm/
+    aws-vault exec run-sandbox -- kubectl apply -Rf addons/
    ```
-
-1. Tell flux to "watch" gsp-base:
-    ```
-    aws-vault exec run-sandbox -- kubectl apply -f gsp-base-helm-release.yaml
-    ```
 
 1. Commit and Push new `cluster.tf`, `kubeconfig`, `gsp-base-helm-release.yaml` and `flux-helm/*yaml` files to keep the record.
