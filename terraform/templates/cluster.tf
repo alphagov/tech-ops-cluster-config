@@ -32,10 +32,6 @@ terraform {
   }
 }
 
-variable "concourse_password" {
-  description = "Concourse `main` user password"
-}
-
 data "aws_caller_identity" "current" {}
 
 module "cluster" {
@@ -57,17 +53,11 @@ module "cluster" {
   # configuration
   ssh_authorized_key = "(PUBLIC_SSH_KEY)"
 
-  concourse_main_password = "${var.concourse_password}"
-
-  codecommit_url = "${module.gsp-base-applier.repo_url}"
-
   admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
 }
 
-module "gsp-base-applier" {
-  source = "../../modules/codecommit-kube-applier"
+module "gsp-base-flux-helm" {
+  source = "../../modules/github-flux"
 
-  repository_name        = "(CLUSTER_NAME).(ZONE_NAME).gsp-base"
-  repository_description = "State of the gsp-base world!"
-  namespace              = "gsp-base"
+  namespace = "gsp-base"
 }

@@ -14,10 +14,6 @@ variable "ssh_authorized_key" {
   type = "string"
 }
 
-variable "codecommit_url" {
-  type = "string"
-}
-
 variable "admin_role_arns" {
   type = "list"
 }
@@ -51,21 +47,3 @@ resource "aws_route53_record" "ingress" {
   records = ["${module.cluster.ingress_dns_name}"]
 }
 
-data "template_file" "values_yaml" {
-  template = "${file("${path.module}/data/values.yaml")}"
-
-  vars {
-    cluster_domain = "${var.cluster_name}.${var.zone_name}"
-    main_username  = "admin"
-    main_password  = "password"
-  }
-}
-
-resource "local_file" "values_yaml" {
-  filename = "values.yaml"
-  content  = "${data.template_file.values_yaml.rendered}"
-
-  provisioner "local-exec" {
-    command = "../../../scripts/render.sh \"${var.codecommit_url}\""
-  }
-}

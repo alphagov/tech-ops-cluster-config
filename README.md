@@ -40,7 +40,6 @@
     | `CLUSTER_NAME` | The name of the cluster about to be created. Needs to be unique across your entire Hosted Zone. | `cluster1` |
     | `ZONE_ID` | An AWS Hosted Zone ID which you've obtained from the first step of this guide. | `Z00000000000` |
     | `ZONE_NAME` | An AWS Hosted Zone name which you've obtained from the first step of this guide. | `re-managed-observe-production.aws.ext.govsvc.uk` |
-    | `MAIN_PASSWORD` | The password for the Concourse `admin` user created by the script. | `pwgen 40 1` |
 
     We've prepared a templater script to create the new cluster terraform
     declaration.
@@ -57,29 +56,24 @@
     terraform/clusters/cluster1.run-sandbox.aws.ext.govsvc.uk/cluster.tf
     ```
 
-    Pull in the gsp-base sub-module:
-    ```
-    git submodule init
-    git submodule update
-    ```
-
     This leaves you with a manual step of:
 
     ```sh
     export DOMAIN=cluster1.gds-re-run-sandbox.aws.ext.govsvc.uk
     cd terraform/clusters/${DOMAIN}
-    aws-vault exec run-sandbox -- docker run -it --env AWS_DEFAULT_REGION --env AWS_REGION --env AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY --env AWS_SESSION_TOKEN --env AWS_SECURITY_TOKEN --env DOMAIN --volume=$(pwd)/../../../:/terraform -w /terraform/terraform/clusters/${DOMAIN} govsvc/terraform {init, plan, apply} -var-file=secrets.tfvars
+    aws-vault exec run-sandbox -- docker run -it --env AWS_DEFAULT_REGION --env AWS_REGION --env AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY --env AWS_SESSION_TOKEN --env AWS_SECURITY_TOKEN --env DOMAIN --volume=$(pwd)/../../../:/terraform -w /terraform/terraform/clusters/${DOMAIN} govsvc/terraform {init, plan, apply}
     ```
 
 1. Test the connection to Kubernetes by executing the following:
     ```
     cp $(pwd)/bootkube-assets/auth/user-config ./kubeconfig
     export KUBECONFIG="$(pwd)/kubeconfig"
-    aws-vault exec run-production -- kubectl get all --all-namespaces
+    aws-vault exec run-sandbox -- kubectl get all --all-namespaces
     ```
-1. Add kube-applier to the cluster:
+
+1. Apply any generated resources to the cluster:
    ```
-    aws-vault exec run-production -- kubectl apply -Rf kube-applier/
+    aws-vault exec run-sandbox -- kubectl apply -Rf addons/
    ```
 
-1. Commit and Push new `cluster.tf`, `kubeconfig`, and `kube-applier` yaml files to keep the record.
+1. Commit and Push new `cluster.tf`, `kubeconfig`, `gsp-base-helm-release.yaml` and `flux-helm/*yaml` files to keep the record.

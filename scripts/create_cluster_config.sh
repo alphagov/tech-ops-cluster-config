@@ -9,8 +9,6 @@ set -euo pipefail
 : "${ZONE_ID:?Required variable!}"
 : "${ZONE_NAME:?Required variable!}"
 
-: "${MAIN_PASSWORD:?Required variable!}"
-
 export CLOUD="aws"
 export SYSTEM_DOMAIN="ext.govsvc.uk"
 
