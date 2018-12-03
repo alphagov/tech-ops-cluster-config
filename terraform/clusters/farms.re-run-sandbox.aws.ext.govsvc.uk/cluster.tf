@@ -61,7 +61,7 @@ module "gsp-base-release" {
 
   namespace  = "gsp-base"
   chart_git  = "https://github.com/alphagov/gsp-base.git"
-  chart_ref  = "flux-spike"
+  chart_ref  = "master"
   chart_path = "charts/base"
 }
 
