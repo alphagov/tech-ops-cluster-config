@@ -60,18 +60,20 @@ module "cluster" {
   codecommit_url = "${module.gsp-base-applier.repo_url}"
 }
 
-module "gsp-base-applier" {
-  source = "../../modules/codecommit-kube-applier"
+module "gsp-base-release" {
+  source = "../../modules/github-flux"
 
-  repository_name        = "cluster.re-managed-observe-staging.aws.ext.govsvc.uk.gsp-base"
-  repository_description = "State of the gsp-base world!"
-  namespace              = "gsp-base"
+  namespace  = "gsp-base"
+  chart_git  = "https://github.com/alphagov/gsp-base.git"
+  chart_ref  = "master"
+  chart_path = "charts/base"
 }
 
-module "observe-applier" {
-  source = "../../modules/codecommit-kube-applier"
+module "gsp-monitoring-release" {
+  source = "../../modules/github-flux"
 
-  repository_name        = "cluster.re-managed-observe-staging.aws.ext.govsvc.uk.gsp-observe"
-  repository_description = "Alertmanager et al"
-  namespace              = "observe"
+  namespace  = "monitoring-system"
+  chart_git  = "https://github.com/alphagov/gsp-monitoring.git"
+  chart_ref  = "master"
+  chart_path = "monitoring"
 }
