@@ -28,11 +28,10 @@ data "template_file" "helm-release" {
   template = "${file("${path.module}/data/helm-release.yaml")}"
 
   vars {
-    namespace = "${var.namespace}"
-    chart_git = "${var.chart_git}"
-    chart_ref = "${var.chart_ref}"
+    namespace  = "${var.namespace}"
+    chart_git  = "${var.chart_git}"
+    chart_ref  = "${var.chart_ref}"
     chart_path = "${var.chart_path}"
-    values = "${var.values}"
   }
 }
 

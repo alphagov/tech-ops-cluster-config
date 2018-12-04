@@ -18,12 +18,6 @@ variable "chart_path" {
     type = "string"
 }
 
-variable "values" {
-    description = "values yaml to render helm chart"
-    type = "string"
-    default = ""
-}
-
 variable "addons_dir" {
     description = "local target path to place kubernetes resource yaml"
     type = "string"
