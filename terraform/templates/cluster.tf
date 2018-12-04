@@ -60,4 +60,7 @@ module "gsp-base-flux-helm" {
   source = "../../modules/github-flux"
 
   namespace = "gsp-base"
+  chart_git  = "https://github.com/alphagov/gsp-base.git"
+  chart_ref  = "master"
+  chart_path = "charts/base"
 }
