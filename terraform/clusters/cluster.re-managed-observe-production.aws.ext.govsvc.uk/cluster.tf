@@ -74,6 +74,15 @@ module "gsp-monitoring-release" {
   chart_path = "monitoring"
 }
 
+module "gsp-sealed-secrets" {
+  source = "../../modules/github-flux"
+
+  namespace  = "secrets-system"
+  chart_git  = "https://github.com/alphagov/gsp-sealed-secrets.git"
+  chart_ref  = "master"
+  chart_path = "charts/sealed-secrets"
+}
+
 module "observe-alertmanager" {
   source = "../../modules/github-flux"
 
