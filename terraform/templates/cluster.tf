@@ -64,3 +64,8 @@ module "gsp-base-flux-helm" {
   chart_ref  = "master"
   chart_path = "charts/base"
 }
+
+module "gsp-canary" {
+  source     = "../../modules/canary"
+  cluster_id = "(CLUSTER_NAME).(ZONE_NAME)"
+}
