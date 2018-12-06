@@ -17,6 +17,8 @@ trap cleanup EXIT
 git init
 git config --local credential.helper '!aws codecommit credential-helper $@'
 git config --local credential.UseHttpPath true
+git config --local user.name "Friendly neighbourhood Spider-Man"
+git config --local user.email "re-buildrun-team@digital.cabinet-office.gov.uk"
 git remote add source "${SOURCE_REPO_URL}"
 git remote add destination "${CODECOMMIT_REPO_URL}"
 git fetch --all
@@ -29,5 +31,9 @@ then
 fi
 
 git checkout -b master --track source/master
-git push --force destination master
 
+# update the embedded timestamp
+sed -i -E -e "s/(chartCommitTimestamp: )\"[0-9]+\"/\1\"$(date +%s)\"/g" charts/gsp-canary/values.yaml
+git add charts/gsp-canary/values.yaml
+git commit -m "Initial timestamp update."
+git push --force destination master
