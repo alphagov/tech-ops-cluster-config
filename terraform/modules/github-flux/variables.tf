@@ -23,3 +23,9 @@ variable "addons_dir" {
     type = "string"
     default = "addons"
 }
+
+variable "values" {
+    description = "embedded yaml to pass to the helm resource for flux helm operator. Whitespace is important"
+    type = "string"
+    default = "    foo: bar # unused/arbitary, but must be at least one value or this breaks"
+}

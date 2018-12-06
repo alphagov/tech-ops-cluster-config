@@ -65,6 +65,15 @@ module "gsp-base-flux-helm" {
   chart_path = "charts/base"
 }
 
+module "gsp-monitoring-release" {
+  source = "../../modules/github-flux"
+
+  namespace  = "monitoring-system"
+  chart_git  = "https://github.com/alphagov/gsp-monitoring.git"
+  chart_ref  = "master"
+  chart_path = "monitoring"
+}
+
 module "gsp-canary" {
   source     = "../../modules/canary"
   cluster_id = "(CLUSTER_NAME).(ZONE_NAME)"

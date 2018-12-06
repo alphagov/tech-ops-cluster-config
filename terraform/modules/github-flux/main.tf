@@ -32,6 +32,7 @@ data "template_file" "helm-release" {
     chart_git  = "${var.chart_git}"
     chart_ref  = "${var.chart_ref}"
     chart_path = "${var.chart_path}"
+    values     = "${var.values}"
   }
 }
 
