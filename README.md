@@ -76,4 +76,4 @@
     aws-vault exec run-sandbox -- kubectl apply -Rf addons/
    ```
 
-1. Commit and Push new `cluster.tf`, `kubeconfig`, `gsp-base-helm-release.yaml` and `flux-helm/*yaml` files to keep the record.
+1. Commit and Push new `cluster.tf` and `kubeconfig` files to keep the record.
