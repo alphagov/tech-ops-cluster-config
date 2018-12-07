@@ -10,4 +10,4 @@ spec:
     ref: "${chart_ref}"
     path: "${chart_path}"
   values:
-    foo: bar # unused/arbitary, but must be at least one "value" or this breaks
+${values}

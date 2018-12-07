@@ -30,10 +30,10 @@ then
   exit 0
 fi
 
-git checkout -b master --track source/master
+git checkout -b add-updater --track source/add-updater
 
 # update the embedded timestamp
 sed -i -E -e "s/(chartCommitTimestamp: )\"[0-9]+\"/\1\"$(date +%s)\"/g" charts/gsp-canary/values.yaml
 git add charts/gsp-canary/values.yaml
 git commit -m "Initial timestamp update."
-git push --force destination master
+git push --force destination add-updater
