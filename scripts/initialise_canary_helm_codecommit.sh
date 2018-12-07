@@ -22,6 +22,7 @@ git config --local user.email "re-buildrun-team@digital.cabinet-office.gov.uk"
 git remote add source "${SOURCE_REPO_URL}"
 git remote add destination "${CODECOMMIT_REPO_URL}"
 git fetch --all
+git pull source master
 dest_master="$(git ls-remote destination master)"
 
 if ! [ -z "$dest_master" ]
