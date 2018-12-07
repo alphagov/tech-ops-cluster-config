@@ -16,7 +16,7 @@ module "gsp-canary-release" {
 
   namespace  = "gsp-canary"
   chart_git  = "${aws_codecommit_repository.canary.clone_url_http}"
-  chart_ref  = "add-updater"
+  chart_ref  = "master"
   chart_path = "charts/gsp-canary"
   values = <<EOF
     updater:
