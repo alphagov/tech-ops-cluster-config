@@ -63,6 +63,8 @@ module "gsp-base-release" {
   chart_git  = "https://github.com/alphagov/gsp-base.git"
   chart_ref  = "master"
   chart_path = "charts/base"
+  cluster_name = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
 }
 
 module "gsp-sealed-secrets" {
@@ -72,6 +74,8 @@ module "gsp-sealed-secrets" {
   chart_git  = "https://github.com/alphagov/gsp-sealed-secrets.git"
   chart_ref  = "master"
   chart_path = "charts/sealed-secrets"
+  cluster_name = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
 }
 
 module "gsp-monitoring-release" {
@@ -81,4 +85,17 @@ module "gsp-monitoring-release" {
   chart_git  = "https://github.com/alphagov/gsp-monitoring.git"
   chart_ref  = "master"
   chart_path = "monitoring"
+  cluster_name = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+}
+
+module "observe-alertmanager" {
+  source = "../../modules/github-flux"
+
+  namespace  = "alertmanager"
+  chart_git  = "https://github.com/alphagov/gsp-observe-alertmanager-spike.git"
+  chart_ref  = "use-gsp-monitoring-operator"
+  valueFileSecrets = ["alertmanager-secret-values"]
+  cluster_name = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
 }

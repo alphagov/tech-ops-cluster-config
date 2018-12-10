@@ -18,6 +18,8 @@ module "gsp-canary-release" {
   chart_git  = "${aws_codecommit_repository.canary.clone_url_http}"
   chart_ref  = "master"
   chart_path = "charts/gsp-canary"
+  cluster_name = ""
+  cluster_domain = "${var.cluster_id}"
   values = <<EOF
     updater:
       helmChartRepoUrl: ${aws_codecommit_repository.canary.clone_url_http}

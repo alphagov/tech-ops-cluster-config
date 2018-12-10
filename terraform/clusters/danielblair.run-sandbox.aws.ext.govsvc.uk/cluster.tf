@@ -63,6 +63,8 @@ module "gsp-base-flux-helm" {
   chart_git  = "https://github.com/alphagov/gsp-base.git"
   chart_ref  = "master"
   chart_path = "charts/base"
+  cluster_name = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
 }
 
 module "gsp-canary" {
