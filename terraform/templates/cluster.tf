@@ -78,3 +78,12 @@ module "gsp-canary" {
   source     = "../../modules/canary"
   cluster_id = "(CLUSTER_NAME).(ZONE_NAME)"
 }
+
+module "gsp-sealed-secrets" {
+  source = "../../modules/github-flux"
+
+  namespace  = "secrets-system"
+  chart_git  = "https://github.com/alphagov/gsp-sealed-secrets.git"
+  chart_ref  = "master"
+  chart_path = "charts/sealed-secrets"
+}
