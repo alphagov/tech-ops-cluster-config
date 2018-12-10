@@ -29,3 +29,9 @@ variable "values" {
     type = "string"
     default = "    foo: bar # unused/arbitary, but must be at least one value or this breaks"
 }
+
+variable "valueFileSecrets" {
+    description = "List of names of Secrets containing additional helm values"
+    type = "list"
+    default = []
+}

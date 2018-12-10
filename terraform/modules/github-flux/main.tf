@@ -33,6 +33,7 @@ data "template_file" "helm-release" {
     chart_ref  = "${var.chart_ref}"
     chart_path = "${var.chart_path}"
     values     = "${var.values}"
+    valueFileSecrets = "[${join(",",formatlist("{\"name\":\"%s\"}", var.valueFileSecrets))}]"
   }
 }
 
