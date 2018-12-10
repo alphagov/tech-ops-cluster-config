@@ -18,6 +18,16 @@ variable "admin_role_arns" {
   type = "list"
 }
 
+variable "worker_count" {
+  type    = "string"
+  default = "2"
+}
+
+variable "worker_type" {
+  type    = "string"
+  default = "t2.medium"
+}
+
 module "cluster" {
   source = "git::https://github.com/alphagov/gsp-typhoon//aws/container-linux/kubernetes?ref=gsp"
 
@@ -31,8 +41,8 @@ module "cluster" {
   asset_dir          = "bootkube-assets"
 
   # optional
-  worker_count = 2
-  worker_type  = "t2.medium"
+  worker_count = "${var.worker_count}"
+  worker_type  = "${var.worker_type}"
 
   cluster_id = "${var.cluster_name}.${var.zone_name}"
   admin_role_arns = "${var.admin_role_arns}"
