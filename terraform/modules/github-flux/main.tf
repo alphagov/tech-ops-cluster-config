@@ -41,3 +41,19 @@ resource "local_file" "helm-release-yaml" {
   filename = "${var.addons_dir}/${var.namespace}-helm-release.yaml"
   content  = "${data.template_file.helm-release.rendered}"
 }
+
+data "template_file" "values" {
+  count = "${length(var.valueFileSecrets)}"
+  template = "${file("${path.module}/data/values-secret.yaml")}"
+
+  vars {
+    namespace = "${var.namespace}"
+    name = "${var.valueFileSecrets[count.index]}"
+  }
+}
+
+resource "local_file" "values" {
+  count = "${length(var.valueFileSecrets)}"
+  filename = "${var.addons_dir}/${var.namespace}-${var.valueFileSecrets[count.index]}-values.yaml"
+  content  = "${data.template_file.values.*.rendered[count.index]}"
+}
