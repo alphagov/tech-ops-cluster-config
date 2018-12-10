@@ -89,5 +89,5 @@ module "observe-alertmanager" {
   namespace  = "alertmanager"
   chart_git  = "https://github.com/alphagov/gsp-observe-alertmanager-spike.git"
   chart_ref  = "master"
-  chart_path = ""
+  valueFileSecrets = ["alertmanager-secret-values"]
 }

@@ -82,3 +82,12 @@ module "gsp-monitoring-release" {
   chart_ref  = "master"
   chart_path = "monitoring"
 }
+
+module "observe-alertmanager" {
+  source = "../../modules/github-flux"
+
+  namespace  = "alertmanager"
+  chart_git  = "https://github.com/alphagov/gsp-observe-alertmanager-spike.git"
+  chart_ref  = "use-gsp-monitoring-operator"
+  valueFileSecrets = ["alertmanager-secret-values"]
+}
