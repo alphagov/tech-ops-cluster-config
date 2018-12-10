@@ -11,11 +11,13 @@ variable "chart_git" {
 variable "chart_ref" {
     description = "git ref/branch to watch"
     type = "string"
+    default = "master"
 }
 
 variable "chart_path" {
     description = "path within the git repository to a helm chart to deploy"
     type = "string"
+    default = ""
 }
 
 variable "addons_dir" {
