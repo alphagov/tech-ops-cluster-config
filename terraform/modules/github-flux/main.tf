@@ -32,6 +32,8 @@ data "template_file" "helm-release" {
     chart_git  = "${var.chart_git}"
     chart_ref  = "${var.chart_ref}"
     chart_path = "${var.chart_path}"
+    cluster_name = "${var.cluster_name}"
+    cluster_domain = "${var.cluster_domain}"
     values     = "${var.values}"
     valueFileSecrets = "[${join(",",formatlist("{\"name\":\"%s\"}", var.valueFileSecrets))}]"
   }

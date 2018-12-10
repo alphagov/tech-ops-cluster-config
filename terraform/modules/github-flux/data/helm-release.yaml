@@ -11,4 +11,7 @@ spec:
     path: "${chart_path}"
   valueFileSecrets: ${valueFileSecrets}
   values:
+    cluster:
+      name: ${cluster_name}
+      domain: ${cluster_domain}
 ${values}
