@@ -56,18 +56,62 @@ module "cluster" {
   admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
 }
 
-module "gsp-base-flux-helm" {
+module "gsp-base-release" {
   source = "../../modules/github-flux"
 
-  namespace = "gsp-base"
-  chart_git  = "https://github.com/alphagov/gsp-base.git"
-  chart_ref  = "master"
-  chart_path = "charts/base"
-  cluster_name = "${module.cluster.cluster_name}"
+  namespace      = "gsp-base"
+  chart_git      = "https://github.com/alphagov/gsp-base.git"
+  chart_ref      = "master"
+  chart_path     = "charts/base"
+  cluster_name   = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+}
+
+module "gsp-monitoring-release" {
+  source = "../../modules/github-flux"
+
+  namespace      = "monitoring-system"
+  chart_git      = "https://github.com/alphagov/gsp-monitoring.git"
+  chart_ref      = "master"
+  chart_path     = "monitoring"
+  cluster_name   = "${module.cluster.cluster_name}"
   cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
 }
 
 module "gsp-canary" {
   source     = "../../modules/canary"
   cluster_id = "danielblair.run-sandbox.aws.ext.govsvc.uk"
+}
+
+module "gsp-sealed-secrets" {
+  source = "../../modules/github-flux"
+
+  namespace      = "secrets-system"
+  chart_git      = "https://github.com/alphagov/gsp-sealed-secrets.git"
+  chart_ref      = "master"
+  chart_path     = "charts/sealed-secrets"
+  cluster_name   = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+}
+
+module "gsp-ci-system" {
+  source = "../../modules/github-flux"
+
+  namespace      = "ci-system"
+  chart_git      = "https://github.com/alphagov/gsp-ci-system.git"
+  chart_ref      = "master"
+  chart_path     = "charts/ci"
+  cluster_name   = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+}
+
+module "gsp-concourse-ci-pipelines" {
+  source = "../../modules/github-flux"
+
+  namespace      = "${module.gsp-ci-system.release-name}-main"
+  chart_git      = "https://github.com/alphagov/gsp-ci-pipelines.git"
+  chart_ref      = "master"
+  chart_path     = "charts/pipelines"
+  cluster_name   = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
 }
