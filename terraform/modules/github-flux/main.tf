@@ -59,3 +59,7 @@ resource "local_file" "values" {
   filename = "${var.addons_dir}/${var.namespace}-${var.valueFileSecrets[count.index]}-values.yaml"
   content  = "${data.template_file.values.*.rendered[count.index]}"
 }
+
+output "release-name" {
+  value = "${var.namespace}"
+}

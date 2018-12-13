@@ -108,3 +108,14 @@ module "gsp-ci-system" {
   cluster_name   = "${module.cluster.cluster_name}"
   cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
 }
+
+module "gsp-concourse-ci-pipelines" {
+  source = "../../modules/github-flux"
+
+  namespace      = "${module.gsp-ci-system.release-name}-main"
+  chart_git      = "https://github.com/alphagov/gsp-ci-pipelines.git"
+  chart_ref      = "master"
+  chart_path     = "charts/pipelines"
+  cluster_name   = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+}
