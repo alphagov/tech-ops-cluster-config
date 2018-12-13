@@ -167,6 +167,8 @@ spec:
         # and replace the tag here.
         image: govsvc/aws-flux-helm-operator:0.0.1544026878
         imagePullPolicy: IfNotPresent
+        args:
+        - --charts-sync-interval=1m
         resources:
           requests:
             cpu: 50m
