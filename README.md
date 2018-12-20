@@ -40,6 +40,7 @@
     | `CLOUD` | The cloud provider. | `aws` |
     | `AWS_ACCOUNT_NAME` | This should match your AWS account name or the account ID. | `re-managed-observe-production` |
     | `AWS_REGION` | Should represent AWS region. Stick to London. | `eu-west-2` |
+    | `AWS_DEFAULT_REGION` | Default AWS region. | `eu-west-2` |
     | `CLUSTER_NAME` | The name of the cluster about to be created. Needs to be unique across your entire Hosted Zone. | `cluster1` |
     | `ZONE_ID` | An AWS Hosted Zone ID which you've obtained from the first step of this guide. | `Z00000000000` |
     | `ZONE_NAME` | An AWS Hosted Zone name which you've obtained from the first step of this guide. | `re-managed-observe-production.aws.ext.govsvc.uk` |
@@ -58,12 +59,13 @@
     terraform/clusters/${CLUSTER}.${AWS_ACCOUNT_NAME}.${CLOUD}.ext.govsvc.uk/cluster.tf
     ```
 
-    This leaves you with a manual step of:
+    This leaves you with a manual steps of:
 
     ```sh
     export DOMAIN=${CLUSTER}.${AWS_ACCOUNT_NAME}.${CLOUD}.ext.govsvc.uk
     cd terraform/clusters/${DOMAIN}
 
+    # initialise terraform
     aws-vault exec run-sandbox -- docker run -it \
       --env AWS_DEFAULT_REGION \
       --env AWS_REGION \
@@ -71,10 +73,12 @@
       --env AWS_SECRET_ACCESS_KEY \
       --env AWS_SESSION_TOKEN \
       --env AWS_SECURITY_TOKEN \
-      --env DOMAIN \ --volume=$(pwd)/../../../:/terraform \
+      --env DOMAIN \
+      --volume=$(pwd)/../../../:/terraform \
       -w /terraform/terraform/clusters/${DOMAIN} \
       govsvc/terraform init
 
+    # check the plan
     aws-vault exec run-sandbox -- docker run -it \
       --env AWS_DEFAULT_REGION \
       --env AWS_REGION \
@@ -82,10 +86,12 @@
       --env AWS_SECRET_ACCESS_KEY \
       --env AWS_SESSION_TOKEN \
       --env AWS_SECURITY_TOKEN \
-      --env DOMAIN \ --volume=$(pwd)/../../../:/terraform \
+      --env DOMAIN \
+      --volume=$(pwd)/../../../:/terraform \
       -w /terraform/terraform/clusters/${DOMAIN} \
       govsvc/terraform plan
 
+    # apply the plan
     aws-vault exec run-sandbox -- docker run -it \
       --env AWS_DEFAULT_REGION \
       --env AWS_REGION \
@@ -93,7 +99,8 @@
       --env AWS_SECRET_ACCESS_KEY \
       --env AWS_SESSION_TOKEN \
       --env AWS_SECURITY_TOKEN \
-      --env DOMAIN \ --volume=$(pwd)/../../../:/terraform \
+      --env DOMAIN \
+      --volume=$(pwd)/../../../:/terraform \
       -w /terraform/terraform/clusters/${DOMAIN} \
       govsvc/terraform apply
     ```
