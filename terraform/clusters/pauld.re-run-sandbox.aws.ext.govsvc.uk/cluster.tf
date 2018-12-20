@@ -1,5 +1,5 @@
 provider "aws" {
-  region  = "(AWS_REGION)"
+  region  = "eu-west-2"
   version = "~> 1.41"
   alias   = "default"
 }
@@ -26,9 +26,9 @@ provider "tls" {
 
 terraform {
   backend "s3" {
-    bucket = "gds-(AWS_ACCOUNT_NAME)-terraform-state"
+    bucket = "gds-re-run-sandbox-terraform-state"
     region = "eu-west-2"
-    key    = "(CLUSTER_NAME).(AWS_ACCOUNT_NAME).(CLOUD).(SYSTEM_DOMAIN)/cluster.tfstate"
+    key    = "pauld.re-run-sandbox.aws.ext.govsvc.uk/cluster.tfstate"
   }
 }
 
@@ -46,12 +46,12 @@ module "cluster" {
   }
 
   # AWS
-  cluster_name = "(CLUSTER_NAME)"
-  zone_name    = "(ZONE_NAME)"
-  zone_id      = "(ZONE_ID)"
+  cluster_name = "pauld"
+  zone_name    = "run-sandbox.aws.ext.govsvc.uk"
+  zone_id      = "Z23SW7QP3LD4TS"
 
   # configuration
-  ssh_authorized_key = "(PUBLIC_SSH_KEY)"
+  ssh_authorized_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDrRoAgyS6SoPYQ1lItEJwCBkYw/hYRWb+ap20cINdPIn+xLeRKqV21ORUE2h2qneX6J6zpHYXVRHWUbqdFU8H9zGKog2x23euCkCYx7kNb6bZc+zbjXCCidiY7GpK9lSrZ9tmxbcZxa5qFrX93/xN+rsCJzdL2yTk0e4mhMCF5taKN3vHM//ml0zGhI95MM6QyUQUoCMn1m8yw+erBUrdnTVNz9PSnPyspMp4+s+uVee18t5svMEm+c9/uoUXt52urm7nijaDYaByM7zJ81ld3kWaAK6lwUh/oG8nLMshR0Gx3Uay8Ht5WxTGBrNM8kzNGwPRR3mo8i3zatMk0ByV69U9RUbekH3ZUa++Zv71Kc13l2PjBQJBULE7OFvCmeY58/Qn6pbtR6h0nvODo6nP9LRjCMZ8WJKim0LOSfNSwsZK3/DFUTP8rXMjUojZf59qUB7hAZ0cBGqQQJoq6HFU81+GoICqaG2AKJYGwEJDJhwhTo6G1NU0tYOq/sxvVxUJU49HNUthL72dS3gbBdUKfCYiDGBw/bdiyUvXkm0/I9vSpPMan5R0Dr8Wi9YSMpKoS1dGKuAdW+8E0fu2pZzn3/xPkv4K0KtQUQBcDIYvJujgjC20qPEbv6qw49WNkR9l2A8C2bdMIoP4LhW4POaJMewSTmmgADNMJ4c1hsB66cw== pauld.re-run-sandbox.aws.ext.govsvc.uk"
 
   admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
 }
@@ -80,7 +80,7 @@ module "gsp-monitoring-release" {
 
 module "gsp-canary" {
   source     = "../../modules/canary"
-  cluster_id = "(CLUSTER_NAME).(ZONE_NAME)"
+  cluster_id = "pauld.run-sandbox.aws.ext.govsvc.uk"
 }
 
 module "gsp-sealed-secrets" {
