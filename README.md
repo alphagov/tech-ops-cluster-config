@@ -77,19 +77,6 @@
       -w /terraform/terraform/clusters/${DOMAIN} \
       govsvc/terraform init
 
-    # check the plan
-    aws-vault exec run-sandbox -- docker run -it \
-      --env AWS_DEFAULT_REGION \
-      --env AWS_REGION \
-      --env AWS_ACCESS_KEY_ID \
-      --env AWS_SECRET_ACCESS_KEY \
-      --env AWS_SESSION_TOKEN \
-      --env AWS_SECURITY_TOKEN \
-      --env DOMAIN \
-      --volume=$(pwd)/../../../:/terraform \
-      -w /terraform/terraform/clusters/${DOMAIN} \
-      govsvc/terraform plan
-
     # apply the plan
     aws-vault exec run-sandbox -- docker run -it \
       --env AWS_DEFAULT_REGION \
