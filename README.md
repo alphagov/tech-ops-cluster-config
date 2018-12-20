@@ -61,7 +61,7 @@
     This leaves you with a manual steps of:
 
     ```sh
-    export DOMAIN=${CLUSTER}.${AWS_ACCOUNT_NAME}.${}.ext.govsvc.uk
+    export DOMAIN=${CLUSTER}.${AWS_ACCOUNT_NAME}.aws.ext.govsvc.uk
     cd terraform/clusters/${DOMAIN}
 
     # initialise terraform
