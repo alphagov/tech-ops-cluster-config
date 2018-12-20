@@ -19,7 +19,7 @@
     * `Default encryption` should be opt in
 1. Manually `Create Hosted Zone` in the Service Team's AWS account
     * `Domain Name` should resolve to
-      `${AWS_ACCOUNT_NAME}.${CLOUD}.ext.govsvc.uk`
+      `${AWS_ACCOUNT_NAME}.aws.ext.govsvc.uk`
     * `Type` should be set to `Public Hosted Zone`
     * Take a note of:
         * `Hosted Zone ID`
@@ -37,7 +37,6 @@
 
     | Variable | Description | Example |
     |---|---|---|
-    | `CLOUD` | The cloud provider. | `aws` |
     | `AWS_ACCOUNT_NAME` | This should match your AWS account name or the account ID. | `re-managed-observe-production` |
     | `AWS_REGION` | Should represent AWS region. Stick to London. | `eu-west-2` |
     | `AWS_DEFAULT_REGION` | Default AWS region. | `eu-west-2` |
@@ -56,13 +55,13 @@
     This should generate new file at the location:
 
     ```
-    terraform/clusters/${CLUSTER}.${AWS_ACCOUNT_NAME}.${CLOUD}.ext.govsvc.uk/cluster.tf
+    terraform/clusters/${CLUSTER}.${AWS_ACCOUNT_NAME}.aws.ext.govsvc.uk/cluster.tf
     ```
 
     This leaves you with a manual steps of:
 
     ```sh
-    export DOMAIN=${CLUSTER}.${AWS_ACCOUNT_NAME}.${CLOUD}.ext.govsvc.uk
+    export DOMAIN=${CLUSTER}.${AWS_ACCOUNT_NAME}.${}.ext.govsvc.uk
     cd terraform/clusters/${DOMAIN}
 
     # initialise terraform
