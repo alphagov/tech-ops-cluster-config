@@ -82,3 +82,28 @@ module "gsp-canary" {
   source     = "../../modules/canary"
   cluster_id = "davidpye.run-sandbox.aws.ext.govsvc.uk"
 }
+
+module "gsp-ci-system" {
+  source = "../../modules/github-flux"
+  namespace      = "ci-system"
+  chart_git      = "https://github.com/alphagov/gsp-ci-system.git"
+  chart_ref      = "master"
+  chart_path     = "charts/ci"
+  cluster_name   = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+}
+
+module "gsp-concourse-ci-pipelines" {
+  source = "../../modules/github-flux"
+  namespace      = "${module.gsp-ci-system.release-name}-main"
+  chart_git      = "https://github.com/alphagov/gsp-ci-pipelines.git"
+  chart_ref      = "master"
+  chart_path     = "charts/pipelines"
+  cluster_name   = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+  values = <<HEREDOC
+    ecr:
+      registry: ${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com
+      region: eu-west-2
+HEREDOC
+}
