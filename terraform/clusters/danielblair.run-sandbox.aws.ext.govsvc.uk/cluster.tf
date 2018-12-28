@@ -1,29 +1,3 @@
-provider "aws" {
-  region  = "eu-west-2"
-  version = "~> 1.41"
-  alias   = "default"
-}
-
-provider "local" {
-  version = "~> 1.0"
-  alias   = "default"
-}
-
-provider "null" {
-  version = "~> 1.0"
-  alias   = "default"
-}
-
-provider "template" {
-  version = "~> 1.0"
-  alias   = "default"
-}
-
-provider "tls" {
-  version = "~> 1.0"
-  alias   = "default"
-}
-
 terraform {
   backend "s3" {
     bucket = "gds-re-run-sandbox-terraform-state"
@@ -34,26 +8,17 @@ terraform {
 
 data "aws_caller_identity" "current" {}
 
-module "cluster" {
-  source = "../../modules/gsp-cluster"
-
-  providers = {
-    aws      = "aws.default"
-    local    = "local.default"
-    null     = "null.default"
-    template = "template.default"
-    tls      = "tls.default"
-  }
-
-  # AWS
-  cluster_name = "danielblair"
-  zone_name    = "run-sandbox.aws.ext.govsvc.uk"
-  zone_id      = "Z23SW7QP3LD4TS"
-
-  # configuration
-  ssh_authorized_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC+VxGpNqOedPU7BqUGg+PA3KDaNe8kx75Gq0b+FxAuthUz0tZ9zqxZkr5ReikMH44V9OqRHPnF7yPgki/KyyETDffCt7eOaC+79WEPSADeHC64v5HkkIkR92+72/4HZpaNg5cGdpzcTo1SYWyy8Zo4Wf822fdoiBDXuwMM0js/prFz8UYbcK3R7xfkmZNrfOvYIHQ4ES1xHlT0x7v4NOeeZgJVRp+yD4WJBZZbVW5Szd02X8+dVAKKj5N3hqssCxJtXgx6JHTZt+T9a9S3Q9YCMJg02CZiWaA1k0s6Ko2a/3K79UZQQt8kLbTx1vy5QFarPTYktnQVPXX1rp8YueefOhSmffoVZEsaK6t4kQmEFKvbhbXrGTtrVgMpSe0F6Fb44BYfRHK+72fEtfC7xZT9dIQM8WcyK+ovaasu0R31zZMZGnU96GwKbDimFmlc1IgkaMlELfDJxek30X7p2KuWvDsSM3vLEc8ezREG5z89nOhFmhLvOr8wPmJOqzJkGp/okaD7pD1lDiAb7zNMjaGRxMDtQEYFlHLz+mdM/MYEWY3uSBsb59toAGT03PMfzwdXwWy2jEG6oTkBkrCLu0MIsURqaAjgJenxWtfgQ5us8E4p/QToVD1hUnZzz1zL9vP4NToKCpipE3NcugX/KsGdR3MGcJQEJOoLB1dfTP0mRQ== danielblair.run-sandbox.aws.ext.govsvc.uk"
-
-  admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
+module "gsp-cluster" {
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=initial-import"
+    cluster_name = "${var.cluster_name}"
+    cluster_id = "danielblair.run-sandbox.aws.ext.govsvc.uk"
+    dns_zone_id = "Z23SW7QP3LD4TS"
+    dns_zone = "run-sandbox.aws.ext.govsvc.uk"
+    ssh_authorized_keys = ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDhje7LMEsP8/2HFBQHvGbwAVRzUuNuVZJhVjHRoZxvARg1nn9D1bWx0FnK9aWL7cmu89P8pQiWGBEjWWZzHjZWnFJ4d5hu+oJliRySbhskiuVCSgP3Z0Grx/Q4cJu35O1LkwcVi8ZbYk/Ud+5pHa/U6i8bYcvxSVb2bEY9Q2t8dF9ev1aSRNNaOj7Y+2aenAwPo9Whr4DryVrAjI/CC7phv6SOSJ4o9y5Ro3Z9yEfy42wOOEL2+Q/6j9dWMVGyuaZkJ9eXRAeRHkcpuUs/kDR07bMBUolz9tfaMZWNtGgeEgm/r39fnvs1B08Pv0sHeYxh1QrNhzG076lhSVuTzxzPYplehgZNeOVseotQHRufsVMXH5paAIMgkXISUHF1dnX4U/7biSldiCG1JNvFCcTTLTEtsPC0H8Hxt5PEr8vVe4Tdfk6KVjZOVdi1alOiDyw4O8jdNKrM8gDE83tG++/RRptxu4pBvdX65AnQeocsA8S4l9hLdB76duQYAjF6iV37rheioOj9jPJR4wi8zajeNnyDbxC5B12I7Pnqz6DQvQkvADK6x27dA6mAVIqq6ORXCXENjh8W/n+9Math2l07csnjzi67np/8a9Gn01LT9xr/xFZgY+ztnHRtDSnxXfKEx3IpOvgfmP6qan3nAIMVmfkcSWd9tnC1m+qQDy/nNQ== daniel.blair@digital.cabinet-office.gov.uk"]
+    user_data_bucket_name = "${var.user_data_bucket_name}"
+    user_data_bucket_region = "${var.user_data_bucket_region}"
+    k8s_tag = "${var.k8s_tag}"
+    admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
 }
 
 module "gsp-base-release" {
@@ -63,8 +28,8 @@ module "gsp-base-release" {
   chart_git      = "https://github.com/alphagov/gsp-base.git"
   chart_ref      = "master"
   chart_path     = "charts/base"
-  cluster_name   = "${module.cluster.cluster_name}"
-  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+  cluster_name   = "${var.cluster_name}"
+  cluster_domain = "danielblair.run-sandbox.aws.ext.govsvc.uk"
 }
 
 module "gsp-monitoring-release" {
@@ -74,8 +39,8 @@ module "gsp-monitoring-release" {
   chart_git      = "https://github.com/alphagov/gsp-monitoring.git"
   chart_ref      = "master"
   chart_path     = "monitoring"
-  cluster_name   = "${module.cluster.cluster_name}"
-  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+  cluster_name   = "${var.cluster_name}"
+  cluster_domain = "danielblair.run-sandbox.aws.ext.govsvc.uk"
 }
 
 module "gsp-canary" {
@@ -90,8 +55,8 @@ module "gsp-sealed-secrets" {
   chart_git      = "https://github.com/alphagov/gsp-sealed-secrets.git"
   chart_ref      = "master"
   chart_path     = "charts/sealed-secrets"
-  cluster_name   = "${module.cluster.cluster_name}"
-  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+  cluster_name   = "${var.cluster_name}"
+  cluster_domain = "danielblair.run-sandbox.aws.ext.govsvc.uk"
 }
 
 module "gsp-ci-system" {
@@ -99,10 +64,10 @@ module "gsp-ci-system" {
 
   namespace      = "ci-system"
   chart_git      = "https://github.com/alphagov/gsp-ci-system.git"
-  chart_ref      = "master"
+  chart_ref      = "add-notary"
   chart_path     = "charts/ci"
-  cluster_name   = "${module.cluster.cluster_name}"
-  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+  cluster_name   = "${var.cluster_name}"
+  cluster_domain = "danielblair.run-sandbox.aws.ext.govsvc.uk"
 }
 
 module "gsp-concourse-ci-pipelines" {
@@ -112,6 +77,6 @@ module "gsp-concourse-ci-pipelines" {
   chart_git      = "https://github.com/alphagov/gsp-ci-pipelines.git"
   chart_ref      = "master"
   chart_path     = "charts/pipelines"
-  cluster_name   = "${module.cluster.cluster_name}"
-  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+  cluster_name   = "${var.cluster_name}"
+  cluster_domain = "danielblair.run-sandbox.aws.ext.govsvc.uk"
 }
