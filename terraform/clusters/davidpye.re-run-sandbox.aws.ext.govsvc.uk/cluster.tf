@@ -107,3 +107,9 @@ module "gsp-concourse-ci-pipelines" {
       region: eu-west-2
 HEREDOC
 }
+
+module "kube2iam" {
+	source = "../../modules/kube2iam"
+}
+
+
