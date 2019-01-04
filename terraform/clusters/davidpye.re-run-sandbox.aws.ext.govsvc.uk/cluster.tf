@@ -112,4 +112,24 @@ module "kube2iam" {
 	source = "../../modules/kube2iam"
 }
 
+module "gsp-prototype-kit" {
+  source = "../../modules/github-flux"
 
+  namespace      = "gsp-prototype-kit"
+  chart_git      = "https://github.com/alphagov/gsp-govuk-prototype-kit.git"
+  chart_ref      = "gsp"
+  chart_path     = "charts/govuk-prototype-kit"
+  cluster_name   = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+  values = <<EOF
+    ingress:
+      hosts:
+        - pk.${module.cluster.cluster_name}.${module.cluster.zone_name}
+        - prototype-kit.${module.cluster.cluster_name}.${module.cluster.zone_name}
+      tls:
+        - secretName: prototype-kit-tls
+          hosts:
+            - pk.${module.cluster.cluster_name}.${module.cluster.zone_name}
+            - prototype-kit.${module.cluster.cluster_name}.${module.cluster.zone_name}
+EOF
+}
