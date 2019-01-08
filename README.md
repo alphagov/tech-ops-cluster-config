@@ -55,13 +55,13 @@
     This should generate new file at the location:
 
     ```
-    terraform/clusters/${CLUSTER}.${AWS_ACCOUNT_NAME}.aws.ext.govsvc.uk/cluster.tf
+    terraform/clusters/${CLUSTER_NAME}.${AWS_ACCOUNT_NAME}.aws.ext.govsvc.uk/cluster.tf
     ```
 
     This leaves you with a manual steps of:
 
     ```sh
-    export DOMAIN=${CLUSTER}.${AWS_ACCOUNT_NAME}.aws.ext.govsvc.uk
+    export DOMAIN=${CLUSTER_NAME}.${AWS_ACCOUNT_NAME}.aws.ext.govsvc.uk
     cd terraform/clusters/${DOMAIN}
 
     # initialise terraform
