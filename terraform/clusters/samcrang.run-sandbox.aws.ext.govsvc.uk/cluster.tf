@@ -8,12 +8,16 @@ terraform {
 
 data "aws_caller_identity" "current" {}
 
+data "aws_route53_zone" "zone" {
+  name = "${var.cluster_zone}."
+}
+
 module "gsp-cluster" {
     source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
     cluster_name = "${var.cluster_name}"
-    cluster_id = "samcrang.run-sandbox.aws.ext.govsvc.uk"
-    dns_zone_id = "Z23SW7QP3LD4TS"
-    dns_zone = "run-sandbox.aws.ext.govsvc.uk"
+    cluster_id = "${var.cluster_name}.${var.cluster_zone}"
+    dns_zone_id = "${data.aws_route53_zone.zone.zone_id}"
+    dns_zone = "${var.cluster_zone}"
     user_data_bucket_name = "${var.user_data_bucket_name}"
     user_data_bucket_region = "${var.user_data_bucket_region}"
     k8s_tag = "${var.k8s_tag}"
@@ -28,7 +32,7 @@ module "gsp-base-release" {
   chart_ref      = "master"
   chart_path     = "charts/base"
   cluster_name   = "${var.cluster_name}"
-  cluster_domain = "samcrang.run-sandbox.aws.ext.govsvc.uk"
+  cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
 module "gsp-monitoring-release" {
@@ -39,12 +43,12 @@ module "gsp-monitoring-release" {
   chart_ref      = "master"
   chart_path     = "monitoring"
   cluster_name   = "${var.cluster_name}"
-  cluster_domain = "samcrang.run-sandbox.aws.ext.govsvc.uk"
+  cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
 module "gsp-canary" {
   source     = "../../modules/canary"
-  cluster_id = "samcrang.run-sandbox.aws.ext.govsvc.uk"
+  cluster_id = "${var.cluster_zone}"
 }
 
 module "gsp-sealed-secrets" {
@@ -55,7 +59,7 @@ module "gsp-sealed-secrets" {
   chart_ref      = "master"
   chart_path     = "charts/sealed-secrets"
   cluster_name   = "${var.cluster_name}"
-  cluster_domain = "samcrang.run-sandbox.aws.ext.govsvc.uk"
+  cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
 module "gsp-ci-system" {
@@ -66,7 +70,7 @@ module "gsp-ci-system" {
   chart_ref      = "add-notary"
   chart_path     = "charts/ci"
   cluster_name   = "${var.cluster_name}"
-  cluster_domain = "samcrang.run-sandbox.aws.ext.govsvc.uk"
+  cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
 module "gsp-concourse-ci-pipelines" {
@@ -77,7 +81,7 @@ module "gsp-concourse-ci-pipelines" {
   chart_ref      = "master"
   chart_path     = "charts/pipelines"
   cluster_name   = "${var.cluster_name}"
-  cluster_domain = "samcrang.run-sandbox.aws.ext.govsvc.uk"
+  cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
   values = <<HEREDOC
     ecr:
       registry: ${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com

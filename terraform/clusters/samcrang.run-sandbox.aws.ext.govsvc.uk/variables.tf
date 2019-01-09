@@ -10,6 +10,10 @@ variable "cluster_name" {
     type = "string"
 }
 
+variable "cluster_zone" {
+    type = "string"
+}
+
 variable "k8s_tag" {
     type = "string"
 }
