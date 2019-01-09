@@ -9,7 +9,7 @@ terraform {
 data "aws_caller_identity" "current" {}
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=initial-import"
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=fix-user-data-access"
     cluster_name = "${var.cluster_name}"
     cluster_id = "danielblair.run-sandbox.aws.ext.govsvc.uk"
     dns_zone_id = "Z23SW7QP3LD4TS"
