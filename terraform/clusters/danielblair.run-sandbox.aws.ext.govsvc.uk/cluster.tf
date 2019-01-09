@@ -9,7 +9,7 @@ terraform {
 data "aws_caller_identity" "current" {}
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=fix-user-data-access"
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=master"
     cluster_name = "${var.cluster_name}"
     cluster_id = "danielblair.run-sandbox.aws.ext.govsvc.uk"
     dns_zone_id = "Z23SW7QP3LD4TS"
@@ -25,7 +25,7 @@ module "gsp-base-release" {
 
   namespace      = "gsp-base"
   chart_git      = "https://github.com/alphagov/gsp-base.git"
-  chart_ref      = "ignition"
+  chart_ref      = "update-ingress-chart"
   chart_path     = "charts/base"
   cluster_name   = "${var.cluster_name}"
   cluster_domain = "danielblair.run-sandbox.aws.ext.govsvc.uk"
@@ -78,4 +78,26 @@ module "gsp-concourse-ci-pipelines" {
   chart_path     = "charts/pipelines"
   cluster_name   = "${var.cluster_name}"
   cluster_domain = "danielblair.run-sandbox.aws.ext.govsvc.uk"
+}
+
+module "gsp-prototype-kit" {
+  source = "../../modules/github-flux"
+
+  namespace      = "gsp-prototype-kit"
+  chart_git      = "https://github.com/alphagov/gsp-govuk-prototype-kit.git"
+  chart_ref      = "gsp"
+  chart_path     = "charts/govuk-prototype-kit"
+  cluster_name   = "${var.cluster_name}"
+  cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
+  values = <<EOF
+    ingress:
+      hosts:
+        - pk.${module.gsp-cluster.cluster-domain-suffix}
+        - prototype-kit.${module.gsp-cluster.cluster-domain-suffix}
+      tls:
+        - secretName: prototype-kit-tls
+          hosts:
+            - pk.${module.gsp-cluster.cluster-domain-suffix}
+            - prototype-kit.${module.gsp-cluster.cluster-domain-suffix}
+EOF
 }
