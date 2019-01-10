@@ -63,6 +63,8 @@ module "gsp-base-release" {
   chart_git  = "https://github.com/alphagov/gsp-base.git"
   chart_ref  = "master"
   chart_path = "charts/base"
+  cluster_name = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
 }
 
 module "gsp-monitoring-release" {
@@ -72,9 +74,47 @@ module "gsp-monitoring-release" {
   chart_git  = "https://github.com/alphagov/gsp-monitoring.git"
   chart_ref  = "master"
   chart_path = "monitoring"
+  cluster_name = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
 }
 
 module "gsp-canary" {
   source     = "../../modules/canary"
   cluster_id = "rafalp.run-sandbox.aws.ext.govsvc.uk"
+}
+
+module "gsp-ci-system" {
+  source = "../../modules/github-flux"
+
+  namespace      = "ci-system"
+  chart_git      = "https://github.com/alphagov/gsp-ci-system.git"
+  chart_ref      = "harbor"
+  chart_path     = "charts/ci"
+  cluster_name   = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
+  values         = <<EOF
+    harbor:
+      externalURL: https://core.${module.cluster.cluster_name}.${module.cluster.zone_name}
+      expose:
+        tls:
+          secretName: harbor-core-certificates
+          notarySecretName: harbor-notary-certificates
+        ingress:
+          annotations:
+            kubernetes.io/tls-acme: "true"
+          hosts:
+            core: core.${module.cluster.cluster_name}.${module.cluster.zone_name}
+            notary: notary.${module.cluster.cluster_name}.${module.cluster.zone_name}
+EOF
+}
+
+module "gsp-concourse-ci-pipelines" {
+  source = "../../modules/github-flux"
+
+  namespace      = "${module.gsp-ci-system.release-name}-main"
+  chart_git      = "https://github.com/alphagov/gsp-ci-pipelines.git"
+  chart_ref      = "master"
+  chart_path     = "charts/pipelines"
+  cluster_name   = "${module.cluster.cluster_name}"
+  cluster_domain = "${module.cluster.cluster_name}.${module.cluster.zone_name}"
 }
