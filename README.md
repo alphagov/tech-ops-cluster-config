@@ -60,6 +60,6 @@
    ```sh
    aws-vault exec run-sandbox -- terraform output admin-kubeconfig > kubeconfig
    export KUBECONFIG=$(pwd)/kubeconfig
-   aws-vault exec run-sandbox -- kubectl apply -Rf addons/
+   aws-vault exec run-sandbox -- kubectl apply -Rf addons/ # This will probably need to be run multiple times
    git add kubeconfig && git commit
    ```
