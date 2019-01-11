@@ -18,11 +18,11 @@ module "gsp-cluster" {
     admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
 
     addons = {
-      ingress = true
-      canary = true
-      monitoring = true
-      secrets = true
-      ci = true
+      ingress = 1
+      canary = 1
+      monitoring = 1
+      secrets = 1
+      ci = 1
     }
 }
 
