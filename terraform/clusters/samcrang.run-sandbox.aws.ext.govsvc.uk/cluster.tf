@@ -88,3 +88,25 @@ module "gsp-concourse-ci-pipelines" {
       region: eu-west-2
 HEREDOC
 }
+
+module "gsp-prototype-kit" {
+  source = "../../modules/github-flux"
+
+  namespace      = "gsp-prototype-kit"
+  chart_git      = "https://github.com/alphagov/gsp-govuk-prototype-kit.git"
+  chart_ref      = "gsp"
+  chart_path     = "charts/govuk-prototype-kit"
+  cluster_name   = "${var.cluster_name}"
+  cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
+  values = <<EOF
+    ingress:
+      hosts:
+        - pk.${module.gsp-cluster.cluster-domain-suffix}
+        - prototype-kit.${module.gsp-cluster.cluster-domain-suffix}
+      tls:
+        - secretName: prototype-kit-tls
+          hosts:
+            - pk.${module.gsp-cluster.cluster-domain-suffix}
+            - prototype-kit.${module.gsp-cluster.cluster-domain-suffix}
+EOF
+}
