@@ -7,15 +7,15 @@ output "bootstrap-base-userdata-verification" {
 }
 
 output "user-data-bucket-name" {
-    value = "${var.user_data_bucket_name}"
+    value = "${module.gsp-cluster.user_data_bucket_name}"
 }
 
 output "user-data-bucket-region" {
-    value = "${var.user_data_bucket_region}"
+    value = "${module.gsp-cluster.user_data_bucket_region}"
 }
 
 output "cluster-name" {
-    value = "${var.cluster_name}"
+    value = "${module.gsp-cluster.cluster-name}"
 }
 
 output "controller-security-group-ids" {
@@ -43,7 +43,7 @@ output "cluster-domain-suffix" {
 }
 
 output "k8s-tag" {
-    value = "${var.k8s_tag}"
+    value = "${module.gsp-cluster.k8s_tag}"
 }
 
 output "kubelet-kubeconfig" {
