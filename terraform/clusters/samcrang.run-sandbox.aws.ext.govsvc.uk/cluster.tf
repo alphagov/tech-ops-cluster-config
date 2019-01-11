@@ -24,7 +24,7 @@ module "gsp-cluster" {
     admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
 }
 
-module "ingress_system" {
+module "ingress-system" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "ingress-system"
@@ -34,7 +34,7 @@ module "ingress_system" {
   cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
-module "monitoring_system" {
+module "monitoring-system" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "monitoring-system"
@@ -44,12 +44,12 @@ module "monitoring_system" {
   cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
-module "gsp_canary" {
+module "gsp-canary" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/canary-release"
   cluster_id = "${var.cluster_zone}"
 }
 
-module "secrets_system" {
+module "secrets-system" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "secrets-system"
@@ -59,7 +59,7 @@ module "secrets_system" {
   cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
-module "ci_system" {
+module "ci-system" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "ci-system"
@@ -69,10 +69,10 @@ module "ci_system" {
   cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
-module "ci_system_pipelines" {
+module "ci-system-pipelines" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
-  namespace      = "${module.ci_system.release-name}-main"
+  namespace      = "${module.ci-system.release-name}-main"
   chart_git      = "https://github.com/alphagov/gsp-ci-pipelines.git"
   chart_ref      = "master"
   chart_path     = "charts/pipelines"
@@ -85,7 +85,7 @@ module "ci_system_pipelines" {
 HEREDOC
 }
 
-module "gsp_prototype_kit" {
+module "gsp-prototype-kit" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "gsp-prototype-kit"
