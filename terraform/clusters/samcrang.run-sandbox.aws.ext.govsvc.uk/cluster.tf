@@ -24,24 +24,22 @@ module "gsp-cluster" {
     admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
 }
 
-module "gsp-base-release" {
+module "ingress_system" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
-  namespace      = "gsp-base"
-  chart_git      = "https://github.com/alphagov/gsp-base.git"
+  namespace      = "ingress-system"
+  chart_git      = "https://github.com/alphagov/gsp-ingress-system.git"
   chart_ref      = "master"
-  chart_path     = "charts/base"
   cluster_name   = "${var.cluster_name}"
   cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
-module "gsp-monitoring-release" {
+module "monitoring_system" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "monitoring-system"
-  chart_git      = "https://github.com/alphagov/gsp-monitoring.git"
+  chart_git      = "https://github.com/alphagov/gsp-monitoring-system.git"
   chart_ref      = "master"
-  chart_path     = "monitoring"
   cluster_name   = "${var.cluster_name}"
   cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
@@ -51,32 +49,30 @@ module "gsp-canary" {
   cluster_id = "${var.cluster_zone}"
 }
 
-module "gsp-sealed-secrets" {
+module "secrets_system" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "secrets-system"
-  chart_git      = "https://github.com/alphagov/gsp-sealed-secrets.git"
+  chart_git      = "https://github.com/alphagov/gsp-secrets-system.git"
   chart_ref      = "master"
-  chart_path     = "charts/sealed-secrets"
   cluster_name   = "${var.cluster_name}"
   cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
-module "gsp-ci-system" {
+module "ci_system" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "ci-system"
   chart_git      = "https://github.com/alphagov/gsp-ci-system.git"
-  chart_ref      = "add-notary"
-  chart_path     = "charts/ci"
+  chart_ref      = "master"
   cluster_name   = "${var.cluster_name}"
   cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
-module "gsp-concourse-ci-pipelines" {
+module "ci_system_pipelines" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
-  namespace      = "${module.gsp-ci-system.release-name}-main"
+  namespace      = "${module.ci_system.release-name}-main"
   chart_git      = "https://github.com/alphagov/gsp-ci-pipelines.git"
   chart_ref      = "master"
   chart_path     = "charts/pipelines"
@@ -89,7 +85,7 @@ module "gsp-concourse-ci-pipelines" {
 HEREDOC
 }
 
-module "gsp-prototype-kit" {
+module "gsp_prototype_kit" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "gsp-prototype-kit"

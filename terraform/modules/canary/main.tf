@@ -12,7 +12,7 @@ resource "aws_codecommit_repository" "canary" {
 }
 
 module "gsp-canary-release" {
-  source = "../github-flux"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace  = "gsp-canary"
   chart_git  = "${aws_codecommit_repository.canary.clone_url_http}"
