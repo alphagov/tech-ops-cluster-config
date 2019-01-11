@@ -44,8 +44,8 @@ module "monitoring_system" {
   cluster_domain = "${var.cluster_name}.${var.cluster_zone}"
 }
 
-module "gsp-canary" {
-  source     = "../../modules/canary"
+module "gsp_canary" {
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/canary-release"
   cluster_id = "${var.cluster_zone}"
 }
 
