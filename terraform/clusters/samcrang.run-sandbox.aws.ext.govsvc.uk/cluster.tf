@@ -25,7 +25,7 @@ module "gsp-cluster" {
 }
 
 module "gsp-base-release" {
-  source = "../../modules/github-flux"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "gsp-base"
   chart_git      = "https://github.com/alphagov/gsp-base.git"
@@ -36,7 +36,7 @@ module "gsp-base-release" {
 }
 
 module "gsp-monitoring-release" {
-  source = "../../modules/github-flux"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "monitoring-system"
   chart_git      = "https://github.com/alphagov/gsp-monitoring.git"
@@ -52,7 +52,7 @@ module "gsp-canary" {
 }
 
 module "gsp-sealed-secrets" {
-  source = "../../modules/github-flux"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "secrets-system"
   chart_git      = "https://github.com/alphagov/gsp-sealed-secrets.git"
@@ -63,7 +63,7 @@ module "gsp-sealed-secrets" {
 }
 
 module "gsp-ci-system" {
-  source = "../../modules/github-flux"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "ci-system"
   chart_git      = "https://github.com/alphagov/gsp-ci-system.git"
@@ -74,7 +74,7 @@ module "gsp-ci-system" {
 }
 
 module "gsp-concourse-ci-pipelines" {
-  source = "../../modules/github-flux"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "${module.gsp-ci-system.release-name}-main"
   chart_git      = "https://github.com/alphagov/gsp-ci-pipelines.git"
@@ -90,7 +90,7 @@ HEREDOC
 }
 
 module "gsp-prototype-kit" {
-  source = "../../modules/github-flux"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "gsp-prototype-kit"
   chart_git      = "https://github.com/alphagov/gsp-govuk-prototype-kit.git"
