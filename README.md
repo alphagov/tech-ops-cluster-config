@@ -31,76 +31,35 @@
    * `Type` field needs to be set to `NS - Name Server`
    * `Value` field needs to contain the `NS` records obtained from the Service
      Team's AWS account
-1. Create cluster
+1. Create cluster Terraform
 
-    From this point onwards, you will need some environment variables defined:
-
-    | Variable | Description | Example |
-    |---|---|---|
-    | `AWS_ACCOUNT_NAME` | This should match your AWS account name or the account ID. | `re-managed-observe-production` |
-    | `AWS_REGION` | Should represent AWS region. Stick to London. | `eu-west-2` |
-    | `AWS_DEFAULT_REGION` | Default AWS region. | `eu-west-2` |
-    | `CLUSTER_NAME` | The name of the cluster about to be created. Needs to be unique across your entire Hosted Zone. | `cluster1` |
-    | `ZONE_ID` | An AWS Hosted Zone ID which you've obtained from the first step of this guide. | `Z00000000000` |
-    | `ZONE_NAME` | An AWS Hosted Zone name which you've obtained from the first step of this guide. | `re-managed-observe-production.aws.ext.govsvc.uk` |
-
-    We've prepared a [templater script](https://github.com/alphagov/gsp-teams/blob/master/scripts/create_cluster_config.sh) to create the new cluster terraform declaration based on a [terraform template](https://github.com/alphagov/gsp-teams/blob/master/terraform/templates/cluster.tf)
-
-    With the above variables you can run:
-
-    ```sh
-    aws-vault exec run-sandbox -- ./scripts/create_cluster_config.sh
-    ```
-
-    This should generate new file at the location:
-
-    ```
-    terraform/clusters/${CLUSTER_NAME}.${AWS_ACCOUNT_NAME}.aws.ext.govsvc.uk/cluster.tf
-    ```
+    Copy an existing cluster configuration from under `terraform/clusters`--you probably want to tweak the `values.auto.tfvars` and `cluster.tf` appropriately.
 
     This leaves you with a manual steps of:
 
     ```sh
-    export DOMAIN=${CLUSTER_NAME}.${AWS_ACCOUNT_NAME}.aws.ext.govsvc.uk
     cd terraform/clusters/${DOMAIN}
 
-    # initialise terraform
-    aws-vault exec run-sandbox -- docker run -it \
-      --env AWS_DEFAULT_REGION \
-      --env AWS_REGION \
-      --env AWS_ACCESS_KEY_ID \
-      --env AWS_SECRET_ACCESS_KEY \
-      --env AWS_SESSION_TOKEN \
-      --env AWS_SECURITY_TOKEN \
-      --env DOMAIN \
-      --volume=$(pwd)/../../../:/terraform \
-      -w /terraform/terraform/clusters/${DOMAIN} \
-      govsvc/terraform init
+    aws-vault exec run-sandbox -- terraform init -upgrade=true
 
-    # apply the plan
-    aws-vault exec run-sandbox -- docker run -it \
-      --env AWS_DEFAULT_REGION \
-      --env AWS_REGION \
-      --env AWS_ACCESS_KEY_ID \
-      --env AWS_SECRET_ACCESS_KEY \
-      --env AWS_SESSION_TOKEN \
-      --env AWS_SECURITY_TOKEN \
-      --env DOMAIN \
-      --volume=$(pwd)/../../../:/terraform \
-      -w /terraform/terraform/clusters/${DOMAIN} \
-      govsvc/terraform apply
+    aws-vault exec run-sandbox -- terraform apply
     ```
 
-1. Test the connection to Kubernetes by executing the following:
-    ```
-    cp $(pwd)/bootkube-assets/auth/user-config ./kubeconfig
-    export KUBECONFIG="$(pwd)/kubeconfig"
-    aws-vault exec run-sandbox -- kubectl get all --all-namespaces
+1. Bootstrap cluster
+
+    Clone the [`gsp-terraform-ignition`](https://github.com/alphagov/gsp-terraform-ignition) repo:
+
+    ```sh
+    cd bootstraper/
+
+    ./bootstrap.sh run-sandbox
     ```
 
-1. Apply any generated resources to the cluster:
+1. Jump back to `gsp-teams`, generate a `kubeconfig`, apply any generated resources to the cluster, commit the `kubeconfig`:
+
+   ```sh
+   aws-vault exec run-sandbox -- terraform output admin-kubeconfig > kubeconfig
+   export KUBECONFIG=$(pwd)/kubeconfig
+   aws-vault exec run-sandbox -- kubectl apply -Rf addons/
+   git add kubeconfig && git commit
    ```
-    aws-vault exec run-sandbox -- kubectl apply -Rf addons/
-   ```
-
-1. Commit and Push new `cluster.tf` and `kubeconfig` files to keep the record.
