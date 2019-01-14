@@ -33,7 +33,7 @@
      Team's AWS account
 1. Create cluster Terraform
 
-    Copy an existing cluster configuration from under `terraform/clusters`--you probably want to tweak the `values.auto.tfvars` and `cluster.tf` appropriately.
+    Copy an existing cluster configuration from under `terraform/clusters`--you probably want to tweak `cluster.tf` appropriately.
 
     This leaves you with a manual steps of:
 
@@ -50,7 +50,7 @@
     Clone the [`gsp-terraform-ignition`](https://github.com/alphagov/gsp-terraform-ignition) repo:
 
     ```sh
-    cd bootstraper/
+    cd bootstrapper/
 
     ./bootstrap.sh run-sandbox
     ```
