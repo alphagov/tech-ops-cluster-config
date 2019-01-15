@@ -62,21 +62,11 @@ Cluster configuration for GDS teams using the GDS Supported Platform.
     aws-vault exec run-sandbox -- terraform apply
     ```
 
-1. Bootstrap cluster
-
-    Clone the [`gsp-terraform-ignition`](https://github.com/alphagov/gsp-terraform-ignition) repo:
-
-    ```sh
-    cd bootstrapper/
-
-    ./bootstrap.sh run-sandbox
-    ```
-
-1. Jump back to `gsp-teams`, generate a `kubeconfig`, apply any generated resources to the cluster, commit the `kubeconfig`:
+1. Generate a `kubeconfig`, apply any generated resources to the cluster, commit the `kubeconfig`:
 
    ```sh
-   aws-vault exec run-sandbox -- terraform output admin-kubeconfig > kubeconfig
+   aws-vault exec run-sandbox -- terraform output kubeconfig > kubeconfig
    export KUBECONFIG=$(pwd)/kubeconfig
    aws-vault exec run-sandbox -- kubectl apply -Rf addons/ # This will probably need to be run multiple times
-   git add cluster.tf outputs.tf && git commit # Create branch as usual best practice
+   git add cluster.tf kubeconfig && git commit # Create branch as usual best practice
    ```

@@ -14,3 +14,14 @@ fly -t gsp set-pipeline -p $ACCOUNT_NAME \
 	--yaml-var public-gpg-keys="$(yq . ../users/*.yaml | jq -s '[.[] | select(.teams[] | IN("re-gsp")) | .pub]')" \
 	--check-creds
 ```
+
+For run-sandbox:
+```
+fly -t gsp set-pipeline -p run-sandbox-<cluster-name> \
+	--config run-sandbox.yaml \
+	--var account-name=run-sandbox \
+	--var account-role-arn=arn:aws:iam::011571571136:role/deployer \
+	--var cluster-name=<cluster-name> \
+	--yaml-var public-gpg-keys="$(yq . ../users/*.yaml | jq -s '[.[] | select(.teams[] | IN("re-gsp")) | .pub]')" \
+	--check-creds
+```
