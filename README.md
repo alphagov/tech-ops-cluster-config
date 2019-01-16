@@ -38,6 +38,8 @@
     This leaves you with a manual steps of:
 
     ```sh
+    export AWS_DEFAULT_REGION=eu-west-2
+
     cd terraform/clusters/${DOMAIN}
 
     aws-vault exec run-sandbox -- terraform init -upgrade=true
@@ -61,5 +63,5 @@
    aws-vault exec run-sandbox -- terraform output admin-kubeconfig > kubeconfig
    export KUBECONFIG=$(pwd)/kubeconfig
    aws-vault exec run-sandbox -- kubectl apply -Rf addons/ # This will probably need to be run multiple times
-   git add kubeconfig && git commit
+   git add cluster.tf outputs.tf && git commit # Create branch as usual best practice
    ```
