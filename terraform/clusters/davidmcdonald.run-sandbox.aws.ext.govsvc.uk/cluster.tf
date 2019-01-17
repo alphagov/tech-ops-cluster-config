@@ -11,11 +11,13 @@ data "aws_caller_identity" "current" {}
 module "gsp-cluster" {
     source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
     cluster_name = "davidmcdonald"
-    dns_zone = "run-sandbox.aws.ext.govsvc.uk"
+    dns_zone = "run-sandbox.aws.ext.govsandbox.uk"
     user_data_bucket_name = "gds-re-run-sandbox-terraform-state"
     user_data_bucket_region = "eu-west-2"
     k8s_tag = "v1.12.2"
     admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
+    controller_instance_type = "m5d.large"
+    worker_instance_type = "m5d.large"
 
     addons = {
       ingress = 1
