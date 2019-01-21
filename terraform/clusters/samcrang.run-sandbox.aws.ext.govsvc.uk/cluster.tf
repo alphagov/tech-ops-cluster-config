@@ -16,6 +16,8 @@ module "gsp-cluster" {
     user_data_bucket_region = "eu-west-2"
     k8s_tag = "v1.12.2"
     admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
+    controller_instance_type = "m5d.large"
+    worker_instance_type = "m5d.large"
 
     addons = {
       ingress = 1
