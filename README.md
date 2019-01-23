@@ -1,6 +1,6 @@
-# Government Shared Platform (come up with a better name please) - Teams
+# GDS Supported Platform - Teams
 
-...
+Cluster configuration for GDS teams using the GDS Supported Platform.
 
 ## Prerequisites
 
