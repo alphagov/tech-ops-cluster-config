@@ -166,7 +166,7 @@ resources:
   type: git
   source:
     uri: https://github.com/alphagov/gsp-teams.git
-    branch: provision-verify
+    branch: master
     paths:
     - "terraform/accounts/((account-name))/*"
     - "terraform/accounts/((account-name))/clusters/**/*"
