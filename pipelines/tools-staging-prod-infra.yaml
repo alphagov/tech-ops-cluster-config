@@ -1,0 +1,422 @@
+
+groups:
+- name: provision
+  jobs:
+  - terraform
+  - bootstrap-tools-cluster
+  - apply-addons-tools-cluster
+  - bootstrap-staging-cluster
+  - apply-addons-staging-cluster
+  - bootstrap-prod-cluster
+  - apply-addons-prod-cluster
+- name: destroy
+  jobs:
+  - destroy-tools-cluster
+  - destroy-staging-cluster
+  - destroy-prod-cluster
+
+
+
+
+
+task_image_resource: &task_image_resource
+  type: docker-image
+  source: {repository: "govsvc/task-toolbox", tag: "1.0.0"}
+
+
+apply_addons_task: &apply_addons_task
+  platform: linux
+  image_resource: *task_image_resource
+  params: &apply_addons_task_params
+    ACCOUNT_ROLE_ARN: ((account-role-arn))
+    ACCOUNT_NAME: ((account-name))
+    CLUSTER_NAME:
+    TERRAFORM_BUCKET: cd-gsp-private-qndvvc
+    TERRAFORM_REGION: eu-west-2
+    TF_VAR_aws_account_role_arn: ((account-role-arn))
+  run:
+    path: /bin/bash
+    args:
+    - -eu
+    - -c
+    - |
+      echo "fetching kubeconfig from terraform state..."
+      jq -r '."admin-kubeconfig"' cluster-outputs/metadata > kubeconfig
+      export KUBECONFIG=$(pwd)/kubeconfig
+      echo "generating kubeyaml addons with terraform..."
+      cd "gsp-teams/terraform/accounts/${ACCOUNT_NAME}/clusters/${CLUSTER_NAME}"
+      terraform init \
+        -backend-config="bucket=${TERRAFORM_BUCKET}" \
+        -backend-config="key=${ACCOUNT_NAME}/clusters/${CLUSTER_NAME}.tfstate" \
+        -backend-config="region=${TERRAFORM_REGION}" \
+        -backend=true \
+        -force-copy \
+        -get=true \
+        -input=false
+      terraform workspace select "${ACCOUNT_NAME}"
+      terraform apply -auto-approve
+      echo "applying kubeyaml..."
+      eval $(aws-assume-role $ACCOUNT_ROLE_ARN)
+      until kubectl apply -R -f addons/; do
+        echo "apply failed retrying..."
+        sleep 1
+      done
+      function not_ready_count() {
+        kubectl get pods -o json --all-namespaces | jq -r '.items[].status.conditions[].status' | grep False | wc -l | awk '{ print $1 }'
+      }
+      function not_running_count() {
+        kubectl get pods -o json --all-namespaces | jq -r '.items[].status.phase' | grep -v Running | wc -l | awk '{ print $1 }'
+      }
+      sleep 30s
+      while [[ "$(not_running_count)" != "0" ]]; do
+        echo "waiting for $(not_running_count) pods to start"
+        sleep 3
+      done
+      while [[ "$(not_ready_count)" != "0" ]]; do
+        echo "waiting for $(not_ready_count) status probes to pass"
+        sleep 3
+      done
+      kubectl get pods --all-namespaces
+  inputs:
+  - name: cluster-outputs
+  - name: gsp-teams
+
+
+
+wait_and_drain_bootstrapper: &wait_and_drain_bootstrapper
+  platform: linux
+  image_resource: *task_image_resource
+  params:
+    ACCOUNT_ROLE_ARN: ((account-role-arn))
+  run:
+    path: /bin/bash
+    args:
+    - -eu
+    - -c
+    - |
+      eval $(aws-assume-role $ACCOUNT_ROLE_ARN)
+      jq -r '."admin-kubeconfig"' cluster-outputs/metadata > kubeconfig
+      export KUBECONFIG=$(pwd)/kubeconfig
+      echo "Waiting for kubernetes..."
+      sleep 30s
+      until kubectl --kubeconfig kubeconfig -n kube-system get pods | grep kube-apiserver | grep -v bootstrap
+      do
+        echo -n "."
+        sleep 5s
+      done
+      echo "Draining bootstrapper node"
+      kubectl --kubeconfig kubeconfig drain --ignore-daemonsets --force --grace-period=60 -l 'node-role.kubernetes.io/bootstrapper'
+  inputs:
+  - name: cluster-outputs
+
+
+
+destroy_bootstrapper: &destroy_bootstrapper
+  platform: linux
+  image_resource: *task_image_resource
+  params:
+    ACCOUNT_ROLE_ARN: ((account-role-arn))
+  run:
+    path: /bin/bash
+    args:
+    - -eu
+    - -c
+    - |
+      eval $(aws-assume-role $ACCOUNT_ROLE_ARN)
+      jq -r '."admin-kubeconfig"' cluster-outputs/metadata > kubeconfig
+      export KUBECONFIG=$(pwd)/kubeconfig
+      kubectl --kubeconfig kubeconfig delete node -l 'node-role.kubernetes.io/bootstrapper'
+  inputs:
+  - name: cluster-outputs
+
+
+
+
+
+
+terraform_source: &terraform_source
+  env_name: ((account-name))
+  backend_type: s3
+  backend_config: &terraform_backend_config
+    bucket: cd-gsp-private-qndvvc
+    region: eu-west-2
+  vars: &terraform_vars
+    aws_account_role_arn: ((account-role-arn))
+
+
+
+
+
+
+resource_types:
+
+- name: terraform
+  type: docker-image
+  source:
+    repository: govsvc/terraform-resource
+    tag: 0.12.0-beta.1
+
+
+
+
+
+resources:
+
+- name: gsp-teams
+  type: git
+  source:
+    uri: https://github.com/alphagov/gsp-teams.git
+    branch: provision-verify
+    paths:
+    - "terraform/accounts/((account-name))/*"
+    - "terraform/accounts/((account-name))/clusters/**/*"
+- name: common-infra
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: ((account-name))/common.tfstate
+- name: tools-cluster
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: ((account-name))/clusters/tools.tfstate
+- name: tools-cluster-bootstrapper
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: ((account-name))/clusters/tools-bootstrapper.tfstate
+    vars:
+      <<: *terraform_vars
+      cluster_state_bucket_name: cd-gsp-private-qndvvc
+      cluster_state_bucket_key: ((account-name))/clusters/tools.tfstate
+- name: staging-cluster
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: ((account-name))/clusters/staging.tfstate
+- name: staging-cluster-bootstrapper
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: ((account-name))/clusters/staging-bootstrapper.tfstate
+    vars:
+      <<: *terraform_vars
+      cluster_state_bucket_name: cd-gsp-private-qndvvc
+      cluster_state_bucket_key: ((account-name))/clusters/staging.tfstate
+- name: prod-cluster
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: ((account-name))/clusters/prod.tfstate
+- name: prod-cluster-bootstrapper
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: ((account-name))/clusters/prod-bootstrapper.tfstate
+    vars:
+      <<: *terraform_vars
+      cluster_state_bucket_name: cd-gsp-private-qndvvc
+      cluster_state_bucket_key: ((account-name))/clusters/prod.tfstate
+
+
+
+
+
+jobs:
+
+- name: terraform
+  serial: true
+  plan:
+  - get: gsp-teams
+    trigger: true
+  - put: common-infra
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/
+  - put: tools-cluster
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/tools/
+  - put: staging-cluster
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/staging/
+  - put: prod-cluster
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/prod/
+
+- name: bootstrap-tools-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    passed: ["terraform"]
+  - get: tools-cluster
+    passed: ["terraform"]
+  - put: tools-cluster-bootstrapper
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/bootstrapper/
+  - task: wait-then-drain-bootstrapper-node
+    input_mapping: {cluster-outputs: tools-cluster}
+    config: *wait_and_drain_bootstrapper
+  - put: tools-cluster-bootstrapper
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/bootstrapper/
+      action: destroy
+    get_params:
+      action: destroy
+  - task: delete-bootstrapper-node
+    input_mapping: {cluster-outputs: tools-cluster}
+    config: *destroy_bootstrapper
+- name: bootstrap-staging-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    passed: ["terraform"]
+  - get: staging-cluster
+    passed: ["terraform"]
+  - put: staging-cluster-bootstrapper
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/bootstrapper/
+  - task: wait-then-drain-bootstrapper-node
+    input_mapping: {cluster-outputs: staging-cluster}
+    config: *wait_and_drain_bootstrapper
+  - put: staging-cluster-bootstrapper
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/bootstrapper/
+      action: destroy
+    get_params:
+      action: destroy
+  - task: delete-bootstrapper-node
+    input_mapping: {cluster-outputs: staging-cluster}
+    config: *destroy_bootstrapper
+- name: bootstrap-prod-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    passed: ["terraform"]
+  - get: prod-cluster
+    passed: ["terraform"]
+  - put: prod-cluster-bootstrapper
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/bootstrapper/
+  - task: wait-then-drain-bootstrapper-node
+    input_mapping: {cluster-outputs: prod-cluster}
+    config: *wait_and_drain_bootstrapper
+  - put: prod-cluster-bootstrapper
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/bootstrapper/
+      action: destroy
+    get_params:
+      action: destroy
+  - task: delete-bootstrapper-node
+    input_mapping: {cluster-outputs: prod-cluster}
+    config: *destroy_bootstrapper
+
+
+- name: apply-addons-tools-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    trigger: true
+    passed: ["terraform"]
+  - get: tools-cluster
+    passed: ["bootstrap-tools-cluster"]
+  - task: apply-addons
+    timeout: 30m
+    config:
+      <<: *apply_addons_task
+      params:
+        <<: *apply_addons_task_params
+        CLUSTER_NAME: tools
+    input_mapping: {cluster-outputs: tools-cluster}
+- name: apply-addons-staging-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    trigger: true
+    passed: ["terraform"]
+  - get: staging-cluster
+    passed: ["bootstrap-staging-cluster"]
+  - task: apply-addons
+    timeout: 30m
+    config:
+      <<: *apply_addons_task
+      params:
+        <<: *apply_addons_task_params
+        CLUSTER_NAME: staging
+    input_mapping: {cluster-outputs: staging-cluster}
+- name: apply-addons-prod-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    trigger: true
+    passed: ["terraform"]
+  - get: prod-cluster
+    passed: ["bootstrap-prod-cluster"]
+  - task: apply-addons
+    timeout: 30m
+    config:
+      <<: *apply_addons_task
+      params:
+        <<: *apply_addons_task_params
+        CLUSTER_NAME: prod
+    input_mapping: {cluster-outputs: prod-cluster}
+
+- name: destroy-tools-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    passed: ["terraform"]
+  - put: tools-cluster
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/tools/
+      action: destroy
+    get_params:
+      action: destroy
+- name: destroy-staging-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    passed: ["terraform"]
+  - put: staging-cluster
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/staging/
+      action: destroy
+    get_params:
+      action: destroy
+- name: destroy-prod-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    passed: ["terraform"]
+  - put: prod-cluster
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/prod/
+      action: destroy
+    get_params:
+      action: destroy
+
