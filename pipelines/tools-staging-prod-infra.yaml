@@ -202,6 +202,9 @@ resources:
     backend_config:
       <<: *terraform_backend_config
       key: ((account-name))/clusters/staging.tfstate
+    <<: *terraform_vars
+      splunk_hec_token: ((splunk_hec_token))
+      splunk_hec_url: ((splunk_hec_url))
 - name: staging-cluster-bootstrapper
   type: terraform
   source:
