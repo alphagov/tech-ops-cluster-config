@@ -9,7 +9,7 @@ terraform {
 data "aws_caller_identity" "current" {}
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=kiam"
     cluster_name = "samcrang"
     dns_zone = "run-sandbox.aws.ext.govsandbox.uk"
     user_data_bucket_name = "gds-re-run-sandbox-terraform-state"
