@@ -50,6 +50,19 @@ module "gsp-cluster" {
     }
 }
 
+module "test-proxy-node" {
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
+
+  namespace      = "test-proxy-node"
+  release_name   = "test" # Has to be changed later down the line.
+  chart_git      = "https://github.com/alphagov/verify-eidas-deployment.git"
+  chart_ref      = "master"
+  chart_path     = "."
+  cluster_name   = "${module.gsp-cluster.cluster-name}"
+  cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
+  addons_dir     = "addons/${module.gsp-cluster.cluster-name}"
+}
+
 output "bootstrap-base-userdata-source" {
     value = "${module.gsp-cluster.bootstrap-base-userdata-source}"
 }
