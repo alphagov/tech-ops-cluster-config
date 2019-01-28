@@ -47,6 +47,7 @@ module "gsp-cluster" {
       monitoring = 1
       secrets = 1
       ci = 0
+      splunk = 0
     }
 }
 

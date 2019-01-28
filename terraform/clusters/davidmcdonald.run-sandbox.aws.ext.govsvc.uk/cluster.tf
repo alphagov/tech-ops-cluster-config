@@ -25,7 +25,15 @@ module "gsp-cluster" {
       monitoring = 1
       secrets = 1
       ci = 1
+      splunk = 0
     }
+
+    dev_user_arns = [
+      "arn:aws:iam::622626885786:user/daniel.blair@digital.cabinet-office.gov.uk",
+      "arn:aws:iam::622626885786:user/david.pye@digital.cabinet-office.gov.uk",
+      "arn:aws:iam::622626885786:user/david.mcdonald@digital.cabinet-office.gov.uk",
+    ]
+    dev_namespaces = ["kube-system", "flux-system", "secrets-system"]
 }
 
 module "prototype-kit" {

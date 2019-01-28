@@ -6,6 +6,14 @@ variable "aws_account_role_arn" {
   type = "string"
 }
 
+variable "splunk_hec_url" {
+  type = "string"
+}
+
+variable "splunk_hec_token" {
+  type = "string"
+}
+
 provider "aws" {
   region = "eu-west-2"
   assume_role {
@@ -41,12 +49,15 @@ module "gsp-cluster" {
       "85.133.67.244/32",
       "18.130.144.30/32", # autom8 concourse
     ]
+    splunk_hec_url = "${var.splunk_hec_url}"
+    splunk_hec_token = "${var.splunk_hec_token}"
     addons = {
       ingress = 1
       canary = 0
       monitoring = 1
       secrets = 1
       ci = 0
+      splunk = 1
     }
 }
 
