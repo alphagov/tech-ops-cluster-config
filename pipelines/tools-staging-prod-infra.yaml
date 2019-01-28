@@ -34,6 +34,8 @@ apply_addons_task: &apply_addons_task
     TERRAFORM_BUCKET: cd-gsp-private-qndvvc
     TERRAFORM_REGION: eu-west-2
     TF_VAR_aws_account_role_arn: ((account-role-arn))
+    TF_VAR_splunk_hec_token: ((splunk_hec_token))
+    TF_VAR_splunk_hec_url: ((splunk_hec_url))
   run:
     path: /bin/bash
     args:
