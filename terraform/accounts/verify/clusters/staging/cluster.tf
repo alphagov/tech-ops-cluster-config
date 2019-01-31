@@ -69,7 +69,7 @@ module "test-proxy-node" {
   namespace      = "test-proxy-node"
   release_name   = "test" # Has to be changed later down the line.
   chart_git      = "https://github.com/alphagov/verify-eidas-deployment.git"
-  chart_ref      = "master"
+  chart_ref      = "staging"
   chart_path     = "."
   cluster_name   = "${module.gsp-cluster.cluster-name}"
   cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
