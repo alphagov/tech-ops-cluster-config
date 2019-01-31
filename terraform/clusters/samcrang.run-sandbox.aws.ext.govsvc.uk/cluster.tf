@@ -29,23 +29,6 @@ module "gsp-cluster" {
     }
 }
 
-module "main-pipelines" {
-  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
-
-  namespace      = "${module.gsp-cluster.ci-system-release-name}-main"
-  chart_git      = "https://github.com/alphagov/gsp-ci-pipelines.git"
-  chart_ref      = "master"
-  chart_path     = "charts/pipelines"
-  cluster_name   = "${module.gsp-cluster.cluster-name}"
-  cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
-  addons_dir     = "addons/${module.gsp-cluster.cluster-name}"
-  values = <<HEREDOC
-    ecr:
-      registry: ${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com
-      region: eu-west-2
-HEREDOC
-}
-
 module "prototype-kit" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
