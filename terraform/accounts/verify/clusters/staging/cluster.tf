@@ -63,6 +63,12 @@ module "gsp-cluster" {
     }
 }
 
+module "hsm" {
+  source       = "../../modules/hsm"
+  cluster_name = "${module.gsp-cluster.cluster-name}"
+  subnet_ids   = "${module.gsp-cluster.private-subnet-ids}"
+}
+
 module "test-proxy-node" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
