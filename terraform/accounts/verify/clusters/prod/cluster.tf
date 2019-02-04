@@ -16,7 +16,7 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=5efcabb9546967a5ca3cdaa60187404855a5e84f"
     cluster_name = "prod"
     controller_count = 2
     controller_instance_type = "m5d.large"
