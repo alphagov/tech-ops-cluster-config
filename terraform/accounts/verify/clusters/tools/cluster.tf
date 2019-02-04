@@ -138,6 +138,6 @@ output "kube-ca-crt" {
     value = "${module.gsp-cluster.kube-ca-crt}"
 }
 
-output "github-deployment-public-key" {
-    value = "${module.gsp-cluster.github-deployment-public-key}"
-}
+# output "github-deployment-public-key" {
+#     value = "${module.gsp-cluster.github-deployment-public-key}"
+# }
