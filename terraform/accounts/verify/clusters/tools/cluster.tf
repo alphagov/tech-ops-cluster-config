@@ -16,7 +16,7 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=5efcabb9546967a5ca3cdaa60187404855a5e84f"
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
     cluster_name = "tools"
     controller_count = 1
     controller_instance_type = "m5d.large"
@@ -138,6 +138,6 @@ output "kube-ca-crt" {
     value = "${module.gsp-cluster.kube-ca-crt}"
 }
 
-# output "github-deployment-public-key" {
-#     value = "${module.gsp-cluster.github-deployment-public-key}"
-# }
+output "github-deployment-public-key" {
+    value = "${module.gsp-cluster.github-deployment-public-key}"
+}
