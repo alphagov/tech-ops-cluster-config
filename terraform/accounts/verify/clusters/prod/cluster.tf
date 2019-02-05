@@ -49,6 +49,7 @@ module "gsp-cluster" {
       ci = 0
       splunk = 0
     }
+    codecommit_init_role_arn = "${var.aws_account_role_arn}"
 }
 
 module "hsm" {

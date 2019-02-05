@@ -51,6 +51,7 @@ module "gsp-cluster" {
       ci = 1
       splunk = 0
     }
+    codecommit_init_role_arn = "${var.aws_account_role_arn}"
 }
 
 module "eidas-ci-pipelines" {
