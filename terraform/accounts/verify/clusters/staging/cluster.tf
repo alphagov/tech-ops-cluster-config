@@ -53,6 +53,7 @@ module "gsp-cluster" {
     ]
     splunk_hec_url = "${var.splunk_hec_url}"
     splunk_hec_token = "${var.splunk_hec_token}"
+    splunk_index = "verify_eidas_notification_k8s"
     addons = {
       ingress = 1
       canary = 0
