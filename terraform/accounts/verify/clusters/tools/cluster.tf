@@ -45,12 +45,12 @@ module "gsp-cluster" {
     ]
     addons = {
       ingress = 1
-      canary = 0
       monitoring = 1
       secrets = 1
       ci = 1
       splunk = 0
     }
+    codecommit_init_role_arn = "${var.aws_account_role_arn}"
 }
 
 module "eidas-ci-pipelines" {
