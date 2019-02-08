@@ -45,7 +45,6 @@ module "gsp-cluster" {
     ]
     addons = {
       ingress = 1
-      canary = 0
       monitoring = 1
       secrets = 1
       ci = 1

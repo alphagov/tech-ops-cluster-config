@@ -55,7 +55,6 @@ module "gsp-cluster" {
     splunk_hec_token = "${var.splunk_hec_token}"
     addons = {
       ingress = 1
-      canary = 0
       monitoring = 1
       secrets = 1
       ci = 0
