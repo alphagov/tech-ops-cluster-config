@@ -13,6 +13,8 @@ provider "aws" {
   }
 }
 
+provider "archive" {}
+
 data "aws_caller_identity" "current" {}
 
 module "gsp-cluster" {
