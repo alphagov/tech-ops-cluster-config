@@ -40,6 +40,7 @@ module "gsp-cluster" {
       "213.86.153.237/32",
       "85.133.67.244/32",
       "18.130.144.30/32", # autom8 concourse
+      "3.8.110.67/32",    # autom8 concourse
     ]
     addons = {
       ingress = 1
