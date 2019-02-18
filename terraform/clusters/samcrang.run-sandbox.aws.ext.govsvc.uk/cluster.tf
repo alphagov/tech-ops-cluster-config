@@ -9,8 +9,8 @@ terraform {
 data "aws_caller_identity" "current" {}
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
-    cluster_name = "samcrang"
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=nginx-prometheus"
+    cluster_name = "crang"
     dns_zone = "run-sandbox.aws.ext.govsandbox.uk"
     user_data_bucket_name = "gds-re-run-sandbox-terraform-state"
     user_data_bucket_region = "eu-west-2"
