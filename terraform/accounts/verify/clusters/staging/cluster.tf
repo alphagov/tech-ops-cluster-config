@@ -63,6 +63,15 @@ module "gsp-cluster" {
       splunk = 1
     }
     codecommit_init_role_arn = "${var.aws_account_role_arn}"
+    dev_user_arns = [
+      "arn:aws:iam::622626885786:user/karol.gancarz@digital.cabinet-office.gov.uk",
+      "arn:aws:iam::622626885786:user/james.howes@digital.cabinet-office.gov.uk",
+      "arn:aws:iam::622626885786:user/anshul.sirur@digital.cabinet-office.gov.uk",
+      "arn:aws:iam::622626885786:user/daniel.besbrode@digital.cabinet-office.gov.uk",
+      "arn:aws:iam::622626885786:user/christopher.wynne@digital.cabinet-office.gov.uk",
+      "arn:aws:iam::622626885786:user/tom.rosier@digital.cabinet-office.gov.uk",
+    ]
+    dev_namespaces = ["test-proxy-node", "default"]
 }
 
 module "hsm" {
