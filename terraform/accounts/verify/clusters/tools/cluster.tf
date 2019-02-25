@@ -6,6 +6,14 @@ variable "aws_account_role_arn" {
   type = "string"
 }
 
+variable "persistent_state_bucket_name" {
+  type = "string"
+}
+
+variable "persistent_state_bucket_key" {
+  type = "string"
+}
+
 provider "aws" {
   region = "eu-west-2"
   assume_role {
@@ -14,6 +22,17 @@ provider "aws" {
 }
 
 data "aws_caller_identity" "current" {}
+
+# Terraform state that persists between respins of the cluster. This Terraform state contains the VPC, HSM, persistent private keys etc
+data "terraform_remote_state" "persistent_state" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.persistent_state_bucket_name}"
+    key    = "${var.persistent_state_bucket_key}"
+    region = "eu-west-2"
+  }
+}
 
 module "gsp-cluster" {
     source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
@@ -42,6 +61,13 @@ module "gsp-cluster" {
       "18.130.144.30/32", # autom8 concourse
       "3.8.110.67/32",    # autom8 concourse
     ]
+    cert_pem                 = "${data.terraform_remote_state.persistent_state.cert_pem}"
+    private_key_pem          = "${data.terraform_remote_state.persistent_state.private_key_pem}"
+    network_id               = "${data.terraform_remote_state.persistent_state.network_id}"
+    private_subnet_ids       = "${data.terraform_remote_state.persistent_state.private_subnet_ids}"
+    public_subnet_ids        = "${data.terraform_remote_state.persistent_state.public_subnet_ids}"
+    host_cidr                = "${data.terraform_remote_state.persistent_state.host_cidr}"
+    nat_gateway_public_ips   = "${data.terraform_remote_state.persistent_state.nat_gateway_public_ips}"
     addons = {
       ingress = 1
       monitoring = 1

@@ -31,6 +31,21 @@ Cluster configuration for GDS teams using the GDS Supported Platform.
    * `Type` field needs to be set to `NS - Name Server`
    * `Value` field needs to contain the `NS` records obtained from the Service
      Team's AWS account
+1. Create persistent Terraform
+
+    To create your network and other persistent resources for the base of your cluster, copy an existing configuration to manage from under `terraform/accounts/run-sandbox/persistent`--you probably want to tweak `resources.tf` appropriately.
+
+    This leaves you with a manual steps of:
+
+    ```sh
+    export AWS_DEFAULT_REGION=eu-west-2
+
+    cd terraform/accounts/${AWS_ACCOUNT_NAME}/persistent/${DOMAIN}
+
+    aws-vault exec run-sandbox -- terraform init -upgrade=true
+
+    aws-vault exec run-sandbox -- terraform apply
+    ```
 1. Create cluster Terraform
 
     Copy an existing cluster configuration from under `terraform/clusters`--you probably want to tweak `cluster.tf` appropriately.
