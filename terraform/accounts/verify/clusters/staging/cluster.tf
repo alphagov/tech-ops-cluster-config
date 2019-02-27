@@ -76,7 +76,6 @@ module "hsm" {
   source             = "../../../../modules/hsm"
   cluster_name       = "${module.gsp-cluster.cluster-name}"
   subnet_ids         = "${module.gsp-cluster.private-subnet-ids}"
-  security_group_ids = ["${module.gsp-cluster.worker-security-group-ids}"]
 }
 
 module "test-proxy-node" {

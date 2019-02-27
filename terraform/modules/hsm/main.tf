@@ -6,9 +6,9 @@ variable "cluster_name" {
   type = "string"
 }
 
-variable "security_group_ids" {
-  description = "List of security groups that are allowed to interact with HSM cluster"
-  type        = "list"
+data "aws_subnet" "vpc" {
+  count = "${length(var.subnet_ids)}"
+  id = "${var.subnet_ids[count.index]}"
 }
 
 resource "aws_cloudhsm_v2_cluster" "cluster" {
@@ -21,13 +21,12 @@ resource "aws_cloudhsm_v2_cluster" "cluster" {
 }
 
 resource "aws_security_group_rule" "hsm-worker-ingress" {
-  count                    = "${length(var.security_group_ids)}"
   security_group_id        = "${aws_cloudhsm_v2_cluster.cluster.security_group_id}"
   type                     = "ingress"
   from_port                = 2223
   to_port                  = 2225
   protocol                 = "tcp"
-  source_security_group_id = "${var.security_group_ids[count.index]}"
+  cidr_blocks = ["${data.aws_subnet.vpc.*.cidr_block}"]
 }
 
 resource "aws_security_group_rule" "hsm-self-ingress" {
