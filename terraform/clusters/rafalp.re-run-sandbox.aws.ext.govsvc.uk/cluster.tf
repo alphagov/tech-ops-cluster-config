@@ -50,7 +50,7 @@ module "eidas-ci-pipelines" {
 
   namespace      = "${module.gsp-cluster.ci-system-release-name}-main"
   chart_git      = "https://github.com/alphagov/verify-eidas-pipelines.git"
-  chart_ref      = "flux-check-release"
+  chart_ref      = "rafalp"
   chart_path     = "."
   cluster_name   = "${module.gsp-cluster.cluster-name}"
   cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
@@ -66,6 +66,32 @@ module "eidas-ci-pipelines" {
         snapshot: "${module.gsp-cluster.notary-snapshot-passphrase}"
         targets: "${module.gsp-cluster.notary-targets-passphrase}"
       password: "${module.gsp-cluster.harbor-password}"
+HEREDOC
+}
+
+module "hello" {
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
+
+  namespace      = "hello"
+  chart_git      = "https://github.com/alphagov/gsp-example.git"
+  chart_ref      = "staging"
+  chart_path     = "."
+  cluster_name   = "${module.gsp-cluster.cluster-name}"
+  cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
+  addons_dir     = "addons/${module.gsp-cluster.cluster-name}"
+  values = <<HEREDOC
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        kubernetes.io/tls-acme: "true"
+      paths:
+        - "/"
+      hosts:
+        - "hello.${module.gsp-cluster.cluster-domain-suffix}"
+      tls:
+      - secretName: hello-tls
+        hosts:
+        - "hello.${module.gsp-cluster.cluster-domain-suffix}"
 HEREDOC
 }
 
