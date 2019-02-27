@@ -1,11 +1,11 @@
-output "cert_pem" {
+output "sealed_secrets_cert_pem" {
   description = "Sealed secrets certificate"
-  value       = "${module.gsp-persistent.cert_pem}"
+  value       = "${module.gsp-persistent.sealed_secrets_cert_pem}"
 }
 
-output "private_key_pem" {
+output "sealed_secrets_private_key_pem" {
   description = "Sealed secrets private key"
-  value       = "${module.gsp-persistent.private_key_pem}"
+  value       = "${module.gsp-persistent.sealed_secrets_private_key_pem}"
 }
 
 output "private_subnet_ids" {
@@ -16,8 +16,8 @@ output "public_subnet_ids" {
   value = ["${module.gsp-network.public_subnet_ids}"]
 }
 
-output "network_id" {
-  value = "${module.gsp-network.network_id}"
+output "vpc_id" {
+  value = "${module.gsp-network.vpc_id}"
 }
 
 output "nat_gateway_public_ips" {
