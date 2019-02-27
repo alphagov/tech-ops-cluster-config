@@ -26,7 +26,7 @@ data "aws_caller_identity" "current" {}
 module "gsp-cluster" {
     source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
     cluster_name = "staging"
-    controller_count = 2
+    controller_count = 3
     controller_instance_type = "m5d.large"
     worker_count = 2
     worker_instance_type = "m5d.large"
