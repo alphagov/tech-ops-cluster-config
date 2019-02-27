@@ -20,7 +20,7 @@ module "gsp-cluster" {
     cluster_name = "tools"
     controller_count = 3
     controller_instance_type = "m5d.large"
-    worker_count = 1
+    worker_count = 2
     worker_instance_type = "m5d.large"
     /* etcd_instance_type = "t3.medium" */
     dns_zone = "verify.govsvc.uk"
