@@ -172,6 +172,7 @@ resources:
     paths:
     - "terraform/accounts/((account-name))/*"
     - "terraform/accounts/((account-name))/clusters/**/*"
+    - "terraform/modules/hsm/*"
 - name: common-infra
   type: terraform
   source:
