@@ -20,14 +20,14 @@ resource "aws_cloudhsm_v2_cluster" "cluster" {
   }
 }
 
-resource "aws_security_group_rule" "hsm" {
-  count                    = "${length(var.security_groups)}"
+resource "aws_security_group_rule" "hsm-worker-ingress" {
+  count                    = "${length(var.security_group_ids)}"
   security_group_id        = "${aws_cloudhsm_v2_cluster.cluster.security_group_id}"
   type                     = "ingress"
   from_port                = 2223
   to_port                  = 2225
   protocol                 = "tcp"
-  source_security_group_id = "${var.security_groups[count.index]}"
+  source_security_group_id = "${var.security_group_ids[count.index]}"
 }
 
 resource "aws_security_group_rule" "hsm-self-ingress" {
