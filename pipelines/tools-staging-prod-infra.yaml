@@ -1,4 +1,3 @@
-
 groups:
 - name: provision
   jobs:
@@ -14,8 +13,6 @@ groups:
   - destroy-tools-cluster
   - destroy-staging-cluster
   - destroy-prod-cluster
-
-
 
 
 
@@ -84,7 +81,6 @@ apply_addons_task: &apply_addons_task
   - name: gsp-teams
 
 
-
 wait_and_drain_bootstrapper: &wait_and_drain_bootstrapper
   platform: linux
   image_resource: *task_image_resource
@@ -110,7 +106,6 @@ wait_and_drain_bootstrapper: &wait_and_drain_bootstrapper
       kubectl --kubeconfig kubeconfig drain --ignore-daemonsets --force --grace-period=60 -l 'node-role.kubernetes.io/bootstrapper'
   inputs:
   - name: cluster-outputs
-
 
 
 destroy_bootstrapper: &destroy_bootstrapper
@@ -149,7 +144,6 @@ terraform_source: &terraform_source
 
 
 
-
 resource_types:
 
 - name: terraform
@@ -171,6 +165,7 @@ resources:
     branch: master
     paths:
     - "terraform/accounts/((account-name))/*"
+    - "terraform/accounts/((account-name))/persistent/**/*"
     - "terraform/accounts/((account-name))/clusters/**/*"
     - "terraform/modules/hsm/*"
 - name: common-infra
@@ -180,6 +175,13 @@ resources:
     backend_config:
       <<: *terraform_backend_config
       key: ((account-name))/common.tfstate
+- name: tools-persistent
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: ((account-name))/clusters/tools-persistent.tfstate
 - name: tools-cluster
   type: terraform
   source:
@@ -187,6 +189,10 @@ resources:
     backend_config:
       <<: *terraform_backend_config
       key: ((account-name))/clusters/tools.tfstate
+    vars:
+      <<: *terraform_vars
+      cluster_state_bucket_name: cd-gsp-private-qndvvc
+      cluster_state_bucket_key: ((account-name))/clusters/tools-persistent.tfstate
 - name: tools-cluster-bootstrapper
   type: terraform
   source:
@@ -198,6 +204,13 @@ resources:
       <<: *terraform_vars
       cluster_state_bucket_name: cd-gsp-private-qndvvc
       cluster_state_bucket_key: ((account-name))/clusters/tools.tfstate
+- name: staging-persistent
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: ((account-name))/clusters/staging-persistent.tfstate
 - name: staging-cluster
   type: terraform
   source:
@@ -207,6 +220,8 @@ resources:
       key: ((account-name))/clusters/staging.tfstate
     vars:
       <<: *terraform_vars
+      persistent_state_bucket_name: cd-gsp-private-qndvvc
+      persistent_state_bucket_key: ((account-name))/clusters/staging-persistent.tfstate
       splunk_hec_token: ((splunk_hec_token))
       splunk_hec_url: ((splunk_hec_url))
 - name: staging-cluster-bootstrapper
@@ -220,6 +235,13 @@ resources:
       <<: *terraform_vars
       cluster_state_bucket_name: cd-gsp-private-qndvvc
       cluster_state_bucket_key: ((account-name))/clusters/staging.tfstate
+- name: prod-persistent
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: ((account-name))/clusters/prod-persistent.tfstate
 - name: prod-cluster
   type: terraform
   source:
@@ -227,6 +249,10 @@ resources:
     backend_config:
       <<: *terraform_backend_config
       key: ((account-name))/clusters/prod.tfstate
+    vars:
+      <<: *terraform_vars
+      persistent_state_bucket_name: cd-gsp-private-qndvvc
+      persistent_state_bucket_key: ((account-name))/clusters/prod-persistent.tfstate
 - name: prod-cluster-bootstrapper
   type: terraform
   source:
@@ -254,6 +280,18 @@ jobs:
     params:
       env_name: ((account-name))
       terraform_source: gsp-teams/terraform/accounts/((account-name))/
+  - put: tools-persistent
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/persistent/tools/
+  - put: staging-persistent
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/persistent/staging/
+  - put: prod-persistent
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/persistent/prod/
   - put: tools-cluster
     params:
       env_name: ((account-name))
