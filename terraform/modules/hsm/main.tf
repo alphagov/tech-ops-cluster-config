@@ -29,24 +29,6 @@ resource "aws_security_group_rule" "hsm-worker-ingress" {
   cidr_blocks = ["${data.aws_subnet.vpc.*.cidr_block}"]
 }
 
-resource "aws_security_group_rule" "hsm-self-ingress" {
-  security_group_id        = "${aws_cloudhsm_v2_cluster.cluster.security_group_id}"
-  type                     = "ingress"
-  from_port                = 2223
-  to_port                  = 2225
-  protocol                 = "tcp"
-  source_security_group_id = "${aws_cloudhsm_v2_cluster.cluster.security_group_id}"
-}
-
-resource "aws_security_group_rule" "hsm-self-egress" {
-  security_group_id        = "${aws_cloudhsm_v2_cluster.cluster.security_group_id}"
-  type                     = "egress"
-  from_port                = 2223
-  to_port                  = 2225
-  protocol                 = "tcp"
-  source_security_group_id = "${aws_cloudhsm_v2_cluster.cluster.security_group_id}"
-}
-
 # We can only create one HSM in Terraform rather than the multiple we require for high availability as you must create
 # a single HSM, initialise and activate it (which is done manually) before you can create more as they are clones of the
 # first HSM. The other HSMs will need to be created after the Terraform apply
