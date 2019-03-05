@@ -66,7 +66,7 @@ module "lambda_splunk_forwarder" {
   source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/lambda_splunk_forwarder"
 
   enabled                   = "${var.splunk}"
-  name                      = "${var.cluster_name}_hsm"
+  name                      = "hsm"
   cloudwatch_log_group_arn  = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/cloudhsm/${aws_cloudhsm_v2_cluster.cluster.cluster_id}:*"
   cloudwatch_log_group_name = "/aws/cloudhsm/${aws_cloudhsm_v2_cluster.cluster.cluster_id}"
   cluster_name              = "${var.cluster_name}"
