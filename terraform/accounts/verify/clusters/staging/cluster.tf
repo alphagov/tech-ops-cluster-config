@@ -53,6 +53,7 @@ module "gsp-cluster" {
     splunk_hec_url = "${var.splunk_hec_url}"
     splunk_hec_token = "${var.splunk_hec_token}"
     splunk_index = "verify_eidas_notification_k8s"
+
     addons = {
       ingress = 1
       monitoring = 1
@@ -76,6 +77,12 @@ module "hsm" {
   source             = "../../../../modules/hsm"
   cluster_name       = "${module.gsp-cluster.cluster-name}"
   subnet_ids         = "${module.gsp-cluster.private-subnet-ids}"
+  subnet_count       = "${module.gsp-cluster.private-subnet-count}" // https://github.com/hashicorp/terraform/issues/12570
+
+  splunk = 1
+  splunk_hec_url   = "${var.splunk_hec_url}"
+  splunk_hec_token = "${var.splunk_hec_token}"
+  splunk_index     = "verify_notification_hms"
 }
 
 module "test-proxy-node" {
