@@ -52,12 +52,6 @@ module "gsp-cluster" {
     codecommit_init_role_arn = "${var.aws_account_role_arn}"
 }
 
-module "hsm" {
-  source       = "../../../../modules/hsm"
-  cluster_name = "${module.gsp-cluster.cluster-name}"
-  subnet_ids   = "${module.gsp-cluster.private-subnet-ids}"
-}
-
 output "bootstrap-base-userdata-source" {
     value = "${module.gsp-cluster.bootstrap-base-userdata-source}"
 }
