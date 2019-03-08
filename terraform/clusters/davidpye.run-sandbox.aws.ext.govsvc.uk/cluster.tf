@@ -22,7 +22,6 @@ module "gsp-cluster" {
     
     controller_instance_type = "m5d.large"
     worker_instance_type = "m5d.large"
-    
 
     addons = {
       ingress = 1
