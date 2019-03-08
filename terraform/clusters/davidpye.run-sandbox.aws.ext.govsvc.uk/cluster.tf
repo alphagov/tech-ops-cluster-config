@@ -9,15 +9,20 @@ terraform {
 data "aws_caller_identity" "current" {}
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
+#    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
+    source = "../../../../gsp-terraform-ignition//modules/gsp-cluster"
     cluster_name = "davidpye"
     dns_zone = "run-sandbox.aws.ext.govsandbox.uk"
     user_data_bucket_name = "gds-re-run-sandbox-terraform-state"
     user_data_bucket_region = "eu-west-2"
     k8s_tag = "v1.12.2"
+
     admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
+    sre_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/sre"]
+    
     controller_instance_type = "m5d.large"
     worker_instance_type = "m5d.large"
+    
 
     addons = {
       ingress = 1
@@ -29,9 +34,31 @@ module "gsp-cluster" {
 
     dev_user_arns = [
       "arn:aws:iam::622626885786:user/daniel.blair@digital.cabinet-office.gov.uk",
-      "arn:aws:iam::622626885786:user/david.pye@digital.cabinet-office.gov.uk",
+#      "arn:aws:iam::622626885786:user/david.pye@digital.cabinet-office.gov.uk",
     ]
-    dev_namespaces = ["kube-system", "flux-system"]
+    
+    dev_namespaces = [
+      "kube-system",
+      "flux-system",
+      "secrets-system"
+    ]
+}
+
+module "main-pipelines" {
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
+
+  namespace      = "${module.gsp-cluster.ci-system-release-name}-main"
+  chart_git      = "https://github.com/alphagov/gsp-ci-pipelines.git"
+  chart_ref      = "master"
+  chart_path     = "charts/pipelines"
+  cluster_name   = "${module.gsp-cluster.cluster-name}"
+  cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
+  addons_dir     = "addons/${module.gsp-cluster.cluster-name}"
+  values = <<HEREDOC
+    ecr:
+      registry: ${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com
+      region: eu-west-2
+HEREDOC
 }
 
 module "prototype-kit" {
