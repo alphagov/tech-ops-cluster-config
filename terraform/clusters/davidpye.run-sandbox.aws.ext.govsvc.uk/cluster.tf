@@ -18,7 +18,7 @@ module "gsp-cluster" {
     k8s_tag = "v1.12.2"
 
     admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
-    sre_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/sre"]
+  #  sre_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/sre"]
     
     controller_instance_type = "m5d.large"
     worker_instance_type = "m5d.large"
