@@ -18,7 +18,7 @@ module "gsp-cluster" {
     k8s_tag = "v1.12.2"
 
     admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
-    sre_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/sre"]
+#    sre_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/sre"]
     
     controller_instance_type = "m5d.large"
     worker_instance_type = "m5d.large"
@@ -33,13 +33,23 @@ module "gsp-cluster" {
 
     dev_user_arns = [
       "arn:aws:iam::622626885786:user/daniel.blair@digital.cabinet-office.gov.uk",
-#      "arn:aws:iam::622626885786:user/david.pye@digital.cabinet-office.gov.uk",
+      "arn:aws:iam::622626885786:user/david.pye@digital.cabinet-office.gov.uk",
     ]
     
     dev_namespaces = [
       "kube-system",
       "flux-system",
       "secrets-system"
+    ]
+
+    sre_user_arns = [
+        "arn:aws:iam::622626885786:user/sam.crang@digital.cabinet-office.gov.uk",
+        "arn:aws:iam::622626885786:user/daniel.blair@digital.cabinet-office.gov.uk",
+        "arn:aws:iam::622626885786:user/chris.farmiloe@digital.cabinet-office.gov.uk",
+        "arn:aws:iam::622626885786:user/rafal.proszowski@digital.cabinet-office.gov.uk",
+        "arn:aws:iam::622626885786:user/david.pye@digital.cabinet-office.gov.uk",
+        "arn:aws:iam::622626885786:user/stephen.ford@digital.cabinet-office.gov.uk",
+        "arn:aws:iam::622626885786:user/david.povey@digital.cabinet-office.gov.uk",
     ]
 }
 
