@@ -19,7 +19,7 @@ module "gsp-cluster" {
 
     admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
   #  sre_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/sre"]
-    
+  
     controller_instance_type = "m5d.large"
     worker_instance_type = "m5d.large"
 
@@ -35,7 +35,7 @@ module "gsp-cluster" {
       "arn:aws:iam::622626885786:user/daniel.blair@digital.cabinet-office.gov.uk",
       "arn:aws:iam::622626885786:user/david.pye@digital.cabinet-office.gov.uk",
     ]
-    
+  
     dev_namespaces = [
       "kube-system",
       "flux-system",
