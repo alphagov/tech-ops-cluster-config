@@ -69,8 +69,8 @@ module "gsp-cluster" {
       "18.130.144.30/32", # autom8 concourse
       "3.8.110.67/32",    # autom8 concourse
     ]
-    sealed_secrets_cert_pem        = "${data.terraform_remote_state.sealed_secrets_persistent_state.cert_pem}"
-    sealed_secrets_private_key_pem = "${data.terraform_remote_state.sealed_secrets_persistent_state.private_key_pem}"
+    sealed_secrets_cert_pem        = "${data.terraform_remote_state.persistent_state.sealed_secrets_cert_pem}"
+    sealed_secrets_private_key_pem = "${data.terraform_remote_state.persistent_state.sealed_secrets_private_key_pem}"
     vpc_id                         = "${data.terraform_remote_state.persistent_state.vpc_id}"
     private_subnet_ids             = "${data.terraform_remote_state.persistent_state.private_subnet_ids}"
     public_subnet_ids              = "${data.terraform_remote_state.persistent_state.public_subnet_ids}"
