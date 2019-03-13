@@ -182,6 +182,10 @@ resources:
     backend_config:
       <<: *terraform_backend_config
       key: ((account-name))/clusters/tools-persistent.tfstate
+    vars:
+      <<: *terraform_vars
+      splunk_hec_token: ((splunk_hec_token))
+      splunk_hec_url: ((splunk_hec_url))
 - name: tools-cluster
   type: terraform
   source:
@@ -211,6 +215,10 @@ resources:
     backend_config:
       <<: *terraform_backend_config
       key: ((account-name))/clusters/staging-persistent.tfstate
+    vars:
+      <<: *terraform_vars
+      splunk_hec_token: ((splunk_hec_token))
+      splunk_hec_url: ((splunk_hec_url))
 - name: staging-cluster
   type: terraform
   source:
@@ -242,6 +250,10 @@ resources:
     backend_config:
       <<: *terraform_backend_config
       key: ((account-name))/clusters/prod-persistent.tfstate
+    vars:
+      <<: *terraform_vars
+      splunk_hec_token: ((splunk_hec_token))
+      splunk_hec_url: ((splunk_hec_url))
 - name: prod-cluster
   type: terraform
   source:
