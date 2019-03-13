@@ -191,8 +191,8 @@ resources:
       key: ((account-name))/clusters/tools.tfstate
     vars:
       <<: *terraform_vars
-      cluster_state_bucket_name: cd-gsp-private-qndvvc
-      cluster_state_bucket_key: ((account-name))/clusters/tools-persistent.tfstate
+      persistent_state_bucket_name: cd-gsp-private-qndvvc
+      persistent_state_bucket_key: ((account-name))/clusters/tools-persistent.tfstate
 - name: tools-cluster-bootstrapper
   type: terraform
   source:
