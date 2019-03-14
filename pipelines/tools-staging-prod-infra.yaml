@@ -163,11 +163,6 @@ resources:
   source:
     uri: https://github.com/alphagov/gsp-teams.git
     branch: master
-    paths:
-    - "terraform/accounts/((account-name))/*"
-    - "terraform/accounts/((account-name))/persistent/**/*"
-    - "terraform/accounts/((account-name))/clusters/**/*"
-    - "terraform/modules/hsm/*"
 - name: common-infra
   type: terraform
   source:
