@@ -34,6 +34,7 @@ data "aws_caller_identity" "current" {}
 # Terraform state that persists between respins of the cluster. This Terraform state contains the VPC, HSM, persistent private keys etc
 data "terraform_remote_state" "persistent_state" {
   backend = "s3"
+  workspace = "verify"
 
   config {
     bucket = "${var.persistent_state_bucket_name}"
