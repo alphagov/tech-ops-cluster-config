@@ -401,6 +401,8 @@ jobs:
       params:
         <<: *apply_addons_task_params
         CLUSTER_NAME: tools
+        TF_VAR_persistent_state_bucket_name: cd-gsp-private-qndvvc
+        TF_VAR_persistent_state_bucket_key: ((account-name))/clusters/tools-persistent.tfstate
     input_mapping: {cluster-outputs: tools-cluster}
 - name: apply-addons-staging-cluster
   serial: true
@@ -417,6 +419,8 @@ jobs:
       params:
         <<: *apply_addons_task_params
         CLUSTER_NAME: staging
+        TF_VAR_persistent_state_bucket_name: cd-gsp-private-qndvvc
+        TF_VAR_persistent_state_bucket_key: ((account-name))/clusters/staging-persistent.tfstate
     input_mapping: {cluster-outputs: staging-cluster}
 - name: apply-addons-prod-cluster
   serial: true
@@ -433,6 +437,8 @@ jobs:
       params:
         <<: *apply_addons_task_params
         CLUSTER_NAME: prod
+        TF_VAR_persistent_state_bucket_name: cd-gsp-private-qndvvc
+        TF_VAR_persistent_state_bucket_key: ((account-name))/clusters/prod-persistent.tfstate
     input_mapping: {cluster-outputs: prod-cluster}
 
 - name: destroy-tools-cluster
