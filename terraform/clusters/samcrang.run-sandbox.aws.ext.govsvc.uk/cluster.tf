@@ -6,6 +6,16 @@ terraform {
   }
 }
 
+data "terraform_remote_state" "persistent_state" {
+  backend = "s3"
+
+  config {
+    bucket = "gds-re-run-sandbox-terraform-state"
+    key    = "samcrang.run-sandbox.aws.ext.govsvc.uk/persistent.tfstate"
+    region = "eu-west-2"
+  }
+}
+
 data "aws_caller_identity" "current" {}
 
 module "gsp-cluster" {
@@ -18,6 +28,14 @@ module "gsp-cluster" {
     admin_role_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin"]
     controller_instance_type = "m5d.large"
     worker_instance_type = "m5d.large"
+
+    sealed_secrets_cert_pem        = "${data.terraform_remote_state.persistent_state.sealed_secrets_cert_pem}"
+    sealed_secrets_private_key_pem = "${data.terraform_remote_state.persistent_state.sealed_secrets_private_key_pem}"
+    vpc_id                         = "${data.terraform_remote_state.persistent_state.vpc_id}"
+    private_subnet_ids             = "${data.terraform_remote_state.persistent_state.private_subnet_ids}"
+    public_subnet_ids              = "${data.terraform_remote_state.persistent_state.public_subnet_ids}"
+    host_cidr                      = "${data.terraform_remote_state.persistent_state.host_cidr}"
+    nat_gateway_public_ips         = "${data.terraform_remote_state.persistent_state.nat_gateway_public_ips}"
 
     addons = {
       ingress = 1
