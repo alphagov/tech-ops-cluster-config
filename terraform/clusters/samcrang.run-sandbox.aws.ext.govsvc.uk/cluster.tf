@@ -44,6 +44,8 @@ module "gsp-cluster" {
       ci = 1
       splunk = 0
     }
+
+    sre_user_arns = ["arn:aws:iam::622626885786:user/sam.crang@digital.cabinet-office.gov.uk"]
 }
 
 module "prototype-kit" {
