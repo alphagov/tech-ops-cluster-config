@@ -21,6 +21,11 @@ provider "aws" {
   }
 }
 
+variable "public-gpg-keys" {
+  type        = "string"
+  description = "Base64 JSON array of public gpg keys."
+}
+
 data "aws_caller_identity" "current" {}
 
 # Terraform state that persists between respins of the cluster. This Terraform state contains the VPC, HSM, persistent private keys etc
@@ -99,6 +104,8 @@ module "eidas-ci-pipelines" {
   cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
   addons_dir     = "addons/${module.gsp-cluster.cluster-name}"
   values = <<HEREDOC
+    github:
+      commit_verification_keys: ${base64decode(var.public-gpg-keys)}
     harbor:
       keys:
         ci: "${module.gsp-cluster.notary-ci-private-key}"
