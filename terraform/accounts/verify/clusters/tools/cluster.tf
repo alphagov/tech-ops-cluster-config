@@ -24,6 +24,7 @@ provider "aws" {
 variable "public-gpg-keys" {
   type        = "string"
   description = "Base64 JSON array of public gpg keys."
+  default     = "W10="
 }
 
 data "aws_caller_identity" "current" {}
