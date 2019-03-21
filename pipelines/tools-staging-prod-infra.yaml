@@ -139,7 +139,7 @@ terraform_source: &terraform_source
     region: eu-west-2
   vars: &terraform_vars
     aws_account_role_arn: ((account-role-arn))
-    public-gpg-keys: "W10="
+    public-gpg-keys: "W10=" # echo -n "[]" | base64
 
 
 
