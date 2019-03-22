@@ -51,7 +51,7 @@ data "terraform_remote_state" "persistent_state" {
 }
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=4a1d85a89c7b10f25bb1a583eab4d4845d01db92"
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=fbc2c7896bd1f519eaea73ca1ac90be02a13e349"
     cluster_name = "tools"
     controller_count = 3
     controller_instance_type = "m5d.large"
@@ -104,7 +104,7 @@ module "gsp-cluster" {
 }
 
 module "eidas-ci-pipelines" {
-  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release?ref=4a1d85a89c7b10f25bb1a583eab4d4845d01db92"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release?ref=fbc2c7896bd1f519eaea73ca1ac90be02a13e349"
 
   namespace      = "${module.gsp-cluster.ci-system-release-name}-main"
   chart_git      = "https://github.com/alphagov/verify-eidas-pipelines.git"
