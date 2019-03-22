@@ -55,7 +55,7 @@ apply_addons_task: &apply_addons_task
         -get=true \
         -input=false
       terraform workspace select "${ACCOUNT_NAME}"
-      terraform apply -var "public-gpg-keys=$(yq . ../../../users/*.yaml | jq -s '[.[] | select(.teams[] == "verify-tech-team-eidas") | .pub]' | base64)" -auto-approve
+      terraform apply -var "public-gpg-keys=$(yq . ../../../users/*.yaml | jq -s '[.[] | select(.teams[] | IN("verify-tech-team-eidas")) | .pub]' | base64)" -auto-approve
       echo "applying kubeyaml..."
       eval $(aws-assume-role $ACCOUNT_ROLE_ARN)
       until kubectl apply -R -f addons/; do
@@ -483,4 +483,3 @@ jobs:
       action: destroy
     get_params:
       action: destroy
-
