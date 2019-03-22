@@ -157,16 +157,28 @@ resource_types:
     repository: govsvc/terraform-resource
     tag: 0.13.0-beta.2
 
-
+- name: github
+  type: docker-image
+  source:
+    repository: "govsvc/concourse-github-resource"
+    tag: "0.0.1551114195"
 
 
 
 resources:
 
 - name: gsp-teams
-  type: git
+  type: github
   source:
     uri: https://github.com/alphagov/gsp-teams.git
+    organization: alphagov
+    repository: gsp-teams
+    github_api_token: ""
+    approvers:
+      - "samcrang"
+      - "paroxp"
+      - "chrisfarms"
+    required_approval_count: 2
     branch: master
     commit_verification_keys: ((public-gpg-keys))
 - name: common-infra
