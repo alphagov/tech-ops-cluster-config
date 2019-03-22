@@ -33,6 +33,8 @@ apply_addons_task: &apply_addons_task
     TF_VAR_aws_account_role_arn: ((account-role-arn))
     TF_VAR_splunk_hec_token: ((splunk_hec_token))
     TF_VAR_splunk_hec_url: ((splunk_hec_url))
+    TF_VAR_promotion_signing_key: ((ci-system-gpg-private))
+    TF_VAR_promotion_verification_key: ((ci-system-gpg-public))
   run:
     path: /bin/bash
     args:
@@ -140,6 +142,8 @@ terraform_source: &terraform_source
   vars: &terraform_vars
     aws_account_role_arn: ((account-role-arn))
     public-gpg-keys: "W10=" # echo -n "[]" | base64
+    promotion_signing_key: ((ci-system-gpg-private))
+    promotion_verification_key: ((ci-system-gpg-public))
 
 
 

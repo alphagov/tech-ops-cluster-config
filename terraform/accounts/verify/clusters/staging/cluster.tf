@@ -29,6 +29,11 @@ provider "aws" {
   }
 }
 
+variable "promotion_verification_key" {
+  type = "string"
+  description = "public gpg key used to verify git commits in flux-system"
+}
+
 data "aws_caller_identity" "current" {}
 
 # Terraform state that persists between respins of the cluster. This Terraform state contains the VPC, HSM, persistent private keys etc
@@ -111,6 +116,7 @@ module "test-proxy-node" {
   cluster_name   = "${module.gsp-cluster.cluster-name}"
   cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
   addons_dir     = "addons/${module.gsp-cluster.cluster-name}"
+  verification_keys = ["${var.promotion_verification_key}"]
 }
 
 output "bootstrap-base-userdata-source" {

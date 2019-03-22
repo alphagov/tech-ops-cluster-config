@@ -26,6 +26,16 @@ variable "public-gpg-keys" {
   description = "Base64 JSON array of public gpg keys."
 }
 
+variable "promotion_signing_key" {
+  type = "string"
+  description = "private gpg key used to sign git commits in ci-system"
+}
+
+variable "promotion_verification_key" {
+  type = "string"
+  description = "public gpg key used to verify git commits in flux-system"
+}
+
 data "aws_caller_identity" "current" {}
 
 # Terraform state that persists between respins of the cluster. This Terraform state contains the VPC, HSM, persistent private keys etc
@@ -103,7 +113,10 @@ module "eidas-ci-pipelines" {
   cluster_name   = "${module.gsp-cluster.cluster-name}"
   cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
   addons_dir     = "addons/${module.gsp-cluster.cluster-name}"
+  verification_keys = ["${var.promotion_verification_key}"]
+  
   values = <<HEREDOC
+    promotionSigningKey: ${format("%#v", var.promotion_signing_key)}
     github:
       commit_verification_keys: ${base64decode(var.public-gpg-keys)}
     harbor:
