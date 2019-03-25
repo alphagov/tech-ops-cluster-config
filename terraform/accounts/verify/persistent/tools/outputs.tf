@@ -6,6 +6,7 @@ output "sealed_secrets_cert_pem" {
 output "sealed_secrets_private_key_pem" {
   description = "Sealed secrets private key"
   value       = "${module.gsp-persistent.sealed_secrets_private_key_pem}"
+  sensitive   = true
 }
 
 output "private_subnet_ids" {
