@@ -26,6 +26,16 @@ variable "public-gpg-keys" {
   description = "Base64 JSON array of public gpg keys."
 }
 
+variable "promotion_signing_key" {
+  type = "string"
+  description = "private gpg key used to sign git commits in ci-system"
+}
+
+variable "promotion_verification_key" {
+  type = "string"
+  description = "public gpg key used to verify git commits in flux-system"
+}
+
 data "aws_caller_identity" "current" {}
 
 # Terraform state that persists between respins of the cluster. This Terraform state contains the VPC, HSM, persistent private keys etc
@@ -41,7 +51,7 @@ data "terraform_remote_state" "persistent_state" {
 }
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=4a1d85a89c7b10f25bb1a583eab4d4845d01db92"
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=fbc2c7896bd1f519eaea73ca1ac90be02a13e349"
     cluster_name = "tools"
     controller_count = 3
     controller_instance_type = "m5d.large"
@@ -94,7 +104,7 @@ module "gsp-cluster" {
 }
 
 module "eidas-ci-pipelines" {
-  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release?ref=4a1d85a89c7b10f25bb1a583eab4d4845d01db92"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release?ref=fbc2c7896bd1f519eaea73ca1ac90be02a13e349"
 
   namespace      = "${module.gsp-cluster.ci-system-release-name}-main"
   chart_git      = "https://github.com/alphagov/verify-eidas-pipelines.git"
@@ -103,7 +113,10 @@ module "eidas-ci-pipelines" {
   cluster_name   = "${module.gsp-cluster.cluster-name}"
   cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
   addons_dir     = "addons/${module.gsp-cluster.cluster-name}"
+  verification_keys = ["${var.promotion_verification_key}"]
+  
   values = <<HEREDOC
+    promotionSigningKey: ${format("%#v", var.promotion_signing_key)}
     github:
       commit_verification_keys: ${base64decode(var.public-gpg-keys)}
     harbor:

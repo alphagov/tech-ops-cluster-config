@@ -63,7 +63,7 @@ resource "aws_cloudhsm_v2_hsm" "cloudhsm_v2_hsm" {
 }
 
 module "lambda_splunk_forwarder" {
-  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/lambda_splunk_forwarder?ref=4a1d85a89c7b10f25bb1a583eab4d4845d01db92"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/lambda_splunk_forwarder?ref=fbc2c7896bd1f519eaea73ca1ac90be02a13e349"
 
   enabled                   = "${var.splunk}"
   name                      = "hsm"

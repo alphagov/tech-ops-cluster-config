@@ -29,6 +29,11 @@ provider "aws" {
   }
 }
 
+variable "promotion_verification_key" {
+  type = "string"
+  description = "public gpg key used to verify git commits in flux-system"
+}
+
 data "aws_caller_identity" "current" {}
 
 # Terraform state that persists between respins of the cluster. This Terraform state contains the VPC, HSM, persistent private keys etc
@@ -44,7 +49,7 @@ data "terraform_remote_state" "persistent_state" {
 }
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=4a1d85a89c7b10f25bb1a583eab4d4845d01db92"
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=fbc2c7896bd1f519eaea73ca1ac90be02a13e349"
     cluster_name = "staging"
     controller_count = 3
     controller_instance_type = "m5d.large"
@@ -101,7 +106,7 @@ module "gsp-cluster" {
 }
 
 module "test-proxy-node" {
-  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release?ref=4a1d85a89c7b10f25bb1a583eab4d4845d01db92"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release?ref=fbc2c7896bd1f519eaea73ca1ac90be02a13e349"
 
   namespace      = "test-proxy-node"
   release_name   = "test" # Has to be changed later down the line.
@@ -111,6 +116,7 @@ module "test-proxy-node" {
   cluster_name   = "${module.gsp-cluster.cluster-name}"
   cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
   addons_dir     = "addons/${module.gsp-cluster.cluster-name}"
+  verification_keys = ["${var.promotion_verification_key}"]
 }
 
 output "bootstrap-base-userdata-source" {
