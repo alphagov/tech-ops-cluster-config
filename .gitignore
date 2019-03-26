@@ -87,7 +87,7 @@ $RECYCLE.BIN/
 ## Project specific
 .terraform
 
-terraform/clusters/**/addons
-terraform/clusters/**/bootkube-assets
-terraform/clusters/**/secrets.tfvars
-terraform/clusters/**/kubeconfig
+terraform/accounts/run-sandbox/clusters/**/addons
+terraform/accounts/run-sandbox/clusters/**/bootkube-assets
+terraform/accounts/run-sandbox/clusters/**/secrets.tfvars
+terraform/accounts/run-sandbox/clusters/**/kubeconfig
