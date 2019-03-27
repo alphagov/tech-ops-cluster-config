@@ -17,4 +17,5 @@ module "hsm" {
   splunk_hec_url   = "${var.splunk_hec_url}"
   splunk_hec_token = "${var.splunk_hec_token}"
   splunk_index     = "verify_notification_hsm"
+  splunk           = 1
 }
