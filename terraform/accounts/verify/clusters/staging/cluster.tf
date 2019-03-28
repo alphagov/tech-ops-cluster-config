@@ -117,6 +117,10 @@ module "test-proxy-node" {
   cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
   addons_dir     = "addons/${module.gsp-cluster.cluster-name}"
   verification_keys = ["${var.promotion_verification_key}"]
+  values = <<HEREDOC
+    stubConnector:
+      enabled: true
+HEREDOC
 }
 
 output "bootstrap-base-userdata-source" {
