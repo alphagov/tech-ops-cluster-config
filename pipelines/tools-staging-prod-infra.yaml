@@ -178,6 +178,7 @@ resources:
       - "samcrang"
       - "paroxp"
       - "chrisfarms"
+      - "tlwr"
     required_approval_count: 2
     branch: master
     commit_verification_keys: ((public-gpg-keys))
