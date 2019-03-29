@@ -50,6 +50,7 @@ data "terraform_remote_state" "persistent_state" {
 
 module "gsp-cluster" {
     source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=272fd3ff095f63ad4914ea31c3dafc125079093b"
+    account_name = "verify"
     cluster_name = "staging"
     controller_count = 3
     controller_instance_type = "m5d.large"
