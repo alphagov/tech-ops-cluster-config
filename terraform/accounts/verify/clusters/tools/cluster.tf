@@ -108,13 +108,13 @@ module "eidas-ci-pipelines" {
 
   namespace      = "${module.gsp-cluster.ci-system-release-name}-main"
   chart_git      = "https://github.com/alphagov/verify-eidas-pipelines.git"
-  chart_ref      = "master"
+  chart_ref      = "production"
   chart_path     = "."
   cluster_name   = "${module.gsp-cluster.cluster-name}"
   cluster_domain = "${module.gsp-cluster.cluster-domain-suffix}"
   addons_dir     = "addons/${module.gsp-cluster.cluster-name}"
   verification_keys = ["${var.promotion_verification_key}"]
-  
+
   values = <<HEREDOC
     promotionSigningKey: ${format("%#v", var.promotion_signing_key)}
     github:
