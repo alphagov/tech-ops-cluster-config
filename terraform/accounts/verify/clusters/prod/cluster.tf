@@ -76,6 +76,10 @@ module "gsp-cluster" {
       ci = 0
       splunk = 0
     }
+
+    github_client_id     = ""
+    github_client_secret = ""
+
     codecommit_init_role_arn = "${var.aws_account_role_arn}"
 }
 

@@ -86,6 +86,9 @@ module "gsp-cluster" {
     splunk_hec_token = "${var.splunk_hec_token}"
     splunk_index = "verify_eidas_notification_k8s"
 
+    github_client_id     = ""
+    github_client_secret = ""
+
     addons = {
       ingress = 1
       monitoring = 1

@@ -14,6 +14,14 @@ variable "persistent_state_bucket_key" {
   type = "string"
 }
 
+variable "github_client_id" {
+  type = "string"
+}
+
+variable "github_client_secret" {
+  type = "string"
+}
+
 provider "aws" {
   region = "eu-west-2"
   assume_role {
@@ -91,6 +99,10 @@ module "gsp-cluster" {
       ci = 1
       splunk = 0
     }
+
+    github_client_id     = "${var.github_client_id}"
+    github_client_secret = "${var.github_client_secret}"
+
     codecommit_init_role_arn = "${var.aws_account_role_arn}"
     dev_user_arns = [
       "arn:aws:iam::622626885786:user/karol.gancarz@digital.cabinet-office.gov.uk",
