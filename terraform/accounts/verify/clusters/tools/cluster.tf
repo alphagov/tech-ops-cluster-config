@@ -100,6 +100,7 @@ module "gsp-cluster" {
       splunk = 0
     }
 
+    github_teams         = ["alphagov:re-gsp", "alphagov:verify-tech-team-eidas"]
     github_client_id     = "${var.github_client_id}"
     github_client_secret = "${var.github_client_secret}"
 
