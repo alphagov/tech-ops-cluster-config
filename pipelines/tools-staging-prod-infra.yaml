@@ -2,12 +2,14 @@ groups:
 - name: provision
   jobs:
   - terraform
-  - bootstrap-tools-cluster
   - apply-addons-tools-cluster
-  - bootstrap-staging-cluster
   - apply-addons-staging-cluster
-  - bootstrap-prod-cluster
   - apply-addons-prod-cluster
+- name: bootstrap
+  jobs:
+  - bootstrap-tools-cluster
+  - bootstrap-staging-cluster
+  - bootstrap-prod-cluster
 - name: destroy
   jobs:
   - destroy-tools-cluster
@@ -339,9 +341,7 @@ jobs:
   serial: true
   plan:
   - get: gsp-teams
-    passed: ["terraform"]
   - get: tools-cluster
-    passed: ["terraform"]
   - put: tools-cluster-bootstrapper
     params:
       env_name: ((account-name))
@@ -363,9 +363,7 @@ jobs:
   serial: true
   plan:
   - get: gsp-teams
-    passed: ["terraform"]
   - get: staging-cluster
-    passed: ["terraform"]
   - put: staging-cluster-bootstrapper
     params:
       env_name: ((account-name))
@@ -387,9 +385,7 @@ jobs:
   serial: true
   plan:
   - get: gsp-teams
-    passed: ["terraform"]
   - get: prod-cluster
-    passed: ["terraform"]
   - put: prod-cluster-bootstrapper
     params:
       env_name: ((account-name))
@@ -416,7 +412,7 @@ jobs:
     trigger: true
     passed: ["terraform"]
   - get: tools-cluster
-    passed: ["bootstrap-tools-cluster"]
+    passed: ["terraform"]
   - task: apply-addons
     timeout: 30m
     config:
@@ -434,7 +430,7 @@ jobs:
     trigger: true
     passed: ["terraform"]
   - get: staging-cluster
-    passed: ["bootstrap-staging-cluster"]
+    passed: ["terraform"]
   - task: apply-addons
     timeout: 30m
     config:
@@ -452,7 +448,7 @@ jobs:
     trigger: true
     passed: ["terraform"]
   - get: prod-cluster
-    passed: ["bootstrap-prod-cluster"]
+    passed: ["terraform"]
   - task: apply-addons
     timeout: 30m
     config:
