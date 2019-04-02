@@ -36,7 +36,7 @@ data "terraform_remote_state" "persistent_state" {
 }
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=c6b20c9fdae3d3d37c4c759152226f5c6d566468"
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=f248feb275df0f7425d762783ef8fb67e8cccc6b"
     cluster_name = "prod"
     controller_count = 3
     controller_instance_type = "m5d.large"
