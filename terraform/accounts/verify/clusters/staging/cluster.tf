@@ -49,7 +49,7 @@ data "terraform_remote_state" "persistent_state" {
 }
 
 module "gsp-cluster" {
-    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=6bd87446ae528e07c63f2e84c95a712e5c6b3864"
+    source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=7e322a41cb4c4d45cd36d3a4ee301cd127b95a9a"
     account_name = "verify"
     cluster_name = "staging"
     controller_count = 3
@@ -110,7 +110,7 @@ module "gsp-cluster" {
 }
 
 module "test-proxy-node" {
-  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release?ref=6bd87446ae528e07c63f2e84c95a712e5c6b3864"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release?ref=7e322a41cb4c4d45cd36d3a4ee301cd127b95a9a"
 
   namespace      = "test-proxy-node"
   release_name   = "test" # Has to be changed later down the line.

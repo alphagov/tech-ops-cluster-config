@@ -33,7 +33,7 @@ resource "local_file" "admin-kubeconfig" {
 }
 
 module "k8s-bootstrap" {
-  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/k8s-bootstrap?ref=6bd87446ae528e07c63f2e84c95a712e5c6b3864"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/k8s-bootstrap?ref=7e322a41cb4c4d45cd36d3a4ee301cd127b95a9a"
   bootstrap_base_userdata_source       = "${data.terraform_remote_state.cluster.bootstrap-base-userdata-source}"
   bootstrap_base_userdata_verification = "${data.terraform_remote_state.cluster.bootstrap-base-userdata-verification}"
   user_data_bucket_name                = "${data.terraform_remote_state.cluster.user-data-bucket-name}"
