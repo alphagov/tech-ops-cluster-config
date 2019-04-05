@@ -1,10 +1,10 @@
 module "gsp-network" {
-  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-network?ref=6bd87446ae528e07c63f2e84c95a712e5c6b3864"
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-network?ref=7e322a41cb4c4d45cd36d3a4ee301cd127b95a9a"
   cluster_name = "staging"
 }
 
 module "gsp-persistent" {
-  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-persistent?ref=6bd87446ae528e07c63f2e84c95a712e5c6b3864"
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-persistent?ref=7e322a41cb4c4d45cd36d3a4ee301cd127b95a9a"
   cluster_name = "${module.gsp-network.cluster-name}"
   dns_zone     = "verify.govsvc.uk"
 }
