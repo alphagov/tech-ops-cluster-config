@@ -21,6 +21,7 @@ data "aws_route53_zone" "apex" {
 
 resource "aws_route53_zone" "subdomain" {
   name = "${var.name}.govsvc.uk"
+  force_destroy = true
 }
 
 resource "aws_route53_record" "ns" {
