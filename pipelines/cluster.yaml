@@ -1,35 +1,48 @@
+
 terraform_source: &terraform_source
   env_name: ((account-name))
   backend_type: s3
   backend_config: &terraform_backend_config
     bucket: cd-gsp-private-qndvvc
     region: eu-west-2
-  vars: &terraform_vars
+  vars:
+    account_name: ((account-name))
+    cluster_name: ((cluster-name))
+    dns_zone: ((account-name)).govsvc.uk
     aws_account_role_arn: ((account-role-arn))
     public-gpg-keys: "W10=" # echo -n "[]" | base64
     promotion_signing_key: ((ci-system-gpg-private))
     promotion_verification_key: ((ci-system-gpg-public))
-    github_client_id: PLACEHOLDER
-    github_client_secret: PLACEHOLDER
+    github_client_id: ((github-client-id))
+    github_client_secret: ((github-client-secret))
+    splunk_hec_token: ((splunk_hec_token))
+    splunk_hec_url: ((splunk_hec_url))
+    persistent_state_workspace: ((account-name))
+    persistent_state_bucket_name: cd-gsp-private-qndvvc
+    persistent_state_bucket_key: persistent.tfstate
+
 task_image_resource: &task_image_resource
   type: docker-image
   source: {repository: "govsvc/task-toolbox", tag: "1.0.0"}
+
 apply_addons_task: &apply_addons_task
   platform: linux
   image_resource: *task_image_resource
-  params: &apply_addons_task_params
+  params:
     ACCOUNT_ROLE_ARN: ((account-role-arn))
     ACCOUNT_NAME: ((account-name))
     CLUSTER_NAME: ((cluster-name))
     TERRAFORM_BUCKET: cd-gsp-private-qndvvc
     TERRAFORM_REGION: eu-west-2
     TF_VAR_aws_account_role_arn: ((account-role-arn))
-    TF_VAR_splunk_hec_token: PLACEHOLDER
+    TF_VAR_splunk_hec_token: ((splunk_hec_token))
     TF_VAR_splunk_hec_url: ((splunk_hec_url))
     TF_VAR_promotion_signing_key: ((ci-system-gpg-private))
     TF_VAR_promotion_verification_key: ((ci-system-gpg-public))
-    TF_VAR_github_client_id: PLACEHOLDER
-    TF_VAR_github_client_secret: PLACEHOLDER
+    TF_VAR_github_client_id: ((github-client-id))
+    TF_VAR_github_client_secret: ((github-client-secret))
+    TF_VAR_persistent_state_bucket_name: cd-gsp-private-qndvvc
+    TF_VAR_persistent_state_bucket_key: persistent.tfstate
   run:
     path: /bin/bash
     args:
@@ -40,10 +53,10 @@ apply_addons_task: &apply_addons_task
       jq -r '."kubeconfig"' cluster-outputs/metadata > kubeconfig
       export KUBECONFIG=$(pwd)/kubeconfig
       echo "generating kubeyaml addons with terraform..."
-      cd "gsp-teams/terraform/accounts/${ACCOUNT_NAME}/clusters/${CLUSTER_NAME}"
+      cd "gsp-teams/terraform/accounts/${ACCOUNT_NAME}/cluster"
       terraform init \
         -backend-config="bucket=${TERRAFORM_BUCKET}" \
-        -backend-config="key=${ACCOUNT_NAME}/clusters/${CLUSTER_NAME}.tfstate" \
+        -backend-config="key=cluster.tfstate" \
         -backend-config="region=${TERRAFORM_REGION}" \
         -backend=true \
         -force-copy \
@@ -69,14 +82,16 @@ apply_addons_task: &apply_addons_task
   inputs:
   - name: cluster-outputs
   - name: gsp-teams
+
+
 drain_cluster_task: &drain_cluster_task
   platform: linux
   image_resource: *task_image_resource
-  params: &drain_cluster_task_params
+  params:
     ACCOUNT_ROLE_ARN: ((account-role-arn))
     AWS_REGION: eu-west-2
     AWS_DEFAULT_REGION: eu-west-2
-    CLUSTER_NAME: drb-eks-test
+    CLUSTER_NAME: ((cluster-name))
   run:
     path: /bin/bash
     args:
@@ -87,7 +102,7 @@ drain_cluster_task: &drain_cluster_task
       eval $(aws-assume-role $ACCOUNT_ROLE_ARN)
 
       echo "fetching kubeconfig from aws..."
-      aws eks update-kubeconfig --name drb-eks-test --kubeconfig ./kubeconfig
+      aws eks update-kubeconfig --name "${CLUSTER_NAME}" --kubeconfig ./kubeconfig
       export KUBECONFIG=$(pwd)/kubeconfig
 
       echo "fetching cluster VPC ID..."
@@ -117,7 +132,6 @@ drain_cluster_task: &drain_cluster_task
           aws ec2 wait instance-terminated --instance-ids $INSTANCES
         fi
       done
-
   inputs:
   - name: cluster-outputs
   - name: gsp-teams
@@ -136,7 +150,7 @@ resource_types:
 
 resources:
 - name: gsp-teams
-  type: git
+  type: git # FIXME: should be github-resource
   source:
     uri: https://github.com/alphagov/gsp-teams.git
     organization: alphagov
@@ -151,30 +165,27 @@ resources:
     required_approval_count: 2
     branch: eks-firebreak
     commit_verification_keys: ((public-gpg-keys))
+- name: bootstrap
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: common.tfstate
 - name: persistent
   type: terraform
   source:
     <<: *terraform_source
     backend_config:
       <<: *terraform_backend_config
-      key: ((account-name))/clusters/((cluster-name))-persistent.tfstate
-    vars:
-      <<: *terraform_vars
-      splunk_hec_token: PLACEHOLDER
-      splunk_hec_url: ((splunk_hec_url))
+      key: persistent.tfstate
 - name: cluster
   type: terraform
   source:
     <<: *terraform_source
     backend_config:
       <<: *terraform_backend_config
-      key: ((account-name))/clusters/((cluster-name)).tfstate
-    vars:
-      <<: *terraform_vars
-      persistent_state_bucket_name: cd-gsp-private-qndvvc
-      persistent_state_bucket_key: ((account-name))/clusters/((cluster-name))-persistent.tfstate
-      splunk_hec_token: PLACEHOLDER
-      splunk_hec_url: ((splunk_hec_url))
+      key: cluster.tfstate
 
 jobs:
 - name: terraform
@@ -182,14 +193,18 @@ jobs:
   plan:
   - get: gsp-teams
     trigger: true
+  - put: bootstrap
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/bootstrap
   - put: persistent
     params:
       env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/persistent/((cluster-name))/
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/persistent
   - put: cluster
     params:
       env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/((cluster-name))/
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/cluster
 - name: apply-addons
   serial: true
   plan:
@@ -201,12 +216,7 @@ jobs:
     passed: ["terraform"]
   - task: apply-addons
     timeout: 30m
-    config:
-      <<: *apply_addons_task
-      params:
-        <<: *apply_addons_task_params
-        TF_VAR_persistent_state_bucket_name: cd-gsp-private-qndvvc
-        TF_VAR_persistent_state_bucket_key: ((account-name))/clusters/((cluster-name))-persistent.tfstate
+    config: *apply_addons_task
     input_mapping: {cluster-outputs: cluster}
 - name: destroy-cluster
   serial: true
@@ -217,17 +227,12 @@ jobs:
     passed: ["apply-addons"]
   - task: drain-cluster
     timeout: 30m
-    config:
-      <<: *drain_cluster_task
-      params:
-        <<: *drain_cluster_task_params
-        TF_VAR_persistent_state_bucket_name: cd-gsp-private-qndvvc
-        TF_VAR_persistent_state_bucket_key: ((account-name))/clusters/((cluster-name))-persistent.tfstate
+    config: *drain_cluster_task
     input_mapping: {cluster-outputs: cluster}
   - put: cluster
     params:
       env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/((cluster-name))/
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/cluster
       action: destroy
     get_params:
       action: destroy
@@ -235,13 +240,14 @@ jobs:
   serial: true
   plan:
   - get: gsp-teams
+    trigger: true
     passed: ["destroy-cluster"]
   - get: persistent
     passed: ["terraform"]
   - put: persistent
     params:
       action: destroy
-      env_name: run-sandbox
-      terraform_source: gsp-teams/terraform/accounts/run-sandbox/persistent/drb-eks-test.run-sandbox.aws.ext.govsandbox.uk/
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/persistent
     get_params:
       action: destroy

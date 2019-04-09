@@ -2,26 +2,6 @@ terraform {
   backend "s3" {}
 }
 
-variable "aws_account_role_arn" {
-  type = "string"
-}
-
-variable "splunk_hec_url" {
-  type = "string"
-}
-
-variable "splunk_hec_token" {
-  type = "string"
-}
-
-variable "persistent_state_bucket_name" {
-  type = "string"
-}
-
-variable "persistent_state_bucket_key" {
-  type = "string"
-}
-
 provider "aws" {
   region = "eu-west-2"
 
@@ -32,7 +12,7 @@ provider "aws" {
 
 data "terraform_remote_state" "persistent_state" {
   backend   = "s3"
-  workspace = "run-sandbox"
+  workspace = "${var.persistent_state_workspace}"
 
   config {
     bucket = "${var.persistent_state_bucket_name}"
@@ -45,13 +25,17 @@ data "aws_caller_identity" "current" {}
 
 module "gsp-cluster" {
   source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=eks-firebreak"
-  account_name = "run-sandbox"
-  cluster_name = "drb-eks-test"
-  dns_zone     = "run-sandbox.aws.ext.govsandbox.uk"
+  account_name = "${var.account_name}"
+  cluster_name = "${var.cluster_name}"
+  dns_zone     = "${var.dns_zone}"
 
   admin_role_arns = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/deployer",
+  ]
+
+  sre_user_arns = [
+    "arn:aws:iam::622626885786:user/daniel.blair@digital.cabinet-office.gov.uk"
   ]
 
   gds_external_cidrs = [
@@ -67,7 +51,9 @@ module "gsp-cluster" {
   ]
 
   worker_instance_type = "m5.large"
-  worker_count         = "2"
+  worker_count         = "3"
+  ci_worker_instance_type = "t3.medium"
+  ci_worker_count         = "3"
 
   addons = {}
 
@@ -82,9 +68,8 @@ module "gsp-cluster" {
   splunk_index                   = "run_sandbox_k8s"
 
   codecommit_init_role_arn = "${var.aws_account_role_arn}"
-  sre_user_arns            = ["arn:aws:iam::622626885786:user/daniel.blair@digital.cabinet-office.gov.uk"]
-  github_client_id         = ""
-  github_client_secret     = ""
+  github_client_id         = "${var.github_client_id}"
+  github_client_secret     = "${var.github_client_secret}"
 }
 
 module "prototype-kit" {

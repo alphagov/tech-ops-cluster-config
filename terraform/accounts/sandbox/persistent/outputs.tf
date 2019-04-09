@@ -25,7 +25,3 @@ output "nat_gateway_public_ips" {
   value = ["${module.gsp-network.nat_gateway_public_ips}"]
 }
 
-output "host_cidr" {
-  description = "CIDR IPv4 range to assign to EC2 nodes"
-  value       = "${module.gsp-network.host_cidr}"
-}
