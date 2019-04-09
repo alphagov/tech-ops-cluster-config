@@ -83,40 +83,41 @@ drain_cluster_task: &drain_cluster_task
     - -eu
     - -c
     - |
+      echo "assuming aws deployer role..."
       eval $(aws-assume-role $ACCOUNT_ROLE_ARN)
-      echo "fetching kubeconfig from AWS..."
+
+      echo "fetching kubeconfig from aws..."
       aws eks update-kubeconfig --name drb-eks-test --kubeconfig ./kubeconfig
       export KUBECONFIG=$(pwd)/kubeconfig
 
+      echo "fetching cluster VPC ID..."
+      CLUSTER_VPC_ID=$(aws eks describe-cluster --name "${CLUSTER_NAME}" | jq .cluster.resourcesVpcConfig.vpcId -r)
+
+      echo "deleting any LoadBalancer services..."
+      kubectl get svc -o json --all-namespaces | jq '.items[] | select(.spec.type == "LoadBalancer")' | kubectl delete -f - --wait
+      echo "waiting for any ELBs that belong to cluster to shutdown..."
+      ELB_ARNS_JSON=$(aws elbv2 describe-load-balancers | jq "{LoadBalancerArns: [ .LoadBalancers[] | select(.VpcId == \"${CLUSTER_VPC_ID}\") | .LoadBalancerArn ]}" -c)
+      if [[ "$(echo $ELB_ARNS_JSON | jq '.LoadBalancerArns | length')" != "0" ]]; then
+        aws elbv2 wait load-balancers-deleted --cli-input-json "${ELB_ARNS_JSON}"
+      fi
+
+      echo "checking for ASGs that belong to this cluster..."
       CLUSTER_ASGS=$(aws autoscaling describe-auto-scaling-groups | jq -r ".AutoScalingGroups[] | select( .Tags[].Key == \"kubernetes.io/cluster/${CLUSTER_NAME}\")" | jq -r .AutoScalingGroupName)
       for ASG_NAME in $CLUSTER_ASGS; do
-
-        echo "scaling $ASG_NAME to zero"
+        echo "scaling ${ASG_NAME} to zero..."
         aws autoscaling update-auto-scaling-group --auto-scaling-group-name "${ASG_NAME}" --min-size 0 --max-size 0 --desired-capacity 0
+      done
 
-        echo "fetching number of instances remaining in $ASG_NAME"
-        INSTANCES=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names "$ASG_NAME" --query "AutoScalingGroups[0].Instances[*].InstanceId" --output text)
-
+      echo "checking if any nodes are still running ..."
+      for ASG_NAME in $CLUSTER_ASGS; do
+        echo "checking number of instances remaining in ${ASG_NAME}..."
+        INSTANCES=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names "${ASG_NAME}" --query "AutoScalingGroups[0].Instances[*].InstanceId" --output text)
         if [ ! -z "$INSTANCES" ]; then
-          echo "waiting for following instances to terminate in $ASG_NAME: $INSTANCES"
+          echo "waiting for following instances to terminate in ${ASG_NAME}: ${INSTANCES}..."
           aws ec2 wait instance-terminated --instance-ids $INSTANCES
-          echo "$INSTANCES instances removed from $ASG_NAME"
         fi
-
       done
 
-      echo "deleting all namespaces..."
-      # this will always error, due to "kube-system" and "default" being protected namespaces
-      kubectl delete namespace --all || true
-      function terminating_count() {
-        kubectl get pods -o json --all-namespaces | jq -r '.items[].status.phase' | grep Terminating | wc -l | awk '{ print $1 }'
-      }
-      sleep 30s
-      while [[ "$(terminating_count)" != "0" ]]; do
-        echo "waiting for $(terminating_count) pods to terminate"
-        sleep 3
-      done
-      kubectl get pods --all-namespaces
   inputs:
   - name: cluster-outputs
   - name: gsp-teams
