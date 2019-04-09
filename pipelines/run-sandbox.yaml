@@ -190,13 +190,14 @@ jobs:
     params:
       env_name: ((account-name))
       terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/((cluster-name))/
-- name: apply-addons-tools-cluster
+- name: apply-addons
   serial: true
   plan:
   - get: gsp-teams
     trigger: true
     passed: ["terraform"]
   - get: cluster
+    trigger: true
     passed: ["terraform"]
   - task: apply-addons
     timeout: 30m
@@ -211,7 +212,9 @@ jobs:
   serial: true
   plan:
   - get: gsp-teams
+    passed: ["apply-addons"]
   - get: cluster
+    passed: ["apply-addons"]
   - task: drain-cluster
     timeout: 30m
     config:
@@ -232,7 +235,9 @@ jobs:
   serial: true
   plan:
   - get: gsp-teams
+    passed: ["destroy-cluster"]
   - get: persistent
+    passed: ["terraform"]
   - put: persistent
     params:
       action: destroy
