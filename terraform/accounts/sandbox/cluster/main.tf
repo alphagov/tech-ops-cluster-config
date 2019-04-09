@@ -50,12 +50,10 @@ module "gsp-cluster" {
     "3.8.110.67/32",     # autom8 concourse
   ]
 
-  worker_instance_type = "m5.large"
-  worker_count         = "3"
-  ci_worker_instance_type = "t3.medium"
-  ci_worker_count         = "3"
-
-  addons = {}
+  worker_instance_type = "${var.worker_instance_type}"
+  worker_count         = "${var.worker_count}"
+  ci_worker_instance_type = "${var.ci_worker_instance_type}"
+  ci_worker_count         = "${var.ci_worker_count}"
 
   sealed_secrets_cert_pem        = "${data.terraform_remote_state.persistent_state.sealed_secrets_cert_pem}"
   sealed_secrets_private_key_pem = "${data.terraform_remote_state.persistent_state.sealed_secrets_private_key_pem}"
@@ -65,7 +63,7 @@ module "gsp-cluster" {
   nat_gateway_public_ips         = "${data.terraform_remote_state.persistent_state.nat_gateway_public_ips}"
   splunk_hec_url                 = "${var.splunk_hec_url}"
   splunk_hec_token               = "${var.splunk_hec_token}"
-  splunk_index                   = "run_sandbox_k8s"
+  splunk_index                   = "${var.splunk_index}"
 
   codecommit_init_role_arn = "${var.aws_account_role_arn}"
   github_client_id         = "${var.github_client_id}"

@@ -41,3 +41,28 @@ variable "splunk_hec_url" {
 variable "splunk_hec_token" {
   type = "string"
 }
+
+variable "splunk_index" {
+  type = "string"
+  default = "run_sandbox_k8s"
+}
+
+variable "worker_instance_type" {
+  type = "string"
+  default = "m5.large"
+}
+
+variable "worker_count" {
+  type = "string"
+  default = "3"
+}
+
+variable "ci_worker_instance_type" {
+  type = "string"
+  default = "m5.large"
+}
+
+variable "ci_worker_count" {
+  type = "string"
+  default = "3"
+}
