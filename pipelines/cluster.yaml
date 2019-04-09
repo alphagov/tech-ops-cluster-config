@@ -168,7 +168,7 @@ resources:
     required_approval_count: 2
     branch: eks-firebreak
     commit_verification_keys: ((trusted-developer-keys))
-- name: bootstrap
+- name: common
   type: terraform
   source:
     <<: *terraform_source
@@ -191,19 +191,31 @@ resources:
       key: cluster.tfstate
 
 jobs:
-- name: terraform
+- name: create-common
   serial: true
   plan:
   - get: gsp-teams
     trigger: true
-  - put: bootstrap
+  - put: common
     params:
       env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/bootstrap
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/common
+- name: create-persistent
+  serial: true
+  plan:
+  - get: gsp-teams
+    trigger: true
+    passed: ["create-common"]
   - put: persistent
     params:
       env_name: ((account-name))
       terraform_source: gsp-teams/terraform/accounts/((account-name))/persistent
+- name: create-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    trigger: true
+    passed: ["create-persistent"]
   - put: cluster
     params:
       env_name: ((account-name))
@@ -213,10 +225,10 @@ jobs:
   plan:
   - get: gsp-teams
     trigger: true
-    passed: ["terraform"]
+    passed: ["create-cluster"]
   - get: cluster
     trigger: true
-    passed: ["terraform"]
+    passed: ["create-cluster"]
   - task: apply-addons
     timeout: 30m
     config: *apply_addons_task
@@ -246,11 +258,26 @@ jobs:
     trigger: true
     passed: ["destroy-cluster"]
   - get: persistent
-    passed: ["terraform"]
+    passed: ["create-persistent"]
   - put: persistent
     params:
       action: destroy
       env_name: ((account-name))
       terraform_source: gsp-teams/terraform/accounts/((account-name))/persistent
+    get_params:
+      action: destroy
+- name: destroy-common
+  serial: true
+  plan:
+  - get: gsp-teams
+    trigger: true
+    passed: ["destroy-persistent"]
+  - get: common
+    passed: ["create-common"]
+  - put: common
+    params:
+      action: destroy
+      env_name: ((account-name))
+      terraform_source: gsp-teams/terraform/accounts/((account-name))/common
     get_params:
       action: destroy
