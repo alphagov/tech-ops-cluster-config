@@ -4,7 +4,7 @@
 
 You need the following dependencies installed on your laptop: [`yq`](https://pypi.org/project/yq/), `jq`.
 
-## How to apply the pipeline
+## How to update the old verify pipeline
 
 ```
 fly -t gsp set-pipeline -p $ACCOUNT_NAME \
@@ -15,13 +15,10 @@ fly -t gsp set-pipeline -p $ACCOUNT_NAME \
 	--check-creds
 ```
 
-For run-sandbox:
+## How to create or update a deployer pipeline
+
+This example will push a pipeline for a cluster in the "sandbox" account called "gsp"
+
 ```
-fly -t gsp set-pipeline -p run-sandbox-<cluster-name> \
-	--config run-sandbox.yaml \
-	--var account-name=run-sandbox \
-	--var account-role-arn=arn:aws:iam::011571571136:role/deployer \
-	--var cluster-name=<cluster-name> \
-	--yaml-var public-gpg-keys="$(yq . ../users/*.yaml | jq -s '[.[] | select(.teams[] | IN("re-gsp")) | .pub]')" \
-	--check-creds
+fly4 -t cd-gsp set-pipeline -p sandbox --config pipelines/cluster.yaml --var account-name=sandbox --var account-role-arn=arn:aws:iam::011571571136:role/deployer --var cluster-name=gsp --yaml-var trusted-developer-keys="$(yq . ./users/*.yaml | jq -s '[ .[].pub ]')" --var splunk_hec_token="NOTATOKEN" --var github-client-secret=NOTASECRET --var github-client-id=NOTID --check-creds
 ```
