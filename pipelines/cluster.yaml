@@ -56,7 +56,7 @@ apply_addons_task: &apply_addons_task
       jq -r '."kubeconfig"' cluster-outputs/metadata > kubeconfig
       export KUBECONFIG=$(pwd)/kubeconfig
       echo "generating kubeyaml addons with terraform..."
-      cd "gsp-teams/terraform/accounts/${ACCOUNT_NAME}/cluster"
+      cd "gsp-teams/pipelines/terraform/${ACCOUNT_NAME}/cluster"
       terraform init \
         -backend-config="bucket=${TERRAFORM_BUCKET}" \
         -backend-config="key=cluster-${CLUSTER_NAME}.tfstate" \
@@ -192,7 +192,7 @@ jobs:
   - put: common
     params:
       env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/common
+      terraform_source: gsp-teams/pipelines/terraform/common
 - name: create-cluster
   serial: true
   plan:
@@ -202,7 +202,7 @@ jobs:
   - put: cluster
     params:
       env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/cluster
+      terraform_source: gsp-teams/pipelines/terraform/cluster
 - name: apply-addons
   serial: true
   plan:
@@ -230,7 +230,7 @@ jobs:
   - put: cluster
     params:
       env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/cluster
+      terraform_source: gsp-teams/pipelines/terraform/cluster
       action: destroy
     get_params:
       action: destroy
@@ -245,6 +245,6 @@ jobs:
     params:
       action: destroy
       env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/common
+      terraform_source: gsp-teams/pipelines/terraform/common
     get_params:
       action: destroy
