@@ -16,17 +16,6 @@ module "domain" {
   providers = { aws = "aws" }
 }
 
-module "gsp-network" {
-  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-network"
-  cluster_name = "${var.cluster_name}"
-}
-
-module "gsp-persistent" {
-  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-persistent"
-  cluster_name = "${module.gsp-network.cluster-name}"
-  dns_zone     = "${module.domain.name}"
-}
-
 
 // FIXME: find me a home -- pre bootstrap - one off - humans?
 /* data "aws_iam_policy_document" "deployer" { */

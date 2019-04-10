@@ -10,18 +10,18 @@ provider "aws" {
   }
 }
 
-data "terraform_remote_state" "persistent_state" {
-  backend   = "s3"
-  workspace = "${var.persistent_state_workspace}"
+data "aws_caller_identity" "current" {}
 
-  config {
-    bucket = "${var.persistent_state_bucket_name}"
-    key    = "${var.persistent_state_bucket_key}"
-    region = "eu-west-2"
-  }
+module "gsp-persistent" {
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-persistent"
+  cluster_name = "${module.gsp-network.cluster-name}"
+  dns_zone     = "${var.dns_zone}"
 }
 
-data "aws_caller_identity" "current" {}
+module "gsp-network" {
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-network"
+  cluster_name = "${var.cluster_name}"
+}
 
 module "gsp-cluster" {
   source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
@@ -55,12 +55,12 @@ module "gsp-cluster" {
   ci_worker_instance_type = "${var.ci_worker_instance_type}"
   ci_worker_count         = "${var.ci_worker_count}"
 
-  sealed_secrets_cert_pem        = "${data.terraform_remote_state.persistent_state.sealed_secrets_cert_pem}"
-  sealed_secrets_private_key_pem = "${data.terraform_remote_state.persistent_state.sealed_secrets_private_key_pem}"
-  vpc_id                         = "${data.terraform_remote_state.persistent_state.vpc_id}"
-  private_subnet_ids             = "${data.terraform_remote_state.persistent_state.private_subnet_ids}"
-  public_subnet_ids              = "${data.terraform_remote_state.persistent_state.public_subnet_ids}"
-  nat_gateway_public_ips         = "${data.terraform_remote_state.persistent_state.nat_gateway_public_ips}"
+  sealed_secrets_cert_pem        = "${module.gsp-persistent.sealed_secrets_cert_pem}"
+  sealed_secrets_private_key_pem = "${module.gsp-persistent.sealed_secrets_private_key_pem}"
+  vpc_id                         = "${module.gsp-network.vpc_id}"
+  private_subnet_ids             = "${module.gsp-network.private_subnet_ids}"
+  public_subnet_ids              = "${module.gsp-network.public_subnet_ids}"
+  nat_gateway_public_ips         = "${module.gsp-network.nat_gateway_public_ips}"
   splunk_hec_url                 = "${var.splunk_hec_url}"
   splunk_hec_token               = "${var.splunk_hec_token}"
   splunk_index                   = "${var.splunk_index}"
