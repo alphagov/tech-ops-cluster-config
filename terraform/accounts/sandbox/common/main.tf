@@ -17,12 +17,12 @@ module "domain" {
 }
 
 module "gsp-network" {
-  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-network?ref=eks-firebreak"
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-network"
   cluster_name = "${var.cluster_name}"
 }
 
 module "gsp-persistent" {
-  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-persistent?ref=eks-firebreak"
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-persistent"
   cluster_name = "${module.gsp-network.cluster-name}"
   dns_zone     = "${module.domain.name}"
 }

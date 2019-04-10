@@ -24,7 +24,7 @@ data "terraform_remote_state" "persistent_state" {
 data "aws_caller_identity" "current" {}
 
 module "gsp-cluster" {
-  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=eks-firebreak"
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
   account_name = "${var.account_name}"
   cluster_name = "${var.cluster_name}"
   dns_zone     = "${var.dns_zone}"
@@ -71,7 +71,7 @@ module "gsp-cluster" {
 }
 
 module "prototype-kit" {
-  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release?ref=eks-firebreak"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
 
   namespace      = "gsp-prototype-kit"
   chart_git      = "https://github.com/alphagov/gsp-govuk-prototype-kit.git"
