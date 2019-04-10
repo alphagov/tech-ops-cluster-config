@@ -1,3 +1,6 @@
+terraform {
+  backend "s3" {}
+}
 
 provider "aws" {
   region = "eu-west-2"
@@ -11,6 +14,17 @@ module "domain" {
   zone = "govsvc.uk"
   name = "${var.account_name}"
   providers = { aws = "aws" }
+}
+
+module "gsp-network" {
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-network?ref=eks-firebreak"
+  cluster_name = "${var.cluster_name}"
+}
+
+module "gsp-persistent" {
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-persistent?ref=eks-firebreak"
+  cluster_name = "${module.gsp-network.cluster-name}"
+  dns_zone     = "${module.domain.name}"
 }
 
 
