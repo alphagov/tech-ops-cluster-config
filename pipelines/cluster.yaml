@@ -238,7 +238,6 @@ jobs:
   serial: true
   plan:
   - get: gsp-teams
-    trigger: true
     passed: ["destroy-cluster"]
   - get: common
     passed: ["create-common"]
