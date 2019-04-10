@@ -141,12 +141,12 @@ drain_cluster_task: &drain_cluster_task
 
 resource_types:
 - name: terraform
-  type: docker-image
+  type: registry-image
   source:
-    repository: govsvc/terraform-resource
-    tag: 0.11.13
+    repository: "govsvc/terraform-resource"
+    tag: "0.11.13"
 - name: github
-  type: docker-image
+  type: registry-image
   source:
     repository: "govsvc/concourse-github-resource"
     tag: "0.0.1551114195"
