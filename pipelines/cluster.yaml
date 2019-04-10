@@ -59,7 +59,7 @@ apply_addons_task: &apply_addons_task
       cd "gsp-teams/terraform/accounts/${ACCOUNT_NAME}/cluster"
       terraform init \
         -backend-config="bucket=${TERRAFORM_BUCKET}" \
-        -backend-config="key=cluster.tfstate" \
+        -backend-config="key=cluster-${CLUSTER_NAME}.tfstate" \
         -backend-config="region=${TERRAFORM_REGION}" \
         -backend=true \
         -force-copy \
@@ -181,7 +181,7 @@ resources:
     <<: *terraform_source
     backend_config:
       <<: *terraform_backend_config
-      key: cluster.tfstate
+      key: cluster-((cluster-name)).tfstate
 
 jobs:
 - name: create-common
