@@ -56,7 +56,7 @@ apply_addons_task: &apply_addons_task
       jq -r '."kubeconfig"' cluster-outputs/metadata > kubeconfig
       export KUBECONFIG=$(pwd)/kubeconfig
       echo "generating kubeyaml addons with terraform..."
-      cd "gsp-teams/pipelines/terraform/${ACCOUNT_NAME}/cluster"
+      cd "gsp-teams/pipelines/terraform/cluster"
       terraform init \
         -backend-config="bucket=${TERRAFORM_BUCKET}" \
         -backend-config="key=cluster-${CLUSTER_NAME}.tfstate" \
