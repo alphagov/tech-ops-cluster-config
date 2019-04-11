@@ -19,7 +19,6 @@ terraform_source: &terraform_source
     persistent_state_workspace: ((account-name))
     persistent_state_bucket_name: cd-gsp-private-qndvvc
     persistent_state_bucket_key: common.tfstate
-    gsp_version_ref: ((gsp-version))
 
 task_image_resource: &task_image_resource
   type: docker-image
@@ -47,7 +46,6 @@ apply_addons_task: &apply_addons_task
     TF_VAR_account_name: ((account-name))
     TF_VAR_cluster_name: ((cluster-name))
     TF_VAR_dns_zone: ((account-name)).govsvc.uk
-    TF_VAR_gsp_version_ref: ((gsp-version))
   run:
     path: /bin/bash
     args:
