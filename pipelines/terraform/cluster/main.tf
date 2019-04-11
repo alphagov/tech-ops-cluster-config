@@ -13,18 +13,18 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 module "gsp-persistent" {
-  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-persistent"
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-persistent?ref=ssm-agent"
   cluster_name = "${module.gsp-network.cluster-name}"
   dns_zone     = "${var.dns_zone}"
 }
 
 module "gsp-network" {
-  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-network"
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-network?ref=ssm-agent"
   cluster_name = "${var.cluster_name}"
 }
 
 module "gsp-cluster" {
-  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=ssm-agent"
   account_name = "${var.account_name}"
   cluster_name = "${var.cluster_name}"
   dns_zone     = "${var.dns_zone}"
@@ -71,7 +71,7 @@ module "gsp-cluster" {
 }
 
 module "prototype-kit" {
-  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release"
+  source = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/flux-release?ref=ssm-agent"
 
   namespace      = "gsp-prototype-kit"
   chart_git      = "https://github.com/alphagov/gsp-govuk-prototype-kit.git"
