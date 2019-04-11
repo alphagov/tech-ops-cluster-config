@@ -2,6 +2,12 @@ variable "aws_account_role_arn" {
   type = "string"
 }
 
+variable "gsp_version_ref" {
+  description = "the git ref/branch to pull gsp modules from"
+  type = "string"
+  default = "master"
+}
+
 variable "persistent_state_workspace" {
   type = "string"
 }
