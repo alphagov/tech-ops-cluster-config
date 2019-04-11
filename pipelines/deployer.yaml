@@ -1,0 +1,250 @@
+
+terraform_source: &terraform_source
+  env_name: ((account-name))
+  backend_type: s3
+  backend_config: &terraform_backend_config
+    bucket: cd-gsp-private-qndvvc
+    region: eu-west-2
+  vars:
+    account_name: ((account-name))
+    cluster_name: ((cluster-name))
+    dns_zone: ((account-name)).govsvc.uk
+    aws_account_role_arn: ((account-role-arn))
+    promotion_signing_key: ((ci-system-gpg-private))
+    promotion_verification_key: ((ci-system-gpg-public))
+    github_client_id: ((github-client-id))
+    github_client_secret: ((github-client-secret))
+    splunk_hec_token: ((splunk_hec_token))
+    splunk_hec_url: ((splunk_hec_url))
+    persistent_state_workspace: ((account-name))
+    persistent_state_bucket_name: cd-gsp-private-qndvvc
+    persistent_state_bucket_key: common.tfstate
+
+task_image_resource: &task_image_resource
+  type: docker-image
+  source: {repository: "govsvc/task-toolbox", tag: "1.0.0"}
+
+apply_addons_task: &apply_addons_task
+  platform: linux
+  image_resource: *task_image_resource
+  params:
+    ACCOUNT_ROLE_ARN: ((account-role-arn))
+    ACCOUNT_NAME: ((account-name))
+    CLUSTER_NAME: ((cluster-name))
+    TERRAFORM_BUCKET: cd-gsp-private-qndvvc
+    TERRAFORM_REGION: eu-west-2
+    TF_VAR_aws_account_role_arn: ((account-role-arn))
+    TF_VAR_splunk_hec_token: ((splunk_hec_token))
+    TF_VAR_splunk_hec_url: ((splunk_hec_url))
+    TF_VAR_promotion_signing_key: ((ci-system-gpg-private))
+    TF_VAR_promotion_verification_key: ((ci-system-gpg-public))
+    TF_VAR_github_client_id: ((github-client-id))
+    TF_VAR_github_client_secret: ((github-client-secret))
+    TF_VAR_persistent_state_workspace: ((account-name))
+    TF_VAR_persistent_state_bucket_name: cd-gsp-private-qndvvc
+    TF_VAR_persistent_state_bucket_key: common.tfstate
+    TF_VAR_account_name: ((account-name))
+    TF_VAR_cluster_name: ((cluster-name))
+    TF_VAR_dns_zone: ((account-name)).govsvc.uk
+  run:
+    path: /bin/bash
+    args:
+    - -eu
+    - -c
+    - |
+      echo "fetching kubeconfig from terraform state..."
+      jq -r '."kubeconfig"' cluster-outputs/metadata > kubeconfig
+      export KUBECONFIG=$(pwd)/kubeconfig
+      echo "generating kubeyaml addons with terraform..."
+      cd "gsp-teams/pipelines/terraform/cluster"
+      terraform init \
+        -backend-config="bucket=${TERRAFORM_BUCKET}" \
+        -backend-config="key=cluster-${CLUSTER_NAME}.tfstate" \
+        -backend-config="region=${TERRAFORM_REGION}" \
+        -backend=true \
+        -force-copy \
+        -get=true \
+        -input=false
+      terraform workspace select "${ACCOUNT_NAME}"
+      terraform apply -auto-approve
+      echo "applying kubeyaml..."
+      eval $(aws-assume-role $ACCOUNT_ROLE_ARN)
+      until kubectl apply -R -f addons/; do
+        echo "apply failed retrying..."
+        sleep 1
+      done
+      function not_running_count() {
+        kubectl get pods -o json --all-namespaces | jq -r '.items[].status.phase' | grep -v Running | grep -v Completed | wc -l | awk '{ print $1 }'
+      }
+      sleep 30s
+      while [[ "$(not_running_count)" != "0" ]]; do
+        echo "waiting for $(not_running_count) pods to start"
+        sleep 3
+      done
+      kubectl get pods --all-namespaces
+  inputs:
+  - name: cluster-outputs
+  - name: gsp-teams
+
+
+drain_cluster_task: &drain_cluster_task
+  platform: linux
+  image_resource: *task_image_resource
+  params:
+    ACCOUNT_ROLE_ARN: ((account-role-arn))
+    AWS_REGION: eu-west-2
+    AWS_DEFAULT_REGION: eu-west-2
+    CLUSTER_NAME: ((cluster-name))
+  run:
+    path: /bin/bash
+    args:
+    - -eu
+    - -c
+    - |
+      echo "assuming aws deployer role..."
+      eval $(aws-assume-role $ACCOUNT_ROLE_ARN)
+
+      echo "fetching kubeconfig from aws..."
+      aws eks update-kubeconfig --name "${CLUSTER_NAME}" --kubeconfig ./kubeconfig
+      export KUBECONFIG=$(pwd)/kubeconfig
+
+      echo "fetching cluster VPC ID..."
+      CLUSTER_VPC_ID=$(aws eks describe-cluster --name "${CLUSTER_NAME}" | jq .cluster.resourcesVpcConfig.vpcId -r)
+
+      echo "deleting any LoadBalancer services..."
+      kubectl get svc -o json --all-namespaces | jq '.items[] | select(.spec.type == "LoadBalancer")' | kubectl delete -f - --wait
+      echo "waiting for any ELBs that belong to cluster to shutdown..."
+      ELB_ARNS_JSON=$(aws elbv2 describe-load-balancers | jq "{LoadBalancerArns: [ .LoadBalancers[] | select(.VpcId == \"${CLUSTER_VPC_ID}\") | .LoadBalancerArn ]}" -c)
+      if [[ "$(echo $ELB_ARNS_JSON | jq '.LoadBalancerArns | length')" != "0" ]]; then
+        aws elbv2 wait load-balancers-deleted --cli-input-json "${ELB_ARNS_JSON}"
+      fi
+
+      echo "checking for ASGs that belong to this cluster..."
+      CLUSTER_ASGS=$(aws autoscaling describe-auto-scaling-groups | jq -r ".AutoScalingGroups[] | select( .Tags[].Key == \"kubernetes.io/cluster/${CLUSTER_NAME}\")" | jq -r .AutoScalingGroupName)
+      for ASG_NAME in $CLUSTER_ASGS; do
+        echo "scaling ${ASG_NAME} to zero..."
+        aws autoscaling update-auto-scaling-group --auto-scaling-group-name "${ASG_NAME}" --min-size 0 --max-size 0 --desired-capacity 0
+      done
+
+      echo "checking if any nodes are still running ..."
+      for ASG_NAME in $CLUSTER_ASGS; do
+        echo "checking number of instances remaining in ${ASG_NAME}..."
+        INSTANCES=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names "${ASG_NAME}" --query "AutoScalingGroups[0].Instances[*].InstanceId" --output text)
+        if [ ! -z "$INSTANCES" ]; then
+          echo "waiting for following instances to terminate in ${ASG_NAME}: ${INSTANCES}..."
+          aws ec2 wait instance-terminated --instance-ids $INSTANCES
+        fi
+      done
+  inputs:
+  - name: cluster-outputs
+  - name: gsp-teams
+
+resource_types:
+- name: terraform
+  type: registry-image
+  source:
+    repository: "govsvc/terraform-resource"
+    tag: "0.13.0-beta.2"
+- name: github
+  type: registry-image
+  source:
+    repository: "govsvc/concourse-github-resource"
+    tag: "0.0.1551114195"
+
+resources:
+- name: gsp-teams
+  type: git # FIXME: should be github-resource
+  source:
+    uri: https://github.com/alphagov/gsp-teams.git
+    organization: alphagov
+    repository: gsp-teams
+    github_api_token: "((github-api-token))"
+    approvers:
+      - "samcrang"
+      - "paroxp"
+      - "chrisfarms"
+      - "tlwr"
+      - "blairboy362"
+    required_approval_count: 2
+    branch: eks-firebreak
+    commit_verification_keys: ((trusted-developer-keys))
+- name: common
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: common.tfstate
+- name: cluster
+  type: terraform
+  source:
+    <<: *terraform_source
+    backend_config:
+      <<: *terraform_backend_config
+      key: cluster-((cluster-name)).tfstate
+
+jobs:
+- name: create-common
+  serial: true
+  plan:
+  - get: gsp-teams
+    trigger: true
+  - put: common
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/pipelines/terraform/common
+- name: create-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    trigger: true
+    passed: ["create-common"]
+  - put: cluster
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/pipelines/terraform/cluster
+- name: apply-addons
+  serial: true
+  plan:
+  - get: gsp-teams
+    trigger: true
+    passed: ["create-cluster"]
+  - get: cluster
+    trigger: true
+    passed: ["create-cluster"]
+  - task: apply-addons
+    timeout: 30m
+    config: *apply_addons_task
+    input_mapping: {cluster-outputs: cluster}
+- name: destroy-cluster
+  serial: true
+  plan:
+  - get: gsp-teams
+    passed: ["apply-addons"]
+  - get: cluster
+    passed: ["apply-addons"]
+  - task: drain-cluster
+    timeout: 30m
+    config: *drain_cluster_task
+    input_mapping: {cluster-outputs: cluster}
+  - put: cluster
+    params:
+      env_name: ((account-name))
+      terraform_source: gsp-teams/pipelines/terraform/cluster
+      action: destroy
+    get_params:
+      action: destroy
+- name: destroy-common
+  serial: true
+  plan:
+  - get: gsp-teams
+    passed: ["destroy-cluster"]
+  - get: common
+    passed: ["create-common"]
+  - put: common
+    params:
+      action: destroy
+      env_name: ((account-name))
+      terraform_source: gsp-teams/pipelines/terraform/common
+    get_params:
+      action: destroy

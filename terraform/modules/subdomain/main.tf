@@ -20,13 +20,14 @@ data "aws_route53_zone" "apex" {
 }
 
 resource "aws_route53_zone" "subdomain" {
-  name = "verify.govsvc.uk"
+  name = "${var.name}.govsvc.uk"
+  force_destroy = true
 }
 
 resource "aws_route53_record" "ns" {
   provider = "aws.apex"
   zone_id = "${data.aws_route53_zone.apex.zone_id}"
-  name    = "verify.govsvc.uk"
+  name    = "${var.name}.govsvc.uk"
   type    = "NS"
   ttl     = "30"
 
