@@ -10,7 +10,7 @@ provider "aws" {
 }
 
 module "domain" {
-  source = "../../../modules/subdomain"
+  source = "../../../terraform/modules/subdomain"
   zone = "govsvc.uk"
   name = "${var.account_name}"
   providers = { aws = "aws" }
