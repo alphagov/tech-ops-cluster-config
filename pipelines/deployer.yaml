@@ -166,7 +166,7 @@ resources:
       - "tlwr"
       - "blairboy362"
     required_approval_count: 2
-    branch: eks-firebreak
+    branch: control-plane-logging
     commit_verification_keys: ((trusted-developer-keys))
 - name: common
   type: terraform
