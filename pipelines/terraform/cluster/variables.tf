@@ -42,6 +42,11 @@ variable "splunk_hec_token" {
   type = "string"
 }
 
+# https://docs.aws.amazon.com/eks/latest/userguide/platform-versions.html
+variable "eks_version" {
+  type = "string"
+}
+
 variable "splunk_index" {
   type = "string"
   default = "run_sandbox_k8s"

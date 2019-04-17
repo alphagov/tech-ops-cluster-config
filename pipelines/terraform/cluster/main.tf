@@ -28,6 +28,7 @@ module "gsp-cluster" {
   account_name = "${var.account_name}"
   cluster_name = "${var.cluster_name}"
   dns_zone     = "${var.dns_zone}"
+  eks_version  = "${var.eks_version}"
 
   admin_role_arns = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/admin",
