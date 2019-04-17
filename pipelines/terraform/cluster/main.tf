@@ -24,7 +24,7 @@ module "gsp-network" {
 }
 
 module "gsp-cluster" {
-  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster?ref=specify-k8s-version"
+  source       = "git::https://github.com/alphagov/gsp-terraform-ignition//modules/gsp-cluster"
   account_name = "${var.account_name}"
   cluster_name = "${var.cluster_name}"
   dns_zone     = "${var.dns_zone}"
