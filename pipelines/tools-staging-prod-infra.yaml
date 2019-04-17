@@ -4,17 +4,14 @@ groups:
   - terraform
   - apply-addons-tools-cluster
   - apply-addons-staging-cluster
-  - apply-addons-prod-cluster
 - name: bootstrap
   jobs:
   - bootstrap-tools-cluster
   - bootstrap-staging-cluster
-  - bootstrap-prod-cluster
 - name: destroy
   jobs:
   - destroy-tools-cluster
   - destroy-staging-cluster
-  - destroy-prod-cluster
 
 
 
@@ -263,39 +260,6 @@ resources:
       <<: *terraform_vars
       cluster_state_bucket_name: cd-gsp-private-qndvvc
       cluster_state_bucket_key: ((account-name))/clusters/staging.tfstate
-- name: prod-persistent
-  type: terraform
-  source:
-    <<: *terraform_source
-    backend_config:
-      <<: *terraform_backend_config
-      key: ((account-name))/clusters/prod-persistent.tfstate
-    vars:
-      <<: *terraform_vars
-      splunk_hec_token: ((splunk_hec_token))
-      splunk_hec_url: ((splunk_hec_url))
-- name: prod-cluster
-  type: terraform
-  source:
-    <<: *terraform_source
-    backend_config:
-      <<: *terraform_backend_config
-      key: ((account-name))/clusters/prod.tfstate
-    vars:
-      <<: *terraform_vars
-      persistent_state_bucket_name: cd-gsp-private-qndvvc
-      persistent_state_bucket_key: ((account-name))/clusters/prod-persistent.tfstate
-- name: prod-cluster-bootstrapper
-  type: terraform
-  source:
-    <<: *terraform_source
-    backend_config:
-      <<: *terraform_backend_config
-      key: ((account-name))/clusters/prod-bootstrapper.tfstate
-    vars:
-      <<: *terraform_vars
-      cluster_state_bucket_name: cd-gsp-private-qndvvc
-      cluster_state_bucket_key: ((account-name))/clusters/prod.tfstate
 
 
 
@@ -320,10 +284,6 @@ jobs:
     params:
       env_name: ((account-name))
       terraform_source: gsp-teams/terraform/accounts/((account-name))/persistent/staging/
-  - put: prod-persistent
-    params:
-      env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/persistent/prod/
   - put: tools-cluster
     params:
       env_name: ((account-name))
@@ -332,10 +292,6 @@ jobs:
     params:
       env_name: ((account-name))
       terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/staging/
-  - put: prod-cluster
-    params:
-      env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/prod/
 
 - name: bootstrap-tools-cluster
   serial: true
@@ -381,29 +337,6 @@ jobs:
   - task: delete-bootstrapper-node
     input_mapping: {cluster-outputs: staging-cluster}
     config: *destroy_bootstrapper
-- name: bootstrap-prod-cluster
-  serial: true
-  plan:
-  - get: gsp-teams
-  - get: prod-cluster
-  - put: prod-cluster-bootstrapper
-    params:
-      env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/bootstrapper/
-  - task: wait-then-drain-bootstrapper-node
-    input_mapping: {cluster-outputs: prod-cluster}
-    config: *wait_and_drain_bootstrapper
-  - put: prod-cluster-bootstrapper
-    params:
-      env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/bootstrapper/
-      action: destroy
-    get_params:
-      action: destroy
-  - task: delete-bootstrapper-node
-    input_mapping: {cluster-outputs: prod-cluster}
-    config: *destroy_bootstrapper
-
 
 - name: apply-addons-tools-cluster
   serial: true
@@ -441,24 +374,6 @@ jobs:
         TF_VAR_persistent_state_bucket_name: cd-gsp-private-qndvvc
         TF_VAR_persistent_state_bucket_key: ((account-name))/clusters/staging-persistent.tfstate
     input_mapping: {cluster-outputs: staging-cluster}
-- name: apply-addons-prod-cluster
-  serial: true
-  plan:
-  - get: gsp-teams
-    trigger: true
-    passed: ["terraform"]
-  - get: prod-cluster
-    passed: ["terraform"]
-  - task: apply-addons
-    timeout: 30m
-    config:
-      <<: *apply_addons_task
-      params:
-        <<: *apply_addons_task_params
-        CLUSTER_NAME: prod
-        TF_VAR_persistent_state_bucket_name: cd-gsp-private-qndvvc
-        TF_VAR_persistent_state_bucket_key: ((account-name))/clusters/prod-persistent.tfstate
-    input_mapping: {cluster-outputs: prod-cluster}
 
 - name: destroy-tools-cluster
   serial: true
@@ -481,18 +396,6 @@ jobs:
     params:
       env_name: ((account-name))
       terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/staging/
-      action: destroy
-    get_params:
-      action: destroy
-- name: destroy-prod-cluster
-  serial: true
-  plan:
-  - get: gsp-teams
-    passed: ["terraform"]
-  - put: prod-cluster
-    params:
-      env_name: ((account-name))
-      terraform_source: gsp-teams/terraform/accounts/((account-name))/clusters/prod/
       action: destroy
     get_params:
       action: destroy
