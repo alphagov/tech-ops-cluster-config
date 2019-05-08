@@ -1,0 +1,54 @@
+---
+name: Benjamin Gill
+email: benjamin.gill@digital.cabinet-office.gov.uk
+hardware:
+  id: 09607808
+  type: yubikey
+github: bjgill
+teams:
+  - verify-tech-team-core
+  - verify-tech-team-approvers
+  - team-identity-assurance
+pub: |
+  -----BEGIN PGP PUBLIC KEY BLOCK-----
+  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
+  =FYOR
+  -----END PGP PUBLIC KEY BLOCK-----
