@@ -1,6 +1,10 @@
 ---
-name: Daniel Blair
+name: daniel.blair
 email: daniel.blair@digital.cabinet-office.gov.uk
+ARN: arn:aws:iam::622626885786:user/daniel.blair@digital.cabinet-office.gov.uk
+roles:
+- verify-sre
+- sandbox-sre
 hardware:
   id: 9607848
   type: yubikey

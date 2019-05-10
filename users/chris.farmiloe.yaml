@@ -1,6 +1,11 @@
 ---
-name: Chris Farmiloe
+name: chris.farmiloe
 email: chris.farmiloe@digital.cabinet-office.gov.uk
+ARN: arn:aws:iam::622626885786:user/chris.farmiloe@digital.cabinet-office.gov.uk
+roles:
+- farms-admin
+- verify-sre
+- sandbox-sre
 hardware:
   id: 9599175
   type: yubikey

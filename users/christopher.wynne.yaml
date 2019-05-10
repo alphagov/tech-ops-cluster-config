@@ -1,6 +1,9 @@
 ---
-name: Christopher Wynne
+name: christopher.wynne
 email: christopher.wynne@digital.cabinet-office.gov.uk
+ARN: arn:aws:iam::622626885786:user/christopher.wynne@digital.cabinet-office.gov.uk
+roles:
+- sandbox-sre
 hardware:
   id: 9607815
   type: yubikey

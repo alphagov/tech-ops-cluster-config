@@ -1,6 +1,9 @@
 ---
-name: Benjamin Gill
+name: benjamin.gill
 email: benjamin.gill@digital.cabinet-office.gov.uk
+ARN: arn:aws:iam::622626885786:user/benjamin.gill@digital.cabinet-office.gov.uk
+roles:
+- sandbox-sre
 hardware:
   id: 09607808
   type: yubikey

@@ -1,6 +1,10 @@
 ---
-name: Dave Povey
+name: dave.povey
 email: david.povey@digital.cabinet-office.gov.uk
+ARN: arn:aws:iam::622626885786:user/david.povey@digital.cabinet-office.gov.uk
+roles:
+- verify-sre
+- sandbox-sre
 hardware:
   id: 9599273
   type: yubikey

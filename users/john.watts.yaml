@@ -1,6 +1,9 @@
 ---
-name: John Watts
+name: john.watts
 email: john.watts@digital.cabinet-office.gov.uk
+ARN: arn:aws:iam::622626885786:user/john.watts@digital.cabinet-office.gov.uk
+roles:
+- sandbox-sre
 hardware:
   id: 9607819
   type: yubikey

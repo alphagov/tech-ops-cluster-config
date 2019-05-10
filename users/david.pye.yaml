@@ -1,6 +1,10 @@
 ---
-name: David Pye
+name: david.pye
 email: david.pye@digital.cabinet-office.gov.uk
+ARN: arn:aws:iam::622626885786:user/david.pye@digital.cabinet-office.gov.uk
+roles:
+- verify-sre
+- sandbox-sre
 hardware:
   id: 9599276
   type: yubikey

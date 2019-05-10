@@ -1,6 +1,9 @@
 ---
-name: James Howes
+name: james.howes
 email: james.howes@digital.cabinet-office.gov.uk
+ARN: arn:aws:iam::622626885786:user/james.howes@digital.cabinet-office.gov.uk
+roles:
+- sandbox-sre
 hardware:
   id: 9607823
   type: yubikey
