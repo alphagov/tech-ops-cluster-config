@@ -1,0 +1,23 @@
+account-id: "622626885786"
+account-name: "portfolio"
+account-role-arn: "arn:aws:iam::622626885786:role/deployer"
+cluster-name: "portfolio"
+cluster-number: "128"
+splunk-enabled: "0"
+splunk-hec-token: "NOTATOKEN"
+splunk-hec-url: "NOTAURL"
+github-client-secret: "NOTASECRET"
+github-client-id: "NOTID"
+eks-version: "1.12"
+platform-repository: "https://github.com/alphagov/gsp-terraform-ignition.git"
+platform-version: "2576e704172f0afb63a1ba5c64d5c27142f460f7"
+config-repository: "https://github.com/alphagov/gsp-teams.git"
+config-version: "master"
+config-path: "."
+trusted-developer-keys: []
+disable-destroy: true
+worker-instance-type: m5d.large
+worker-count: 3
+ci-worker-instance-type: t3.medium
+ci-worker-count: 3
+
