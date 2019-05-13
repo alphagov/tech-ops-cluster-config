@@ -14,3 +14,4 @@ config-repository: "https://github.com/alphagov/gsp-teams.git"
 config-version: "master"
 config-path: "."
 trusted-developer-keys: []
+disable-destroy: true
