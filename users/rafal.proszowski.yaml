@@ -1,6 +1,10 @@
 ---
-name: Rafal Proszowski
+name: rafal.proszowski
 email: rafal.proszowski@digital.cabinet-office.gov.uk
+ARN: arn:aws:iam::622626885786:user/rafal.proszowski@digital.cabinet-office.gov.uk
+roles:
+- verify-sre
+- sandbox-sre
 hardware:
   type: yubikey
   personal: true

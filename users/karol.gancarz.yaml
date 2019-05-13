@@ -1,6 +1,9 @@
 ---
-name: Karol Gancarz
+name: karol.gancarz
 email: karol.gancarz@digital.cabinet-office.gov.uk
+ARN: arn:aws:iam::622626885786:user/karol.gancarz@digital.cabinet-office.gov.uk
+roles:
+- sandbox-sre
 hardware:
   id: 9607806
   type: yubikey
