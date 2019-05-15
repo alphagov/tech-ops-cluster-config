@@ -5,6 +5,7 @@ ARN: arn:aws:iam::622626885786:user/daniel.blair@digital.cabinet-office.gov.uk
 roles:
 - verify-admin
 - sandbox-sre
+- portfolio-admin
 hardware:
   id: 9607848
   type: yubikey

@@ -5,6 +5,7 @@ ARN: arn:aws:iam::622626885786:user/sam.crang@digital.cabinet-office.gov.uk
 roles:
 - verify-sre
 - sandbox-sre
+- portfolio-sre
 hardware:
   type: yubikey
   personal: true

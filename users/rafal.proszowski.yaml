@@ -5,6 +5,7 @@ ARN: arn:aws:iam::622626885786:user/rafal.proszowski@digital.cabinet-office.gov.
 roles:
 - verify-sre
 - sandbox-sre
+- portfolio-admin
 hardware:
   type: yubikey
   personal: true

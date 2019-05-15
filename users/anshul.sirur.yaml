@@ -4,6 +4,7 @@ email: anshul.sirur@digital.cabinet-office.gov.uk
 ARN: arn:aws:iam::622626885786:user/anshul.sirur@digital.cabinet-office.gov.uk
 roles:
 - sandbox-sre
+- portfolio-sre
 hardware:
   id: 9607847
   type: yubikey
