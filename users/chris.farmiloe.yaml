@@ -6,6 +6,7 @@ roles:
 - farms-admin
 - verify-sre
 - sandbox-sre
+- portfolio-sre
 hardware:
   id: 9599175
   type: yubikey
