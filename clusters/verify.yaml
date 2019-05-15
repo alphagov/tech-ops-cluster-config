@@ -16,7 +16,7 @@ config-version: "master"
 config-path: "."
 trusted-developer-keys: []
 disable-destroy: true
-worker_instance_type: m5d.large
-worker_count: 3
-ci_worker_instance_type: t3.medium
-ci_worker_count: 3
+worker-instance-type: m5d.large
+worker-count: 3
+ci-worker-instance-type: t3.medium
+ci-worker-count: 3
