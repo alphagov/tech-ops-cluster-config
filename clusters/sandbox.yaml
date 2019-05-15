@@ -18,5 +18,5 @@ trusted-developer-keys: []
 disable-destroy: false
 worker-instance-type: m5d.large
 worker-count: 3
-ci-worker-instance-type: t3.micro
+ci-worker-instance-type: t3.small
 ci-worker-count: 3
