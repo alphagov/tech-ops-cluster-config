@@ -3,7 +3,7 @@ name: daniel.blair
 email: daniel.blair@digital.cabinet-office.gov.uk
 ARN: arn:aws:iam::622626885786:user/daniel.blair@digital.cabinet-office.gov.uk
 roles:
-- verify-admin
+- verify-sre
 - sandbox-sre
 - sandbox-admin
 - portfolio-admin
