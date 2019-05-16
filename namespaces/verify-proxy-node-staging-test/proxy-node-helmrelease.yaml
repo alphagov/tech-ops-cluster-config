@@ -19,4 +19,4 @@ spec:
     vmc:
       secretName: verify-staging-vmc
     vsp:
-      secretName: verify-staging-test-vsp
+      secretName: test-vsp
