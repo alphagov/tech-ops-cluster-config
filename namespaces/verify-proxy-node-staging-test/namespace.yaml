@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: verify-proxy-node-staging-test
+  labels:
+    namespace: verify-proxy-node-staging-test
