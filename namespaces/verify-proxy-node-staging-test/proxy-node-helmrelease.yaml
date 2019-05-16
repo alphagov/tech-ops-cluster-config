@@ -10,6 +10,10 @@ spec:
     ref: "eks-prep"
     path: "."
   values:
+    global:
+      cluster:
+        name: "{{ .Values.global.cluster.name }}"
+        domain: "{{ .Values.global.cluster.domain }}"
     stubConnector:
       enabled: true
     vmc:
