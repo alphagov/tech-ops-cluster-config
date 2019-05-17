@@ -3,6 +3,7 @@ name: stephen.ford
 email: stephen.ford@digital.cabinet-office.gov.uk
 ARN: arn:aws:iam::622626885786:user/stephen.ford@digital.cabinet-office.gov.uk
 roles:
+- verify-admin
 - sandbox-sre
 hardware:
   id: 9599499
