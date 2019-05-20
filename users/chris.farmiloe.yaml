@@ -6,6 +6,7 @@ roles:
 - sandbox-sre
 - sandbox-admin
 - verify-sre
+- verify-admin
 - portfolio-sre
 hardware:
   id: 9599175
