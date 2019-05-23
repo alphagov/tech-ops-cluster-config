@@ -17,3 +17,4 @@ worker-instance-type: m5d.large
 worker-count: 3
 ci-worker-instance-type: t3.medium
 ci-worker-count: 3
+github-client-id: "1dbe43926d46b9ded8ad"
