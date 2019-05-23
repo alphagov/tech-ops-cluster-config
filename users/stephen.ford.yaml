@@ -5,6 +5,7 @@ ARN: arn:aws:iam::622626885786:user/stephen.ford@digital.cabinet-office.gov.uk
 roles:
 - verify-admin
 - sandbox-sre
+- sandbox-admin
 hardware:
   id: 9599499
   type: yubikey
