@@ -2,19 +2,17 @@
 apiVersion: flux.weave.works/v1beta1
 kind: HelmRelease
 metadata:
-  name: test
+  name: metadata-controller
 spec:
-  releaseName: test
+  releaseName: v1
   chart:
-    git: "https://github.com/alphagov/verify-eidas-deployment.git"
+    git: "https://github.com/alphagov/verify-metadata-controller.git"
     ref: "eks-prep"
-    path: "."
+    path: "chart"
   values:
     global:
       cluster:
         name: "{{ .Values.global.cluster.name }}"
         domain: "{{ .Values.global.cluster.domain }}"
-    stubConnector:
-      enabled: true
-    vsp:
-      secretName: test-vsp
+    vmc:
+      secretName: vmc
