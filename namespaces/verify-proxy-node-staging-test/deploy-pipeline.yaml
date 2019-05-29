@@ -313,7 +313,7 @@ spec:
             inputs:
             - name: verify-eidas-deployment-staging
             params:
-              CLUSTER_DOMAIN: staging.verify.govsvc.uk
+              CLUSTER_DOMAIN: ((cluster.domain))
               RELEASE: test
               REPOSITORY_DIR: verify-eidas-deployment-staging
             run: *await_changes
@@ -323,8 +323,8 @@ spec:
           config:
             <<: *run-acceptance-tests-config
             params:
-              PROXY_NODE_URL: "https://test-proxy-node.staging.verify.govsvc.uk"
-              STUB_CONNECTOR_URL: "https://test-connector.staging.verify.govsvc.uk"
+              PROXY_NODE_URL: "https://test-proxy-node.((cluster.domain))"
+              STUB_CONNECTOR_URL: "https://test-connector.((cluster.domain))"
               STUB_IDP_USER: "stub-idp-demo-one"
               SELENIUM_HUB_URL: "https://selenium.tools.signin.service.gov.uk/wd/hub"
         - task: sign-production-promotion
