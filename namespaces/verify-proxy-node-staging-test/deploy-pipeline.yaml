@@ -13,7 +13,7 @@ spec:
       type: docker-image
       source:
         repository: "govsvc/concourse-github-resource"
-        tag: "0.0.1551114195"
+        tag: "v0.0.1"
 
     - name: harbor
       type: docker-image
