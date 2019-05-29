@@ -7,7 +7,7 @@ spec:
   releaseName: test
   chart:
     git: "https://github.com/alphagov/verify-eidas-deployment.git"
-    ref: "eks-prep"
+    ref: "staging"
     path: "."
   values:
     global:
