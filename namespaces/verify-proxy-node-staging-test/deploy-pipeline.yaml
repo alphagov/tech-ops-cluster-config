@@ -23,7 +23,6 @@ spec:
         tag: "0.0.1553882420"
 
     github_source: &github_source
-      branch: master
       organization: alphagov
       github_api_token: ((github.api-token))
       approvers: ((trusted-developers.github-accounts))
@@ -52,6 +51,7 @@ spec:
         source:
           <<: *github_source
           uri: https://github.com/alphagov/verify-eidas-deployment.git
+          branch: master
           repository: verify-eidas-deployment
 
       - name: verify-eidas-deployment-staging
