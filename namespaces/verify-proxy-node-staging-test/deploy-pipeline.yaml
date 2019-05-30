@@ -306,6 +306,7 @@ spec:
             run: *await_changes
         - task: run-acceptance-tests
           image: acceptance-tests-image
+          attempts: 2
           timeout: 15m
           config:
             <<: *run-acceptance-tests-config
