@@ -106,12 +106,6 @@ spec:
           <<: *harbor_source
           repository: registry.((cluster.domain))/eidas/verify-service-provider
 
-      - name: metadata-controller-image
-        type: harbor
-        source:
-          <<: *harbor_source
-          repository: registry.((cluster.domain))/eidas/metadata-controller
-
       - name: acceptance-tests-image
         type: harbor
         source:
@@ -234,8 +228,6 @@ spec:
             trigger: true
           - get: verify-service-provider-image
             trigger: true
-          - get: metadata-controller-image
-            trigger: true
           - get: acceptance-tests-image
             trigger: true
         - task: pin-docker-image-versions
@@ -255,7 +247,6 @@ spec:
             - name: stub-connector-image
             - name: cloudhsm-image
             - name: verify-service-provider-image
-            - name: metadata-controller-image
             outputs:
             - name: bumped_repository
             run:
@@ -273,10 +264,6 @@ spec:
                     image:
                       repository: $(cat gateway-image/repository)@$(cat gateway-image/digest | cut -d ':' -f 1)
                       tag: $(cat gateway-image/digest | cut -d ':' -f 2)
-                  vmc:
-                    image:
-                      repository: $(cat metadata-controller-image/repository)@$(cat metadata-controller-image/digest | cut -d ':' -f 1)
-                      tag: $(cat metadata-controller-image/digest | cut -d ':' -f 2)
                   translator:
                     image:
                       repository: $(cat translator-image/repository)@$(cat translator-image/digest | cut -d ':' -f 1)
