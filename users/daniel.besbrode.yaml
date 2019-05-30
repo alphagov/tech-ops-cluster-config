@@ -4,7 +4,6 @@ email: daniel.besbrode@digital.cabinet-office.gov.uk
 ARN: arn:aws:iam::622626885786:user/daniel.besbrode@digital.cabinet-office.gov.uk
 roles:
 - sandbox-sre
-- verify-proxy-node-staging-test-dev
 hardware:
   id: 9607837
   type: yubikey
