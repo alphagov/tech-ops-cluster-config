@@ -1,0 +1,324 @@
+---
+apiVersion: concourse.k8s.io/v1beta1
+kind: Pipeline
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: deploy
+spec:
+  exposed: true
+  pipelineString: |
+    resource_types:
+    - name: github
+      type: docker-image
+      source:
+        repository: "govsvc/concourse-github-resource"
+        tag: "v0.0.1"
+
+    - name: harbor
+      type: docker-image
+      privileged: true
+      source:
+        repository: govsvc/gsp-harbor-docker-image-resource
+        tag: "0.0.1553882420"
+
+    github_source: &github_source
+      organization: alphagov
+      github_api_token: ((github.api-token))
+      approvers: ((trusted-developers.github-accounts))
+      required_approval_count: 2
+      commit_verification_keys: ((trusted-developers.gpg-keys))
+
+    harbor_source: &harbor_source
+      username: ((harbor.harbor_username))
+      password: ((harbor.harbor_password))
+      harbor:
+        url: ((harbor.harbor_url))
+        prevent_vul: "false"
+      notary:
+        url: ((harbor.notary_url))
+        root_key: ((harbor.root_key))
+        delegate_key: ((harbor.ci_key))
+        passphrase:
+          root: ((harbor.notary_root_passphrase))
+          snapshot: ((harbor.notary_snapshot_passphrase))
+          targets: ((harbor.notary_targets_passphrase))
+          delegation: ((harbor.notary_delegation_passphrase))
+
+    resources:
+      - name: verify-eidas-deployment-master
+        type: github
+        source:
+          <<: *github_source
+          uri: https://github.com/alphagov/verify-eidas-deployment.git
+          branch: master
+          repository: verify-eidas-deployment
+
+      - name: verify-eidas-deployment-staging
+        type: git
+        source:
+          uri: git@github.com:alphagov/verify-eidas-deployment.git
+          branch: staging
+          private_key: |
+            ((deployment.key))
+
+      - name: verify-eidas-deployment-production
+        type: git
+        source:
+          uri: git@github.com:alphagov/verify-eidas-deployment.git
+          branch: production
+          private_key: |
+            ((deployment.key))
+
+      - name: gateway-image
+        type: harbor
+        source:
+          <<: *harbor_source
+          repository: registry.((cluster.domain))/eidas/gateway
+
+      - name: translator-image
+        type: harbor
+        source:
+          <<: *harbor_source
+          repository: registry.((cluster.domain))/eidas/translator
+
+      - name: parser-image
+        type: harbor
+        source:
+          <<: *harbor_source
+          repository: registry.((cluster.domain))/eidas/parser
+
+      - name: stub-connector-image
+        type: harbor
+        source:
+          <<: *harbor_source
+          repository: registry.((cluster.domain))/eidas/stub-connector
+
+      - name: cloudhsm-image
+        type: harbor
+        source:
+          <<: *harbor_source
+          repository: registry.((cluster.domain))/eidas/cloudhsm
+
+      - name: verify-service-provider-image
+        type: harbor
+        source:
+          <<: *harbor_source
+          repository: registry.((cluster.domain))/eidas/verify-service-provider
+
+      - name: acceptance-tests-image
+        type: harbor
+        source:
+          <<: *harbor_source
+          repository: registry.((cluster.domain))/eidas/acceptance-tests
+
+    sign_promotion_task: &sign_promotion_task
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: alpine
+          tag: "3.9"
+      inputs:
+      - name: repository
+      outputs:
+      - name: promoted_repository
+      params:
+        GPG_PRIVATE_KEY: ((promotion.signingKey))
+      run:
+        path: /bin/ash
+        args:
+        - -e
+        - -u
+        - -c
+        - |
+          : "${GPG_PRIVATE_KEY:?}"
+
+          apk add git gnupg
+
+          echo "${GPG_PRIVATE_KEY}" > key
+
+          gpg --import key
+
+          KEY_ID="$(gpg -K | awk '{ if (NR==4) print $1 }')"
+
+          git config --system user.name "Friendly neighbourhood Spider-Man"
+          git config --system user.email "re-gsp+ci-system@digital.cabinet-office.gov.uk"
+          git config --system user.signingkey "${KEY_ID}"
+
+          cd repository/
+          git add values.yaml
+          git commit -S -m "Pinning versions" || true
+          git commit --allow-empty -S -m "Promoting deployment"
+
+          cd ../
+          cp -r repository/. promoted_repository/
+
+    await_changes: &await_changes
+      path: /bin/bash
+      args:
+      - -e
+      - -c
+      - -u
+      - |
+        : "${REPOSITORY_DIR:?}"
+        : "${CLUSTER_DOMAIN:?}"
+        : "${RELEASE:?}"
+
+        echo "INFO: Moving into ${REPOSITORY_DIR}"
+        cd "${REPOSITORY_DIR}"
+
+        GITHASH="$(git rev-parse HEAD)"
+        echo "INFO: Revision at hand ${GITHASH}"
+        [ -z "${GITHASH}" ] && exit 1
+
+        for (( c = 1; c <= "${ATTEMPTS:-15}"; c++ )); do
+          echo "INFO: Attempt NO. ${c}"
+          curl -s "https://flux-reporter.${CLUSTER_DOMAIN}/helmreleases" | tee releases
+          echo ""
+
+          RELEASE_REVISION="$(jq -r 'map(select(.release == "'${RELEASE}'"))[0].revision' releases)"
+          RELEASE_STATUS="$(jq -r 'map(select(.release == "'${RELEASE}'"))[0].status' releases)"
+
+          if [ "$(jq -r 'map(select(.release == "'${RELEASE}'")) | length' releases)" -eq "1" ]; then
+            echo "Revision deployed: ${RELEASE_REVISION}"
+
+            if [ -n "${RELEASE_REVISION}" ] && [ "${RELEASE_STATUS}" = "DEPLOYED" ] && [ "${RELEASE_REVISION}" = "${GITHASH}" ]; then
+              echo "SUCCESS: Got a match!"
+              exit 0
+            fi
+          fi
+
+          echo "WARNING: Current deployment of ${RELEASE} at revision ${RELEASE_REVISION} waiting for revision ${GITHASH} ...sleeping and retrying"
+          sleep "${WAIT:-60}"
+        done
+
+        echo "ERROR: Timed out..."
+        exit 1
+
+    run-acceptance-tests-config: &run-acceptance-tests-config
+      platform: linux
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -euo pipefail
+          cd /
+          bundle exec cucumber --strict --tags "not @ignore"
+
+    jobs:
+      - name: promote-deployment
+        serial: true
+        plan:
+        - aggregate:
+          - get: verify-eidas-deployment-master
+            trigger: true
+          - get: gateway-image
+            trigger: true
+          - get: translator-image
+            trigger: true
+          - get: parser-image
+            trigger: true
+          - get: stub-connector-image
+            trigger: true
+          - get: cloudhsm-image
+            trigger: true
+          - get: verify-service-provider-image
+            trigger: true
+          - get: acceptance-tests-image
+            trigger: true
+        - task: pin-docker-image-versions
+          input_mapping:
+            repository: verify-eidas-deployment-master
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: governmentpaas/spruce
+            inputs:
+            - name: repository
+            - name: gateway-image
+            - name: translator-image
+            - name: parser-image
+            - name: stub-connector-image
+            - name: cloudhsm-image
+            - name: verify-service-provider-image
+            outputs:
+            - name: bumped_repository
+            run:
+              path: /bin/ash
+              args:
+                - -e
+                - -c
+                - |
+                  cat << EOF > overrides.yaml
+                  esp:
+                    image:
+                      repository: $(cat parser-image/repository)@$(cat parser-image/digest | cut -d ':' -f 1)
+                      tag: $(cat parser-image/digest | cut -d ':' -f 2)
+                  gateway:
+                    image:
+                      repository: $(cat gateway-image/repository)@$(cat gateway-image/digest | cut -d ':' -f 1)
+                      tag: $(cat gateway-image/digest | cut -d ':' -f 2)
+                  translator:
+                    image:
+                      repository: $(cat translator-image/repository)@$(cat translator-image/digest | cut -d ':' -f 1)
+                      tag: $(cat translator-image/digest | cut -d ':' -f 2)
+                  hsm:
+                    image:
+                      repository: $(cat cloudhsm-image/repository)@$(cat cloudhsm-image/digest | cut -d ':' -f 1)
+                      tag: $(cat cloudhsm-image/digest | cut -d ':' -f 2)
+                  stubConnector:
+                    image:
+                      repository: $(cat stub-connector-image/repository)@$(cat stub-connector-image/digest | cut -d ':' -f 1)
+                      tag: $(cat stub-connector-image/digest | cut -d ':' -f 2)
+                  vsp:
+                    image:
+                      repository: $(cat verify-service-provider-image/repository)@$(cat verify-service-provider-image/digest | cut -d ':' -f 1)
+                      tag: $(cat verify-service-provider-image/digest | cut -d ':' -f 2)
+                  EOF
+
+                  cp -r repository/. bumped_repository/
+                  spruce merge repository/values.yaml overrides.yaml > bumped_repository/values.yaml
+        - task: sign-staging-promotion
+          input_mapping:
+            repository: bumped_repository
+          config: *sign_promotion_task
+        - put: verify-eidas-deployment-staging
+          params:
+            repository: promoted_repository
+            force: true
+        - task: await-deployment
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: govsvc/flux-check-release
+            inputs:
+            - name: verify-eidas-deployment-staging
+            params:
+              CLUSTER_DOMAIN: ((cluster.domain))
+              RELEASE: test
+              REPOSITORY_DIR: verify-eidas-deployment-staging
+            run: *await_changes
+        - task: run-acceptance-tests
+          image: acceptance-tests-image
+          timeout: 15m
+          config:
+            <<: *run-acceptance-tests-config
+            params:
+              PROXY_NODE_URL: "https://test-proxy-node.((cluster.domain))"
+              STUB_CONNECTOR_URL: "https://test-connector.((cluster.domain))"
+              STUB_IDP_USER: "stub-idp-demo-one"
+              SELENIUM_HUB_URL: "https://selenium.tools.signin.service.gov.uk/wd/hub"
+        - task: sign-production-promotion
+          input_mapping:
+            repository: verify-eidas-deployment-staging
+          config: *sign_promotion_task
+        - put: verify-eidas-deployment-production
+          params:
+            repository: promoted_repository
+            force: true

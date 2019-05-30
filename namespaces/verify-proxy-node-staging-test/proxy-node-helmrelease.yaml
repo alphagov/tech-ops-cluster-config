@@ -1,0 +1,20 @@
+---
+apiVersion: flux.weave.works/v1beta1
+kind: HelmRelease
+metadata:
+  name: test
+spec:
+  releaseName: test
+  chart:
+    git: "https://github.com/alphagov/verify-eidas-deployment.git"
+    ref: "staging"
+    path: "."
+  values:
+    global:
+      cluster:
+        name: "{{ .Values.global.cluster.name }}"
+        domain: "{{ .Values.global.cluster.domain }}"
+    stubConnector:
+      enabled: true
+    vsp:
+      secretName: test-vsp
