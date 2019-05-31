@@ -5,6 +5,7 @@ ARN: arn:aws:iam::622626885786:user/phillip.miller@digital.cabinet-office.gov.uk
 roles:
 - sandbox-sre
 - verify-proxy-node-staging-test-dev
+- verify-proxy-node-build-dev
 hardware:
   id: 9607803
   type: yubikey
