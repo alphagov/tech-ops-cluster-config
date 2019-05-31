@@ -87,7 +87,7 @@ spec:
         branch: master
 
     - name: verify-service-provider-config-repo
-      icon: gate
+      icon: settings
       type: github
       source:
         <<: *github_source
