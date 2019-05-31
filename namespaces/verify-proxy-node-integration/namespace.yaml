@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: verify-proxy-node-integration
+  labels:
+    namespace: verify-proxy-node-integration

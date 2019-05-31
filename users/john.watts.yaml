@@ -6,6 +6,8 @@ roles:
 - sandbox-sre
 - verify-proxy-node-staging-test-dev
 - verify-proxy-node-build-dev
+- verify-proxy-node-integration-dev
+- verify-proxy-node-prod-dev
 hardware:
   id: 9607819
   type: yubikey
