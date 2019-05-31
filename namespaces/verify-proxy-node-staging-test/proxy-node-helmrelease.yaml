@@ -6,9 +6,9 @@ metadata:
 spec:
   releaseName: test
   chart:
-    git: "https://github.com/alphagov/verify-eidas-deployment.git"
+    git: "https://github.com/alphagov/verify-proxy-node.git"
     ref: "staging"
-    path: "."
+    path: "chart"
   values:
     global:
       cluster:

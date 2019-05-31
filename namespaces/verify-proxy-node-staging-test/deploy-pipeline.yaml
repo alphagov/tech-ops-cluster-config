@@ -28,6 +28,7 @@ spec:
       approvers: ((trusted-developers.github-accounts))
       required_approval_count: 2
       commit_verification_keys: ((trusted-developers.gpg-keys))
+      private_key: ((deployment.key))
 
     harbor_source: &harbor_source
       username: ((harbor.harbor_username))
@@ -46,29 +47,25 @@ spec:
           delegation: ((harbor.notary_delegation_passphrase))
 
     resources:
-      - name: verify-eidas-deployment-master
+      - name: master
         type: github
         source:
           <<: *github_source
-          uri: https://github.com/alphagov/verify-eidas-deployment.git
+          uri: git@github.com:alphagov/verify-proxy-node.git
           branch: master
-          repository: verify-eidas-deployment
+          repository: verify-proxy-node
 
-      - name: verify-eidas-deployment-staging
+      - name: staging
         type: git
         source:
-          uri: git@github.com:alphagov/verify-eidas-deployment.git
+          uri: git@github.com:alphagov/verify-proxy-node.git
           branch: staging
-          private_key: |
-            ((deployment.key))
 
-      - name: verify-eidas-deployment-production
+      - name: production
         type: git
         source:
-          uri: git@github.com:alphagov/verify-eidas-deployment.git
+          uri: git@github.com:alphagov/verify-proxy-node.git
           branch: production
-          private_key: |
-            ((deployment.key))
 
       - name: gateway-image
         type: harbor
@@ -212,7 +209,7 @@ spec:
         serial: true
         plan:
         - aggregate:
-          - get: verify-eidas-deployment-master
+          - get: master
             trigger: true
           - get: gateway-image
             trigger: true
@@ -230,7 +227,7 @@ spec:
             trigger: true
         - task: pin-docker-image-versions
           input_mapping:
-            repository: verify-eidas-deployment-master
+            repository: master
           config:
             platform: linux
             image_resource:
@@ -286,7 +283,7 @@ spec:
           input_mapping:
             repository: bumped_repository
           config: *sign_promotion_task
-        - put: verify-eidas-deployment-staging
+        - put: staging
           params:
             repository: promoted_repository
             force: true
@@ -298,11 +295,11 @@ spec:
               source:
                 repository: govsvc/flux-check-release
             inputs:
-            - name: verify-eidas-deployment-staging
+            - name: staging
             params:
               CLUSTER_DOMAIN: ((cluster.domain))
               RELEASE: test
-              REPOSITORY_DIR: verify-eidas-deployment-staging
+              REPOSITORY_DIR: staging
             run: *await_changes
         - task: run-acceptance-tests
           image: acceptance-tests-image
@@ -317,9 +314,9 @@ spec:
               SELENIUM_HUB_URL: "https://selenium.tools.signin.service.gov.uk/wd/hub"
         - task: sign-production-promotion
           input_mapping:
-            repository: verify-eidas-deployment-staging
+            repository: staging
           config: *sign_promotion_task
-        - put: verify-eidas-deployment-production
+        - put: production
           params:
             repository: promoted_repository
             force: true
