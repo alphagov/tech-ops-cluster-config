@@ -1,0 +1,209 @@
+---
+apiVersion: concourse.k8s.io/v1beta1
+kind: Pipeline
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: release
+spec:
+  exposed: true
+  pipelineString: |
+
+    github_source: &github_source
+      uri: https://github.com/alphagov/verify-metadata-controller.git
+      organization: alphagov
+      owner: alphagov
+      repository: verify-metadata-controller
+      github_api_token: ((github.api-token))
+      access_token: ((github.api-token))
+      approvers: ((trusted-developers.github-accounts))
+      required_approval_count: 2
+      commit_verification_keys: ((trusted-developers.gpg-keys))
+
+    harbor_source: &harbor_source
+      username: ((harbor.harbor_username))
+      password: ((harbor.harbor_password))
+      harbor:
+        url: ((harbor.harbor_url))
+        prevent_vul: "false"
+      notary:
+        url: ((harbor.notary_url))
+        root_key: ((harbor.root_key))
+        delegate_key: ((harbor.ci_key))
+        passphrase:
+          root: ((harbor.notary_root_passphrase))
+          snapshot: ((harbor.notary_snapshot_passphrase))
+          targets: ((harbor.notary_targets_passphrase))
+          delegation: ((harbor.notary_delegation_passphrase))
+
+    task_toolbox: &task_toolbox
+      type: docker-image
+      source:
+        repository: govsvc/task-toolbox
+        tag: "1.2.0"
+
+    resource_types:
+
+    - name: github
+      type: registry-image
+      source:
+        repository: "govsvc/concourse-github-resource"
+        tag: "v0.0.1"
+
+    - name: harbor
+      type: docker-image
+      privileged: true
+      source:
+        repository: govsvc/gsp-harbor-docker-image-resource
+        tag: "0.0.1553882420"
+
+    resources:
+
+    - name: src
+      type: github
+      source:
+        <<: *github_source
+        branch: master
+
+    - name: release
+      type: github-release
+      source:
+        <<: *github_source
+
+    - name: image
+      type: harbor
+      icon: tag
+      source:
+        <<: *harbor_source
+        repository: registry.((cluster.domain))/eidas/metadata-controller
+
+
+    jobs:
+
+    - name: build
+      serial: true
+      plan:
+
+      - get: src
+        trigger: true
+
+      - put: image
+        params:
+          build: src
+          tag_file: src/.git/short_ref
+          tag_as_latest: true
+          tag_prefix: v
+
+    - name: release
+      serial: true
+      plan:
+
+      - in_parallel:
+        - get: src
+          passed: ["build"]
+          trigger: true
+        - get: image
+          passed: ["build"]
+          trigger: true
+
+      - task: generate-chart-values
+        config:
+          platform: linux
+          image_resource: *task_toolbox
+          inputs:
+          - name: src
+          - name: image
+          outputs:
+          - name: chart-values
+          run:
+            path: /bin/bash
+            args:
+              - -eu
+              - -c
+              - |
+                echo "generating helm values for latest image versions..."
+                mkdir -p chart-values
+                cat << EOF > ./overrides.yaml
+                vmc:
+                  image:
+                    repository: $(cat image/repository)@$(cat image/digest | cut -d ':' -f 1)
+                    tag: $(cat image/digest | cut -d ':' -f 2)
+                EOF
+                echo "merging with chart values..."
+                spruce merge ./src/chart/values.yaml ./overrides.yaml | tee -a chart-values/values.yaml
+
+      - get: release
+
+      - task: generate-chart-version
+        config:
+          platform: linux
+          image_resource: *task_toolbox
+          inputs:
+          - name: release
+          outputs:
+          - name: chart-version
+          params:
+            CLUSTER_DOMAIN: ((cluster.domain))
+          run:
+            path: /bin/bash
+            args:
+            - -eu
+            - -c
+            - |
+              echo "bumping release number..."
+              CURRENT_TAG=$(cat release/tag)
+              awk -F. '/[0-9]+\./{$NF++;print}' OFS=. <<< "${CURRENT_TAG}" > chart-version/tag
+              NEW_TAG=$(cat chart-version/tag)
+              echo "${NEW_TAG}" > chart-version/name
+              cat chart-version/name
+
+      - task: generate-chart-package
+        config:
+          platform: linux
+          image_resource: *task_toolbox
+          inputs:
+          - name: src
+          - name: chart-version
+          - name: chart-values
+          outputs:
+          - name: chart-package
+          params:
+            CLUSTER_PRIVATE_KEY: ((cluster.privateKey))
+          run:
+            path: /bin/bash
+            args:
+            - -eu
+            - -c
+            - |
+              echo "preparing keyring..."
+              echo "${CLUSTER_PRIVATE_KEY}" > key
+              gpg --import key
+              gpg --export-secret-keys > ~/.gnupg/pubring.gpg
+              KEY_ID="$(gpg --list-secret-keys --with-colons  | awk -F: '/uid:/ {print $10}' | head -n1)"
+              echo "building chart with release values..."
+              CHART_NAME=$(yq . < ./src/chart/Chart.yaml | jq -r .name)
+              cp -r "./src/chart" "./${CHART_NAME}"
+              cp "./chart-values/values.yaml" "./${CHART_NAME}/values.yaml"
+              mkdir -p chart-package
+              APP_VERSION=$(cat ./src/.git/short_ref)
+              CHART_VERSION=$(cat ./chart-version/tag)
+              echo "generating signed (${KEY_ID}) helm package for ${CHART_NAME} at app-version: '${APP_VERSION}' chart-version: '${CHART_VERSION}'..."
+              helm package \
+                --app-version "${APP_VERSION}" \
+                --version "${CHART_VERSION}" \
+                --destination "./chart-package/" \
+                --save=false \
+                --sign \
+                --key "${KEY_ID}" \
+                "./${CHART_NAME}"
+              echo "verifying package signature..."
+              helm verify ./chart-package/*.tgz
+              echo "OK!"
+
+      - put: release
+        params:
+          name: chart-version/name
+          tag: chart-version/tag
+          globs:
+          - chart-package/*
+
