@@ -205,6 +205,7 @@ spec:
 
     - name: package
       serial: true
+      serial_groups: ["package"]
       plan:
       - in_parallel:
         - get: src
@@ -357,6 +358,7 @@ spec:
 
     - name: test
       serial: true
+      serial_groups: ["package"]
       plan:
 
       - get: chart
@@ -463,6 +465,7 @@ spec:
 
     - name: release
       serial: true
+      serial_groups: ["package"]
       plan:
 
       - get: chart
