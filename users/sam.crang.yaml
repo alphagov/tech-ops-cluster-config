@@ -6,6 +6,7 @@ roles:
 - verify-sre
 - verify-admin
 - sandbox-sre
+- sandbox-admin
 - portfolio-sre
 hardware:
   type: yubikey
