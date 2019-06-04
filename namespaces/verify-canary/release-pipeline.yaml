@@ -67,6 +67,12 @@ spec:
         trigger: true
       - get: src
       - put: image
+        params:
+          build: src
+          dockerfile: src/Dockerfile
+          tag_file: src/.git/short_ref
+          tag_as_latest: true
+          tag_prefix: v
 
     - name: deploy
       serial: true
