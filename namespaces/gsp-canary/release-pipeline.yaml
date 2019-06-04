@@ -52,12 +52,6 @@ spec:
       source:
         uri: https://github.com/alphagov/gsp-canary.git
 
-    - name: chart
-      type: git
-      icon: file-document
-      source:
-        uri: https://github.com/alphagov/gsp-canary-chart.git
-
     - name: image
       type: harbor
       icon: layers
@@ -77,7 +71,7 @@ spec:
     - name: package
       serial: true
       plan:
-      - get: chart
+      - get: src
       - get: image
         passed: ["build"]
         trigger: true
@@ -88,7 +82,7 @@ spec:
           image_resource: *task_toolbox
           inputs:
           - name: timer
-          - name: chart
+          - name: src
           - name: image
           outputs:
           - name: chart-values
@@ -108,7 +102,7 @@ spec:
                   chartCommitTimestamp: $(cat timer/version | cut -d ':' -f 2)
                 EOF
                 echo "merging with chart values..."
-                spruce merge ./chart/gsp-canary/values.yaml ./overrides.yaml | tee -a chart-values/values.yaml
+                spruce merge ./src/chart/values.yaml ./overrides.yaml | tee -a chart-values/values.yaml
 
       - get: release
 
@@ -140,7 +134,7 @@ spec:
           platform: linux
           image_resource: *task_toolbox
           inputs:
-          - name: chart
+          - name: src
           - name: chart-version
           - name: chart-values
           outputs:
@@ -159,11 +153,11 @@ spec:
               gpg --export-secret-keys > ~/.gnupg/pubring.gpg
               KEY_ID="$(gpg --list-secret-keys --with-colons  | awk -F: '/uid:/ {print $10}' | head -n1)"
               echo "building chart with release values..."
-              CHART_NAME=$(yq . < ./chart/gsp-canary/Chart.yaml | jq -r .name)
-              cp -r "./chart/gsp-canary/chart" "./${CHART_NAME}"
+              CHART_NAME=$(yq . < ./src/chart/Chart.yaml | jq -r .name)
+              cp -r "./src/chart/chart" "./${CHART_NAME}"
               cp "./chart-values/values.yaml" "./${CHART_NAME}/values.yaml"
               mkdir -p chart-package
-              APP_VERSION=$(cat ./chart/gsp-canary/.git/short_ref)
+              APP_VERSION=$(cat ./src/chart/.git/short_ref)
               CHART_VERSION=$(cat ./chart-version/tag)
               echo "generating signed (${KEY_ID}) helm package for ${CHART_NAME} at app-version: '${APP_VERSION}' chart-version: '${CHART_VERSION}'..."
               helm package \
