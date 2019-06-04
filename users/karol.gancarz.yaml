@@ -4,6 +4,7 @@ email: karol.gancarz@digital.cabinet-office.gov.uk
 ARN: arn:aws:iam::622626885786:user/karol.gancarz@digital.cabinet-office.gov.uk
 roles:
 - sandbox-sre
+- verify-metadata-controller-dev
 - verify-proxy-node-staging-test-dev
 - verify-proxy-node-build-dev
 - verify-proxy-node-integration-dev
