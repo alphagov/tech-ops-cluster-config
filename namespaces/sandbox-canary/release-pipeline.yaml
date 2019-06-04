@@ -1,0 +1,176 @@
+---
+apiVersion: concourse.k8s.io/v1beta1
+kind: Pipeline
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: release
+spec:
+  exposed: true
+  pipelineString: |
+
+    harbor_source: &harbor_source
+      username: ((harbor.harbor_username))
+      password: ((harbor.harbor_password))
+      harbor:
+        url: ((harbor.harbor_url))
+        prevent_vul: "false"
+      notary:
+        url: ((harbor.notary_url))
+        root_key: ((harbor.root_key))
+        delegate_key: ((harbor.ci_key))
+        passphrase:
+          root: ((harbor.notary_root_passphrase))
+          snapshot: ((harbor.notary_snapshot_passphrase))
+          targets: ((harbor.notary_targets_passphrase))
+          delegation: ((harbor.notary_delegation_passphrase))
+
+    task_toolbox: &task_toolbox
+      type: docker-image
+      source:
+        repository: govsvc/task-toolbox
+        tag: "1.2.0"
+
+    resource_types:
+    - name: harbor
+      type: docker-image
+      privileged: true
+      source:
+        repository: govsvc/gsp-harbor-docker-image-resource
+        tag: "0.0.1553882420"
+
+    resources:
+    - name: timer
+      type: time
+      icon: update
+      source:
+        interval: 5m
+
+    - name: src
+      type: git
+      icon: github-circle
+      source:
+        uri: https://github.com/alphagov/gsp-canary.git
+
+    - name: chart
+      type: git
+      icon: file-document
+      source:
+        uri: https://github.com/alphagov/gsp-canary-chart.git
+
+    - name: image
+      type: harbor
+      icon: layers
+      source:
+        <<: *harbor_source
+        repository: registry.((cluster.domain))/gsp/canary
+
+    jobs:
+    - name: build
+      serial: true
+      plan:
+      - get: timer
+        trigger: true
+      - get: src
+      - put: image
+
+    - name: package
+      serial: true
+      plan:
+      - get: chart
+      - get: image
+        passed: ["build"]
+        trigger: true
+
+      - task: generate-chart-values
+        config:
+          platform: linux
+          image_resource: *task_toolbox
+          inputs:
+          - name: timer
+          - name: chart
+          - name: image
+          outputs:
+          - name: chart-values
+          run:
+            path: /bin/bash
+            args:
+              - -eu
+              - -c
+              - |
+                echo "generating helm values for latest image versions..."
+                mkdir -p chart-values
+                cat << EOF > ./overrides.yaml
+                canary:
+                  image:
+                    repository: $(cat image/repository)@$(cat image/digest | cut -d ':' -f 1)
+                    tag: $(cat image/digest | cut -d ':' -f 2)
+                  chartCommitTimestamp: $(cat timer/version | cut -d ':' -f 2)
+                EOF
+                echo "merging with chart values..."
+                spruce merge ./chart/gsp-canary/values.yaml ./overrides.yaml | tee -a chart-values/values.yaml
+
+      - get: release
+
+      - task: generate-chart-version
+        config:
+          platform: linux
+          image_resource: *task_toolbox
+          inputs:
+          - name: release
+          outputs:
+          - name: chart-version
+          params:
+            CLUSTER_DOMAIN: ((cluster.domain))
+          run:
+            path: /bin/bash
+            args:
+            - -eu
+            - -c
+            - |
+              echo "bumping release number..."
+              CURRENT_TAG=$(cat release/tag)
+              awk -F. '/[0-9]+\./{$NF++;print}' OFS=. <<< "${CURRENT_TAG}" > chart-version/tag
+              NEW_TAG=$(cat chart-version/tag)
+              echo "${NEW_TAG}" > chart-version/name
+              cat chart-version/name
+
+      - task: generate-chart-package
+        config:
+          platform: linux
+          image_resource: *task_toolbox
+          inputs:
+          - name: chart
+          - name: chart-version
+          - name: chart-values
+          outputs:
+          - name: chart-package
+          params:
+            CLUSTER_PRIVATE_KEY: ((cluster.privateKey))
+          run:
+            path: /bin/bash
+            args:
+            - -eu
+            - -c
+            - |
+              echo "preparing keyring..."
+              echo "${CLUSTER_PRIVATE_KEY}" > key
+              gpg --import key
+              gpg --export-secret-keys > ~/.gnupg/pubring.gpg
+              KEY_ID="$(gpg --list-secret-keys --with-colons  | awk -F: '/uid:/ {print $10}' | head -n1)"
+              echo "building chart with release values..."
+              CHART_NAME=$(yq . < ./chart/gsp-canary/Chart.yaml | jq -r .name)
+              cp -r "./chart/gsp-canary/chart" "./${CHART_NAME}"
+              cp "./chart-values/values.yaml" "./${CHART_NAME}/values.yaml"
+              mkdir -p chart-package
+              APP_VERSION=$(cat ./chart/gsp-canary/.git/short_ref)
+              CHART_VERSION=$(cat ./chart-version/tag)
+              echo "generating signed (${KEY_ID}) helm package for ${CHART_NAME} at app-version: '${APP_VERSION}' chart-version: '${CHART_VERSION}'..."
+              helm package \
+                --app-version "${APP_VERSION}" \
+                --version "${CHART_VERSION}" \
+                --destination "./chart-package/" \
+                --save=false \
+                --sign \
+                --key "${KEY_ID}" \
+                "./${CHART_NAME}"
