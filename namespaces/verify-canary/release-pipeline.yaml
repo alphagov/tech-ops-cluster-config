@@ -44,7 +44,7 @@ spec:
       type: time
       icon: update
       source:
-        interval: 5m
+        interval: 15m
 
     - name: src
       type: git
