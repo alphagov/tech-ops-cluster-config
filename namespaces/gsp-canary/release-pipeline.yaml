@@ -174,3 +174,19 @@ spec:
                 --sign \
                 --key "${KEY_ID}" \
                 "./${CHART_NAME}"
+
+    - name: release
+      serial: true
+      serial_groups: ["package"]
+      plan:
+
+      - get: chart
+        passed: ["package"]
+        trigger: true
+
+      - put: release
+        params:
+          name: chart/tag
+          tag: chart/tag
+          globs:
+          - chart/*.tgz*
