@@ -33,7 +33,6 @@ users-organization: "alphagov"
 users-repository: "gds-trusted-developers"
 users-version: "master"
 users-path: "users"
-trusted-developer-keys: []
 disable-destroy: true
 worker-instance-type: m5d.large
 worker-count: 3
