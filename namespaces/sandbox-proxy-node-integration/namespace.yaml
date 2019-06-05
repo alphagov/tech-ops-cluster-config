@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sandbox-proxy-node-integration
+  labels:
+    namespace: sandbox-proxy-node-integration
