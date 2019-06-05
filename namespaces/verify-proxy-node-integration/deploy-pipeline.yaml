@@ -136,4 +136,5 @@ spec:
                 --allow-ns "${RELEASE_NAMESPACE}" \
                 --app "${APP_NAME}" \
                 --diff-changes \
+                --labels "app=${APP_NAME},deployed-at=$(date +%s)" \
                 -f ./manifests/
