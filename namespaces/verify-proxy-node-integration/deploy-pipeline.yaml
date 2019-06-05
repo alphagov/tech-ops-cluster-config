@@ -41,6 +41,14 @@ spec:
       source:
         <<: *github_source
 
+    - name: daily
+      type: time
+      icon: update
+      source:
+        interval: 12h
+        start: 8:00 AM
+        stop: 8:00 PM
+
     jobs:
 
     - name: deploy-nl-integration
@@ -48,6 +56,9 @@ spec:
       plan:
 
       - get: release
+        trigger: true
+
+      - get: daily
         trigger: true
 
       - task: render-manifests
