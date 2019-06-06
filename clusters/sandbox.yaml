@@ -38,3 +38,4 @@ worker-instance-type: m5d.large
 worker-count: 3
 ci-worker-instance-type: t3.small
 ci-worker-count: 3
+github-approval-count: 0
