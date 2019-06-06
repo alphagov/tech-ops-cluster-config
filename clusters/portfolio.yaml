@@ -26,4 +26,4 @@ worker-instance-type: m5d.large
 worker-count: 3
 ci-worker-instance-type: t3.medium
 ci-worker-count: 3
-
+git-resource-type: github
