@@ -39,3 +39,4 @@ worker-count: 3
 ci-worker-instance-type: t3.small
 ci-worker-count: 3
 git-resource-type: git
+trusted-developer-keys: []
