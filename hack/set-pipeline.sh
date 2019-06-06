@@ -32,7 +32,7 @@ approvers="/tmp/deployer-${CLUSTER_NAME}-approvers.yaml"
 echo -n "github-approvers: " > "${approvers}"
 cat ${PATH_TO_USERS}/*.yaml \
   | yq . \
-  | jq -c -s "[.[] | select(.roles[] | select((. == \"${CLUSTER_NAME}-sre\" ) or (. == \"${CLUSTER_NAME}-admin\"))) | .github]" \
+  | jq -c -s "[.[] | select(.roles[] | select((. == \"${CLUSTER_NAME}-sre\" ) or (. == \"${CLUSTER_NAME}-admin\"))) | .github] | unique" \
   >> "${approvers}"
 
 trusted="/tmp/deployer-${CLUSTER_NAME}-keys.yaml"
