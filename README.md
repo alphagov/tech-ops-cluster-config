@@ -53,7 +53,7 @@ Your PR will require review by at least two other trusted developers with write 
 ## Accessing a cluster
 
 * You must be listed as a trusted developer in [./users/](./users)
-* You must have a relevent role (ie the `sandbox-canary-dev` role would give you dev access to the sandbox-canary namespace)
+* You must have a relevant role (ie the `sandbox-canary-dev` role would give you dev access to the sandbox-canary namespace)
 * You will need `kubectl` and the `aws` cli tool
 
 ### ...with aws-vault
