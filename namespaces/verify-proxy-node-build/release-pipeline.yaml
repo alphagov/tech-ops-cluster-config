@@ -469,7 +469,6 @@ spec:
       plan:
 
       - get: chart
-        passed: ["test"]
         trigger: true
 
       - put: release
