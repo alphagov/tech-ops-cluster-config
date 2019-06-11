@@ -112,7 +112,6 @@ spec:
           passed: ["build"]
           trigger: true
         - get: cloudhsm-image
-          passed: ["build"]
           trigger: true
 
       - task: generate-chart-values
