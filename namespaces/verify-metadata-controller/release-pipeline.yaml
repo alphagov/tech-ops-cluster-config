@@ -111,7 +111,7 @@ spec:
         - get: image
           passed: ["build"]
           trigger: true
-        - get: cloudhsm
+        - get: cloudhsm-image
           passed: ["build"]
           trigger: true
 
@@ -122,7 +122,7 @@ spec:
           inputs:
           - name: src
           - name: image
-          - name: clouhsm-image
+          - name: cloudhsm-image
           outputs:
           - name: chart-values
           run:
