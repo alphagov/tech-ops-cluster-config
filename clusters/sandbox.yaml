@@ -39,3 +39,17 @@ worker-count: 3
 ci-worker-instance-type: t3.small
 ci-worker-count: 3
 github-approval-count: 0
+namespaces:
+- name: sandbox-metadata-controller
+  owner: alphagov
+  repository: verify-metadata-controller
+  branch: proxy-node-mesh
+  path: ci
+  requiredApprovalCount: 0
+  scope: cluster
+- name: sandbox-proxy-node-integration
+  owner: alphagov
+  repository: verify-proxy-node
+  branch: proxy-node-mesh
+  path: ci/sandbox
+  requiredApprovalCount: 0
