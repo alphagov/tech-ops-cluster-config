@@ -39,4 +39,5 @@ worker-count: 3
 ci-worker-instance-type: t3.medium
 ci-worker-count: 3
 github-approval-count: 1
-namespaces: []
+namespaces:
+- name: portfolio-example
