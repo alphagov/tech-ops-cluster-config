@@ -22,7 +22,7 @@ eks-version: "1.12"
 platform-uri: "https://github.com/alphagov/gsp.git"
 platform-organization: "alphagov"
 platform-repository: "gsp"
-platform-version: "proxy-node-mesh"
+platform-version: "master"
 config-uri: "https://github.com/alphagov/gsp-teams.git"
 config-organization: "alphagov"
 config-repository: "gsp-teams"
@@ -43,13 +43,13 @@ namespaces:
 - name: sandbox-metadata-controller
   owner: alphagov
   repository: verify-metadata-controller
-  branch: proxy-node-mesh
+  branch: master
   path: ci
   requiredApprovalCount: 0
   scope: cluster
 - name: sandbox-proxy-node-integration
   owner: alphagov
   repository: verify-proxy-node
-  branch: proxy-node-mesh
+  branch: master
   path: ci/sandbox
   requiredApprovalCount: 0
