@@ -2,9 +2,7 @@ concourse-team: gsp
 concourse-username: gsp
 concourse-url: https://cd.gds-reliability.engineering
 concourse-pipeline-name: sandbox-deployer
-account-id: "011571571136"
 account-name: "sandbox"
-account-role-arn: "arn:aws:iam::011571571136:role/deployer"
 cluster-name: "sandbox"
 cluster-number: "101"
 cluster-domain: "london.sandbox.govsvc.uk"
