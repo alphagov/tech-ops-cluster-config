@@ -1,0 +1,57 @@
+concourse-team: gsp
+concourse-username: gsp
+concourse-url: https://cd.gds-reliability.engineering
+concourse-pipeline-name: istiomesh-deployer
+account-id: "011571571136"
+account-name: "sandbox"
+account-role-arn: "arn:aws:iam::011571571136:role/deployer"
+cluster-name: "istiomesh"
+cluster-number: "101"
+cluster-domain: "london.istiomesh.govsvc.uk"
+splunk-enabled: "0"
+splunk-hec-url: "NOTAURL"
+k8s-splunk-hec-token: "NOTATOKEN"
+k8s-splunk-index: "NOTANINDEX"
+hsm-splunk-hec-token: "NOTATOKEN"
+hsm-splunk-index: "NOTANINDEX"
+vpc-flow-log-splunk-hec-token: "NOTATOKEN"
+vpc-flow-log-splunk-index: "NOTANINDEX"
+eks-version: "1.12"
+platform-uri: "https://github.com/alphagov/gsp.git"
+platform-organization: "alphagov"
+platform-repository: "gsp"
+platform-version: "proxy-node-mesh"
+config-uri: "https://github.com/alphagov/tech-ops-cluster-config.git"
+config-organization: "alphagov"
+config-repository: "tech-ops-cluster-config"
+config-version: "proxy-node-mesh"
+config-path: "clusters/istiomesh.yaml"
+config-values-path: "clusters/istiomesh-values.yaml"
+users-uri: "git@github.com:alphagov/gds-trusted-developers.git"
+users-organization: "alphagov"
+users-repository: "gds-trusted-developers"
+users-version: "proxy-node-mesh"
+users-path: "users"
+disable-destroy: false
+worker-instance-type: m5d.large
+worker-count: 3
+ci-worker-instance-type: t3.small
+ci-worker-count: 3
+github-approval-count: 0
+github-client-secret: "NOTASECRET"
+github-client-id: "NOTID"
+github-approvers: ["blairboy362"]
+namespaces:
+- name: sandbox-metadata-controller
+  owner: alphagov
+  repository: verify-metadata-controller
+  branch: istiomesh
+  path: ci
+  requiredApprovalCount: "0"
+  scope: cluster
+- name: sandbox-proxy-node-integration
+  owner: alphagov
+  repository: verify-proxy-node
+  branch: istiomesh
+  path: ci/sandbox
+  requiredApprovalCount: "0"
