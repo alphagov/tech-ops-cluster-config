@@ -1,6 +1,7 @@
 cloudHSMExpose: true
 
 namespaces:
+- name: sandbox-main
 - name: sandbox-metadata-controller
   owner: alphagov
   repository: verify-metadata-controller
