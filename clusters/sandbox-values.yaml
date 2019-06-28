@@ -1,2 +1,16 @@
----
 cloudHSMExpose: true
+
+namespaces:
+- name: sandbox-metadata-controller
+  owner: alphagov
+  repository: verify-metadata-controller
+  branch: proxy-node-mesh
+  path: ci
+  requiredApprovalCount: 0
+  scope: cluster
+- name: sandbox-proxy-node-integration
+  owner: alphagov
+  repository: verify-proxy-node
+  branch: proxy-node-mesh
+  path: ci/sandbox
+  requiredApprovalCount: 0
