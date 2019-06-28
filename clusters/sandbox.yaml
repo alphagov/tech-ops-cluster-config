@@ -14,7 +14,6 @@ hsm-splunk-hec-token: "NOTATOKEN"
 hsm-splunk-index: "NOTANINDEX"
 vpc-flow-log-splunk-hec-token: "NOTATOKEN"
 vpc-flow-log-splunk-index: "NOTANINDEX"
-eks-version: "1.12"
 platform-uri: "https://github.com/alphagov/gsp.git"
 platform-organization: "alphagov"
 platform-repository: "gsp"
@@ -36,17 +35,3 @@ worker-count: 3
 ci-worker-instance-type: t3.small
 ci-worker-count: 3
 github-approval-count: 0
-namespaces:
-- name: sandbox-metadata-controller
-  owner: alphagov
-  repository: verify-metadata-controller
-  branch: proxy-node-mesh
-  path: ci
-  requiredApprovalCount: 0
-  scope: cluster
-- name: sandbox-proxy-node-integration
-  owner: alphagov
-  repository: verify-proxy-node
-  branch: proxy-node-mesh
-  path: ci/sandbox
-  requiredApprovalCount: 0
