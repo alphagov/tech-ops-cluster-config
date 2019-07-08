@@ -17,7 +17,7 @@ vpc-flow-log-splunk-index: "NOTANINDEX"
 platform-uri: "https://github.com/alphagov/gsp.git"
 platform-organization: "alphagov"
 platform-repository: "gsp"
-platform-version: "master"
+platform-pre-release: true
 config-uri: "https://github.com/alphagov/tech-ops-cluster-config.git"
 config-organization: "alphagov"
 config-repository: "tech-ops-cluster-config"
@@ -27,7 +27,6 @@ config-values-path: "clusters/sandbox-values.yaml"
 users-uri: "git@github.com:alphagov/gds-trusted-developers.git"
 users-organization: "alphagov"
 users-repository: "gds-trusted-developers"
-users-version: "master"
 users-path: "users"
 disable-destroy: false
 worker-instance-type: m5d.large
