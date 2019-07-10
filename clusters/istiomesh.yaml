@@ -21,6 +21,7 @@ platform-uri: "https://github.com/alphagov/gsp.git"
 platform-organization: "alphagov"
 platform-repository: "gsp"
 platform-version: "proxy-node-mesh"
+platform-pre-release: true
 config-uri: "https://github.com/alphagov/tech-ops-cluster-config.git"
 config-organization: "alphagov"
 config-repository: "tech-ops-cluster-config"
@@ -41,6 +42,7 @@ github-approval-count: 0
 github-client-secret: "NOTASECRET"
 github-client-id: "NOTID"
 github-approvers: ["blairboy362"]
+github-release-tag-pregix: "gsp-istiomesh-"
 namespaces:
 - name: sandbox-metadata-controller
   owner: alphagov
