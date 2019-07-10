@@ -42,7 +42,7 @@ github-approval-count: 0
 github-client-secret: "NOTASECRET"
 github-client-id: "NOTID"
 github-approvers: ["blairboy362"]
-github-release-tag-pregix: "gsp-istiomesh-"
+github-release-tag-prefix: "gsp-istiomesh-"
 namespaces:
 - name: sandbox-metadata-controller
   owner: alphagov
