@@ -20,18 +20,18 @@ eks-version: "1.12"
 platform-uri: "https://github.com/alphagov/gsp.git"
 platform-organization: "alphagov"
 platform-repository: "gsp"
-platform-version: "proxy-node-mesh"
+platform-version: "master"
 platform-pre-release: true
 config-uri: "https://github.com/alphagov/tech-ops-cluster-config.git"
 config-organization: "alphagov"
 config-repository: "tech-ops-cluster-config"
-config-version: "proxy-node-mesh"
+config-version: "master"
 config-path: "clusters/istiomesh.yaml"
 config-values-path: "clusters/istiomesh-values.yaml"
 users-uri: "git@github.com:alphagov/gds-trusted-developers.git"
 users-organization: "alphagov"
 users-repository: "gds-trusted-developers"
-users-version: "proxy-node-mesh"
+users-version: "master"
 users-path: "users"
 disable-destroy: false
 worker-instance-type: m5d.large
@@ -47,13 +47,13 @@ namespaces:
 - name: sandbox-metadata-controller
   owner: alphagov
   repository: verify-metadata-controller
-  branch: istiomesh
+  branch: master
   path: ci
   requiredApprovalCount: "0"
   scope: cluster
 - name: sandbox-proxy-node-integration
   owner: alphagov
   repository: verify-proxy-node
-  branch: istiomesh
+  branch: master
   path: ci/sandbox
   requiredApprovalCount: "0"
