@@ -5,11 +5,17 @@ global:
     ip: "10.101.29.134"
 
 namespaces:
+- name: sandbox-connector-node-metadata
+  owner: alphagov
+  repository: verify-metadata
+  branch: master
+  path: ci/sandbox
+  requiredApprovalCount: 0
 - name: sandbox-main
 - name: sandbox-metadata-controller
   owner: alphagov
   repository: verify-metadata-controller
-  branch: master
+  branch: eid-1549-change-metadata-resource-to-accept-optional-saml-certs
   path: ci
   requiredApprovalCount: 0
   scope: cluster
