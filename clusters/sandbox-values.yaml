@@ -9,7 +9,7 @@ namespaces:
   owner: alphagov
   repository: verify-metadata
   branch: master
-  path: ci
+  path: ci/sandbox
   requiredApprovalCount: 0
 - name: sandbox-main
 - name: sandbox-metadata-controller
