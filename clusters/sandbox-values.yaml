@@ -15,7 +15,7 @@ namespaces:
 - name: sandbox-metadata-controller
   owner: alphagov
   repository: verify-metadata-controller
-  branch: eid-1549-change-metadata-resource-to-accept-optional-saml-certs
+  branch: master
   path: ci
   requiredApprovalCount: 0
   scope: cluster
