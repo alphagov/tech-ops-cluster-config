@@ -33,6 +33,6 @@ worker-instance-type: m5d.large
 worker-count: 3
 ci-worker-instance-type: t3.small
 ci-worker-count: 3
-github-approval-count: 0
-config-approval-count: 0
+github-approval-count: 2
+config-approval-count: 2
 github-release-tag-prefix: "gsp-"
