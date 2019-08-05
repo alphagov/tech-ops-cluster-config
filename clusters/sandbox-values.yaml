@@ -26,3 +26,9 @@ namespaces:
   path: ci/sandbox
   requiredApprovalCount: 0
 - name: spike-dcs-mtls
+- name: sandbox-aws-service-operator-test
+  roles:
+  - name: app-1
+    policies:
+    - sqs
+
