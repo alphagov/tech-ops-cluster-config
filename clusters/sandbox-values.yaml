@@ -31,3 +31,4 @@ namespaces:
   - name: app-1
     policies:
     - sqs
+
