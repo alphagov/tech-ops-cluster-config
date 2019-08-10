@@ -19,6 +19,12 @@ namespaces:
   path: ci
   requiredApprovalCount: 0
   scope: cluster
+- name: sandbox-proxy-node-dev
+  owner: alphagov
+  repository: verify-proxy-node
+  branch: sandbox
+  path: ci/sandbox
+  requiredApprovalCount: 0
 - name: sandbox-proxy-node-integration
   owner: alphagov
   repository: verify-proxy-node
@@ -31,4 +37,3 @@ namespaces:
   - name: app-1
     policies:
     - sqs
-
