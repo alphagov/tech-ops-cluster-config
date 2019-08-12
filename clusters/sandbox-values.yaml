@@ -4,6 +4,10 @@ global:
     enabled: true
     ip: "10.101.29.134"
 
+httpsEgressSafelist:
+- name: sqs-eu-west-2
+  fqdn: sqs.eu-west-2.amazonaws.com
+
 namespaces:
 - name: sandbox-connector-node-metadata
   owner: alphagov
