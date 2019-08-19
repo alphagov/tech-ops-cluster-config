@@ -12,14 +12,14 @@ namespaces:
 - name: sandbox-connector-node-metadata
   owner: alphagov
   repository: verify-metadata
-  branch: master
+  branch: sandbox
   path: ci/sandbox
   requiredApprovalCount: 0
 - name: sandbox-main
 - name: sandbox-metadata-controller
   owner: alphagov
   repository: verify-metadata-controller
-  branch: master
+  branch: sandbox
   path: ci
   requiredApprovalCount: 0
   scope: cluster
