@@ -7,6 +7,10 @@ global:
 httpsEgressSafelist:
 - name: sqs-eu-west-2
   fqdn: sqs.eu-west-2.amazonaws.com
+- name: stub-connector
+  fqdn: test-connector.london.sandbox.govsvc.uk
+- name: test-intgegration
+  fqdn: test-integration-connector.london.sandbox.govsvc.uk
 
 namespaces:
 - name: sandbox-connector-node-metadata
