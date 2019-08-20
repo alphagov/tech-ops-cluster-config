@@ -11,6 +11,8 @@ httpsEgressSafelist:
   fqdn: test-connector.london.sandbox.govsvc.uk
 - name: test-intgegration
   fqdn: test-integration-connector.london.sandbox.govsvc.uk
+- name: hub-integration
+  fqdn: www.integration.signin.service.gov.uk
 
 namespaces:
 - name: sandbox-connector-node-metadata
