@@ -35,12 +35,6 @@ namespaces:
   branch: sandbox
   path: ci/sandbox
   requiredApprovalCount: 0
-- name: sandbox-proxy-node-integration
-  owner: alphagov
-  repository: verify-proxy-node
-  branch: master
-  path: ci/sandbox
-  requiredApprovalCount: 0
 - name: spike-dcs-mtls
 - name: sandbox-aws-service-operator-test
   roles:
