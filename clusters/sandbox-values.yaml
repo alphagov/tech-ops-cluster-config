@@ -5,10 +5,16 @@ global:
     ip: "10.101.29.134"
 
 egressSafelist:
-- name: sqs-eu-west-2
-  fqdn: sqs.eu-west-2.amazonaws.com
-- name: queue-eu-west-2
-  fqdn: eu-west-2.queue.amazonaws.com # legacy endpoint
+- name: sqs
+  hosts:
+    - "sqs.eu-west-2.amazonaws.com"
+    - "eu-west-2.queue.amazonaws.com"
+  ports:
+  - name: https
+    number: 443
+    protocol: TLS
+  location: MESH_EXTERNAL
+  resolution: DNS
 
 - name: rds
   hosts: ["*.rds.amazonaws.com"]
@@ -19,12 +25,32 @@ egressSafelist:
   location: MESH_EXTERNAL
   resolution: DNS
 
-- name: stub-connector
-  fqdn: test-connector.london.sandbox.govsvc.uk
-- name: test-intgegration
-  fqdn: test-integration-connector.london.sandbox.govsvc.uk
-- name: hub-integration
-  fqdn: www.integration.signin.service.gov.uk
+- name: verify-connector-sandbox
+  hosts: ["test-connector.london.sandbox.govsvc.uk"]
+  ports:
+  - name: https
+    number: 443
+    protocol: TCP
+  location: MESH_EXTERNAL
+  resolution: DNS
+
+- name: verify-integration-connector-sandbox
+  hosts: ["test-integration-connector.london.sandbox.govsvc.uk"]
+  ports:
+  - name: https
+    number: 443
+    protocol: TCP
+  location: MESH_EXTERNAL
+  resolution: DNS
+
+- name: verify-hub-integration
+  hosts: ["www.integration.signin.service.gov.uk"]
+  ports:
+  - name: https
+    number: 443
+    protocol: TCP
+  location: MESH_EXTERNAL
+  resolution: DNS
 
 namespaces:
 - name: sandbox-connector-node-metadata
