@@ -4,11 +4,21 @@ global:
     enabled: true
     ip: "10.101.29.134"
 
-httpsEgressSafelist:
+egressSafelist:
 - name: sqs-eu-west-2
   fqdn: sqs.eu-west-2.amazonaws.com
 - name: queue-eu-west-2
   fqdn: eu-west-2.queue.amazonaws.com # legacy endpoint
+
+- name: rds
+  hosts: ["*.rds.amazonaws.com"]
+  ports:
+  - name: postgres
+    number: 5432
+    protocol: TCP
+  location: MESH_EXTERNAL
+  resolution: DNS
+
 - name: stub-connector
   fqdn: test-connector.london.sandbox.govsvc.uk
 - name: test-intgegration
