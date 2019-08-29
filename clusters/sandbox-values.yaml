@@ -6,51 +6,52 @@ global:
 
 egressSafelist:
 - name: sqs
-  hosts:
-    - "sqs.eu-west-2.amazonaws.com"
-    - "eu-west-2.queue.amazonaws.com"
-  ports:
-  - name: https
-    number: 443
-    protocol: TLS
-  location: MESH_EXTERNAL
-  resolution: DNS
-
+  service:
+    hosts:
+      - "sqs.eu-west-2.amazonaws.com"
+      - "eu-west-2.queue.amazonaws.com"
+    ports:
+    - name: https
+      number: 443
+      protocol: TLS
+    location: MESH_EXTERNAL
+    resolution: DNS
 - name: rds
-  hosts: ["*.eu-west-2.rds.amazonaws.com"]
-  ports:
-  - name: postgres
-    number: 5432
-    protocol: TLS
-  location: MESH_EXTERNAL
-  resolution: DNS
-
+  service:
+    hosts: ["*.eu-west-2.rds.amazonaws.com"]
+    ports:
+    - name: postgres
+      number: 5432
+      protocol: TLS
+    location: MESH_EXTERNAL
+    resolution: DNS
 - name: verify-connector-sandbox
-  hosts: ["test-connector.london.sandbox.govsvc.uk"]
-  ports:
-  - name: https
-    number: 443
-    protocol: TLS
-  location: MESH_EXTERNAL
-  resolution: DNS
-
+  service:
+    hosts: ["test-connector.london.sandbox.govsvc.uk"]
+    ports:
+    - name: https
+      number: 443
+      protocol: TLS
+    location: MESH_EXTERNAL
+    resolution: DNS
 - name: verify-integration-connector-sandbox
-  hosts: ["test-integration-connector.london.sandbox.govsvc.uk"]
-  ports:
-  - name: https
-    number: 443
-    protocol: TLS
-  location: MESH_EXTERNAL
-  resolution: DNS
-
+  service:
+    hosts: ["test-integration-connector.london.sandbox.govsvc.uk"]
+    ports:
+    - name: https
+      number: 443
+      protocol: TLS
+    location: MESH_EXTERNAL
+    resolution: DNS
 - name: verify-hub-integration
-  hosts: ["www.integration.signin.service.gov.uk"]
-  ports:
-  - name: https
-    number: 443
-    protocol: TLS
-  location: MESH_EXTERNAL
-  resolution: DNS
+  service:
+    hosts: ["www.integration.signin.service.gov.uk"]
+    ports:
+    - name: https
+      number: 443
+      protocol: TLS
+    location: MESH_EXTERNAL
+    resolution: DNS
 
 namespaces:
 - name: sandbox-connector-node-metadata
