@@ -21,7 +21,7 @@ egressSafelist:
   ports:
   - name: postgres
     number: 5432
-    protocol: TCP
+    protocol: TLS
   location: MESH_EXTERNAL
   resolution: DNS
 
