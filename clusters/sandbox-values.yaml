@@ -30,7 +30,7 @@ egressSafelist:
   ports:
   - name: https
     number: 443
-    protocol: TCP
+    protocol: TLS
   location: MESH_EXTERNAL
   resolution: DNS
 
@@ -39,7 +39,7 @@ egressSafelist:
   ports:
   - name: https
     number: 443
-    protocol: TCP
+    protocol: TLS
   location: MESH_EXTERNAL
   resolution: DNS
 
@@ -48,7 +48,7 @@ egressSafelist:
   ports:
   - name: https
     number: 443
-    protocol: TCP
+    protocol: TLS
   location: MESH_EXTERNAL
   resolution: DNS
 
