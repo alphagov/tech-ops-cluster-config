@@ -17,7 +17,7 @@ egressSafelist:
   resolution: DNS
 
 - name: rds
-  hosts: ["*.rds.amazonaws.com"]
+  hosts: ["*.eu-west-2.rds.amazonaws.com"]
   ports:
   - name: postgres
     number: 5432
