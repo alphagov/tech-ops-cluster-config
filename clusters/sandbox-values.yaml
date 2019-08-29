@@ -19,12 +19,13 @@ egressSafelist:
 - name: rds
   service:
     hosts: ["*.eu-west-2.rds.amazonaws.com"]
+    addresses: ["10.0.0.0/8"]
     ports:
     - name: postgres
       number: 5432
       protocol: TLS
     location: MESH_EXTERNAL
-    resolution: DNS
+    resolution: NONE
 - name: verify-connector-sandbox
   service:
     hosts: ["test-connector.london.sandbox.govsvc.uk"]
