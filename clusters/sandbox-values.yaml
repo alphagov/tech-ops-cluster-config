@@ -62,13 +62,6 @@ namespaces:
   path: ci/sandbox
   requiredApprovalCount: 0
 - name: sandbox-main
-  owner: alphagov
-  repository: tech-ops-cluster-config
-  branch: master
-  path: config/sandbox/sandbox-main
-  requiredApprovalCount: 0
-  ingress:
-    enabled: true
 - name: sandbox-metadata-controller
   owner: alphagov
   repository: verify-metadata-controller
