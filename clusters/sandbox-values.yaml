@@ -76,11 +76,13 @@ namespaces:
   path: ci/sandbox
   requiredApprovalCount: 0
   scope: cluster
+  talksToHsm: true
 - name: sandbox-proxy-node-dev
   owner: alphagov
   repository: verify-proxy-node
   branch: sandbox
   path: ci/sandbox
   requiredApprovalCount: 0
+  talksToHsm: true
 - name: spike-dcs-mtls
 - name: sandbox-gsp-service-operator-test
