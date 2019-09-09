@@ -86,3 +86,19 @@ namespaces:
   talksToHsm: true
 - name: spike-dcs-mtls
 - name: sandbox-gsp-service-operator-test
+
+extraPermissionsSRE:
+  - apiGroups: ["verify.gov.uk"]
+    resources: ["certificaterequests", "metadata"]
+    verbs:
+    - get
+    - list
+    - watch
+extraPermissionsDev:
+  - apiGroups: ["verify.gov.uk"]
+    resources: ["certificaterequests", "metadata"]
+    verbs:
+    - get
+    - list
+    - watch
+
