@@ -61,6 +61,8 @@ namespaces:
   branch: sandbox
   path: ci/sandbox
   requiredApprovalCount: 0
+  ingress:
+    enabled: true
 - name: sandbox-main
   ingress:
     enabled: true
@@ -79,6 +81,8 @@ namespaces:
   path: ci/sandbox
   requiredApprovalCount: 0
   talksToHsm: true
+  ingress:
+    enabled: true
 - name: spike-dcs-mtls
 - name: sandbox-gsp-service-operator-test
 
