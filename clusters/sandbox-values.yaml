@@ -28,9 +28,7 @@ egressSafelist:
     resolution: NONE
 - name: s3
   service:
-    hosts:
-      - "s3.eu-west-2.amazonaws.com"
-      - "*.s3-control.eu-west-2.amazonaws.com"
+    hosts: ["s3.eu-west-2.amazonaws.com"]
     ports:
     - name: https
       number: 443
