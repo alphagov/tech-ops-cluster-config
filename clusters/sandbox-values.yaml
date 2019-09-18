@@ -26,6 +26,18 @@ egressSafelist:
       protocol: TCP
     location: MESH_EXTERNAL
     resolution: NONE
+- name: s3
+  service:
+    hosts:
+      - "s3.eu-west-2.amazonaws.com"
+      - "*.s3-control.eu-west-2.amazonaws.com"
+    ports:
+    - name: https
+      number: 443
+      protocol: TLS
+    location: MESH_EXTERNAL
+    resolution: DNS
+
 - name: verify-connector-sandbox
   service:
     hosts: ["test-connector.london.sandbox.govsvc.uk"]
