@@ -26,26 +26,6 @@ egressSafelist:
       protocol: TCP
     location: MESH_EXTERNAL
     resolution: NONE
-- name: s3
-  service:
-    hosts: ["*.s3.eu-west-2.amazonaws.com"]
-    # FIXME: harding s3 endpoint addrs that could potentially change is not
-    # ideal. this is workaround until the svc-operator can manage required
-    # ServiceEntries or another solution presents itself
-    #
-    # curl https://ip-ranges.amazonaws.com/ip-ranges.json | jq -r '.prefixes[] | select(.region=="eu-west-2") | select(.service=="S3") | .ip_prefix'
-    #
-    addresses:
-    - 52.95.150.0/24
-    - 52.95.148.0/23
-    - 52.92.88.0/22
-    ports:
-    - name: https
-      number: 443
-      protocol: TLS
-    location: MESH_EXTERNAL
-    resolution: NONE
-
 - name: verify-connector-sandbox
   service:
     hosts: ["test-connector.london.sandbox.govsvc.uk"]
