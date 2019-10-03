@@ -105,6 +105,9 @@ namespaces:
     enabled: true
 - name: spike-dcs-mtls
 - name: sandbox-gsp-service-operator-test
+- name: sandbox-phil-playground
+  ingress:
+    enabled: true
 
 extraPermissionsSRE:
   - apiGroups: ["verify.gov.uk"]
