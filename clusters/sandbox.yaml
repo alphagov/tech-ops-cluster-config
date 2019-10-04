@@ -30,7 +30,7 @@ users-repository: "gds-trusted-developers"
 users-path: "users"
 disable-destroy: false
 worker-instance-type: m5d.large
-worker-count: 6
+worker-count: 0
 extra-workers-per-az-count: 1
 ci-worker-instance-type: t3.large
 ci-worker-count: 3
