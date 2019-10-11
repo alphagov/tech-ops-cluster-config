@@ -16,16 +16,6 @@ egressSafelist:
       protocol: TLS
     location: MESH_EXTERNAL
     resolution: DNS
-- name: rds
-  service:
-    hosts: ["*.eu-west-2.rds.amazonaws.com"]
-    addresses: ["10.0.0.0/8"]
-    ports:
-    - name: aurora
-      number: 3306
-      protocol: TCP
-    location: MESH_EXTERNAL
-    resolution: NONE
 - name: verify-connector-sandbox
   service:
     hosts: ["test-connector.london.sandbox.govsvc.uk"]
