@@ -30,7 +30,6 @@ users-repository: "gds-trusted-developers"
 users-path: "users"
 disable-destroy: false
 worker-instance-type: m5d.large
-worker-count: 0
 extra-workers-per-az-count: 1
 minimum-workers-per-az-count: 1
 maximum-workers-per-az-count: 3
