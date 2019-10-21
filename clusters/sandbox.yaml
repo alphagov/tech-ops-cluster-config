@@ -32,7 +32,7 @@ disable-destroy: false
 worker-instance-type: m5d.large
 extra-workers-per-az-count: 1
 minimum-workers-per-az-count: 1
-maximum-workers-per-az-count: 3
+maximum-workers-per-az-count: 4
 ci-worker-instance-type: t3.large
 ci-worker-count: 3
 github-approval-count: 0
