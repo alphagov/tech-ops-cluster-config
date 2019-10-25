@@ -34,6 +34,7 @@ config-organization: "alphagov"
 config-repository: "gsp"
 config-path: "clusters/ondemand-0.yaml"
 config-trigger: false
+config-version: "mk-new-cluster"
 users-trigger: false
 enable-nlb: true
 config-values-path: "clusters/ondemand-0-values.yaml"
