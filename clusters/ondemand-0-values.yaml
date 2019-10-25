@@ -1,0 +1,5 @@
+---
+namespaces:
+- name: ondemand-0-main
+  ingress:
+    enabled: true
