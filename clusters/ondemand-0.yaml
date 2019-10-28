@@ -38,4 +38,3 @@ config-version: "mk-new-cluster"
 users-trigger: false
 enable-nlb: true
 config-values-path: "clusters/ondemand-0-values.yaml"
-terraform-resource-tag: "0.0.2019-10-25-18-06"
