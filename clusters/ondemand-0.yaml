@@ -28,7 +28,7 @@ disable-destroy: false
 worker-instance-type: t3.medium
 minimum-workers-per-az-count: 1
 ci-worker-instance-type: t3.medium
-ci-worker-count: 3
+ci-worker-count: 1
 config-uri: "https://github.com/alphagov/tech-ops-cluster-config.git"
 config-organization: "alphagov"
 config-repository: "tech-ops-cluster-config"
