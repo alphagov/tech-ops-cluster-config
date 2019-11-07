@@ -37,5 +37,4 @@ ci-worker-instance-type: t3.large
 ci-worker-count: 3
 github-approval-count: 0
 config-approval-count: 0
-github-release-tag-prefix: "gsp-"
 enable-nlb: 1
