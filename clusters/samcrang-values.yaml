@@ -1,0 +1,5 @@
+---
+namespaces:
+- name: samcrang-main
+  ingress:
+    enabled: true
