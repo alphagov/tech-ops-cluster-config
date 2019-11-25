@@ -39,3 +39,4 @@ github-approval-count: 0
 config-approval-count: 0
 github-release-tag-prefix: "gsp-"
 enable-nlb: 1
+cls-destination-enabled: 1
