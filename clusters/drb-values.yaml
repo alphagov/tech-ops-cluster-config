@@ -1,0 +1,7 @@
+---
+namespaces:
+- name: drb-main
+  ingress:
+    enabled: true
+  operators:
+  - daniel.blair
