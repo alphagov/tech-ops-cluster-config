@@ -25,7 +25,7 @@ trusted-developer-keys: []
 config-approval-count: 0
 config-approvers: ["Krenair"]
 disable-destroy: false
-worker-instance-type: t3.large
+worker-instance-type: t3.medium
 minimum-workers-per-az-count: 2
 maximum-workers-per-az-count: 4
 ci-worker-instance-type: t3.medium
@@ -40,7 +40,7 @@ users-trigger: false
 enable-nlb: true
 config-values-path: "clusters/ondemand-0-values.yaml"
 platform-pre-release: true
-platform-version: set-desired-counts
+platform-version: eks-managed-nodes
 platform-resource-type: git
 platform-tag-filter: ""
 config-trigger: true
