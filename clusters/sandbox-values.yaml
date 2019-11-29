@@ -18,7 +18,11 @@ egressSafelist:
     resolution: DNS
 - name: verify-connector-sandbox
   service:
-    hosts: ["test-connector.london.sandbox.govsvc.uk"]
+    hosts:
+      # legacy sandbox stub-connector
+      - test-connector.london.sandbox.govsvc.uk
+      # multi-country stub-connector
+      - stub-connector.eidas.test.london.sandbox.govsvc.uk
     ports:
     - name: https
       number: 443
