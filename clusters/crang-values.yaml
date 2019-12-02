@@ -1,0 +1,5 @@
+---
+namespaces:
+- name: crang-main
+  ingress:
+    enabled: true
