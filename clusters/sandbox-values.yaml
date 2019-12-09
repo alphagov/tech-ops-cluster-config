@@ -23,12 +23,12 @@ egressSafelist:
       - test-connector.london.sandbox.govsvc.uk
       # multi-country stub-connector
       - stub-connector.eidas.test.london.sandbox.govsvc.uk
-      - stgmteidasnode.gov.mt/EidasNode/ConnectorMetadata
-      - eidastest.eesti.ee/EidasNode/ConnectorMetadata
-      - testnode.island.is/eidas-node/ConnectorMetadata
-      - eidas.difi.no/EidasNode/ConnectorMetadata
-      - mteidasnode.gov.mt/EidasNode/ConnectorMetadata
-      - acc-eidas.minez.nl/EidasNodeC/ConnectorMetadata
+      - stgmteidasnode.gov.mt
+      - eidastest.eesti.ee
+      - testnode.island.is
+      - eidas.difi.no
+      - mteidasnode.gov.mt
+      - acc-eidas.minez.nl
     ports:
     - name: https
       number: 443
