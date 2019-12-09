@@ -28,7 +28,7 @@ egressSafelist:
       - testnode.island.is/eidas-node/ConnectorMetadata
       - eidas.difi.no/EidasNode/ConnectorMetadata
       - mteidasnode.gov.mt/EidasNode/ConnectorMetadata
-      - https://acc-eidas.minez.nl/EidasNodeC/ConnectorMetadata
+      - acc-eidas.minez.nl/EidasNodeC/ConnectorMetadata
     ports:
     - name: https
       number: 443
@@ -100,4 +100,3 @@ extraPermissionsDev:
     - get
     - list
     - watch
-
