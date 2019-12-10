@@ -29,6 +29,7 @@ egressSafelist:
       - eidas.difi.no
       - mteidasnode.gov.mt
       - acc-eidas.minez.nl
+      - preprod.eidas.autenticacao.gov.pt
     ports:
     - name: https
       number: 443
