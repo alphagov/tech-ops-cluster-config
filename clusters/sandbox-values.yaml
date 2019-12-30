@@ -4,6 +4,32 @@ global:
     enabled: true
     ip: "10.101.29.134"
 
+clusterAdmins:
+- aditya.pahuja
+- alex.monk
+- alex.wilson
+- benjamin.gill
+- chris.clayson
+- chris.farmiloe
+- christopher.wynne
+- daniel.besbrode
+- daniel.blair
+- david.pye
+- george.lund
+- james.howes
+- james.maynard
+- joakim.kakaei
+- john.watts
+- karol.gancarz
+- kerr.rainey
+- lewis.westbury
+- philip.potter
+- phillip.miller
+- rafal.proszowski
+- sam.crang
+- stephen.ford
+- toby.lornewelch-richards
+- tom.rosier
 egressSafelist:
 - name: sqs
   service:
