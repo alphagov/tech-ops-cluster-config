@@ -5,3 +5,6 @@ namespaces:
     enabled: true
   operators:
   - daniel.blair
+- name: drb-test
+  ingress:
+    enabled: true
