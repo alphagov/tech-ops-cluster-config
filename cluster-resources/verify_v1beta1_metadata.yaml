@@ -1,0 +1,121 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: metadata.verify.gov.uk
+spec:
+  group: verify.gov.uk
+  names:
+    kind: Metadata
+    plural: metadata
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          properties:
+            certificateAuthority:
+              properties:
+                namespace:
+                  type: string
+                secretName:
+                  type: string
+              required:
+              - secretName
+              - namespace
+              type: object
+            data:
+              properties:
+                contactCompany:
+                  type: string
+                contactEmail:
+                  type: string
+                contactGivenName:
+                  type: string
+                contactSurname:
+                  type: string
+                entityID:
+                  type: string
+                orgDisplayName:
+                  type: string
+                orgName:
+                  type: string
+                orgURL:
+                  type: string
+                postURL:
+                  type: string
+                redirectURL:
+                  type: string
+                samlEncryptionCertificate:
+                  type: string
+                samlSigningCertificate:
+                  type: string
+                validityDays:
+                  format: int64
+                  type: integer
+              type: object
+            enabled:
+              type: boolean
+            id:
+              type: string
+            publishingPath:
+              type: string
+            samlSigningCertRequest:
+              properties:
+                CACert:
+                  type: boolean
+                certificateAuthority:
+                  properties:
+                    namespace:
+                      type: string
+                    secretName:
+                      type: string
+                  required:
+                  - secretName
+                  - namespace
+                  type: object
+                commonName:
+                  type: string
+                countryCode:
+                  type: string
+                expiryMonths:
+                  format: int64
+                  type: integer
+                location:
+                  type: string
+                organization:
+                  type: string
+                organizationUnit:
+                  type: string
+              required:
+              - commonName
+              type: object
+            type:
+              type: string
+          required:
+          - type
+          - certificateAuthority
+          type: object
+        status:
+          type: object
+  version: v1beta1
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
