@@ -35,7 +35,7 @@ minimum-workers-per-az-count: 2
 platform-pre-release: true
 platform-resource-type: git
 platform-tag-filter: ""
-platform-version: "dev-namespace-roles"
+platform-version: "master"
 splunk-enabled: "0"
 splunk-hec-url: "NOTAURL"
 trusted-developer-keys: []
