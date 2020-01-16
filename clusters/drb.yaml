@@ -26,6 +26,7 @@ github-client-id: "NOTID"
 github-client-secret: "NOTASECRET"
 google-oauth-client-id: "NOTASECRET"
 google-oauth-client-secret: "NOTID"
+harbor-rds-skip-final-snapshot: true
 hsm-splunk-hec-token: "NOTATOKEN"
 hsm-splunk-index: "NOTAURL"
 k8s-splunk-hec-token: "NOTATOKEN"
