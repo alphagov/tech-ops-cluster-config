@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: v1-vmc
+  namespace: sandbox-metadata-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: v1-vmc
+subjects:
+- kind: ServiceAccount
+  name: v1-vmc
+  namespace: sandbox-metadata-controller
