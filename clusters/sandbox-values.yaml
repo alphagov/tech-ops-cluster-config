@@ -23,6 +23,8 @@ egressSafelist:
       - test-connector.london.sandbox.govsvc.uk
       # multi-country stub-connector
       - stub-connector.eidas.test.london.sandbox.govsvc.uk
+      # HMRC integration
+      - test-www.tax.service.gov.uk
       - stgmteidasnode.gov.mt
       - eidastest.eesti.ee
       - testnode.island.is
