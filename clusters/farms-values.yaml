@@ -1,0 +1,37 @@
+---
+global:
+  cloudHsm:
+    enabled: false
+
+egressSafelist:
+- name: sqs
+  service:
+    hosts:
+      - "sqs.eu-west-2.amazonaws.com"
+      - "eu-west-2.queue.amazonaws.com"
+    ports:
+    - name: https
+      number: 443
+      protocol: TLS
+    location: MESH_EXTERNAL
+    resolution: DNS
+
+namespaces:
+- name: sandbox-main
+  ingress:
+    enabled: true
+
+extraPermissionsSRE:
+  - apiGroups: ["verify.gov.uk"]
+    resources: ["certificaterequests", "metadata"]
+    verbs:
+    - get
+    - list
+    - watch
+extraPermissionsDev:
+  - apiGroups: ["verify.gov.uk"]
+    resources: ["certificaterequests", "metadata"]
+    verbs:
+    - get
+    - list
+    - watch
