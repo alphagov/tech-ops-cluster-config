@@ -27,6 +27,7 @@ disable-destroy: false
 extra-workers-per-az-count: 1
 minimum-workers-per-az-count: 1
 maximum-workers-per-az-count: 4
+worker-on-demand-base-capacity: 0
 worker-on-demand-percentage-above-base: 0
 ci-worker-instance-type: t3.large
 ci-worker-count: 3
