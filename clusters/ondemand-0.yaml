@@ -25,9 +25,10 @@ trusted-developer-keys: []
 config-approval-count: 0
 config-approvers: ["Krenair"]
 disable-destroy: false
-worker-instance-type: t3.medium
 minimum-workers-per-az-count: 2
 maximum-workers-per-az-count: 4
+worker-on-demand-base-capacity: 0
+worker-on-demand-percentage-above-base: 0
 ci-worker-instance-type: t3.medium
 ci-worker-count: 1
 config-uri: "https://github.com/alphagov/tech-ops-cluster-config.git"
