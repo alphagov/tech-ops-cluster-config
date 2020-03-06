@@ -46,3 +46,4 @@ platform-resource-type: git
 platform-tag-filter: ""
 config-trigger: true
 users-trigger: true
+config-resource-type: git
