@@ -41,7 +41,7 @@ users-trigger: false
 enable-nlb: true
 config-values-path: "clusters/ondemand-0-values.yaml"
 platform-pre-release: true
-platform-version: use-image-digests
+platform-version: ci-on-normal-nodegroup
 platform-resource-type: git
 platform-tag-filter: ""
 config-trigger: true
