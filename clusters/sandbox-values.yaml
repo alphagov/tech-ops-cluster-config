@@ -65,6 +65,7 @@ namespaces:
   branch: sandbox
   path: ci/sandbox
   requiredApprovalCount: 0
+  configureNamespaceResourceType: git
   ingress:
     enabled: true
 - name: sandbox-main
@@ -76,6 +77,7 @@ namespaces:
   branch: sandbox
   path: ci/sandbox
   requiredApprovalCount: 0
+  configureNamespaceResourceType: git
   scope: cluster
   talksToHsm: true
 - name: sandbox-proxy-node-dev
@@ -84,6 +86,7 @@ namespaces:
   branch: sandbox
   path: ci/sandbox
   requiredApprovalCount: 0
+  configureNamespaceResourceType: git
   talksToHsm: true
   ingress:
     enabled: true
