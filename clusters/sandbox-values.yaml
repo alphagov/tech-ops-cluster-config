@@ -1,6 +1,7 @@
 ---
 global:
   cloudHsm:
+    public: true
     enabled: true
     ip: "10.101.29.134"
 
