@@ -30,6 +30,7 @@ config-repository: "tech-ops-cluster-config"
 config-version: "dp-cluster"
 config-path: "clusters/davidpye-sandbox.yaml"
 config-values-path: "clusters/davidpye-sandbox-values.yaml"
+config-resource-type: git
 users-uri: "git@github.com:alphagov/gds-trusted-developers.git"
 users-organization: "alphagov"
 users-repository: "gds-trusted-developers"
