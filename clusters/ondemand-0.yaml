@@ -35,7 +35,6 @@ config-uri: "https://github.com/alphagov/tech-ops-cluster-config.git"
 config-organization: "alphagov"
 config-repository: "tech-ops-cluster-config"
 config-path: "clusters/ondemand-0.yaml"
-config-trigger: false
 config-version: "mk-new-cluster"
 users-trigger: false
 enable-nlb: true
