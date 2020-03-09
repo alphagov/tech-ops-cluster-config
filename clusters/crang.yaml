@@ -19,6 +19,7 @@ config-trigger: true
 config-uri: "https://github.com/alphagov/tech-ops-cluster-config.git"
 config-values-path: "clusters/crang-values.yaml"
 config-version: "crang-cluster"
+config-resource-type: git
 disable-destroy: false
 eks-version: "1.14"
 enable-nlb: false
