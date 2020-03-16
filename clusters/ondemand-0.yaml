@@ -40,7 +40,7 @@ users-trigger: false
 enable-nlb: true
 config-values-path: "clusters/ondemand-0-values.yaml"
 platform-pre-release: true
-platform-version: cloudwatch-logs-vpce
+platform-version: master
 platform-resource-type: git
 platform-tag-filter: ""
 config-trigger: true
