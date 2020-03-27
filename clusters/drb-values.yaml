@@ -1,0 +1,8 @@
+---
+namespaces:
+- name: drb-main
+  ingress:
+    enabled: true
+- name: drb-test
+  ingress:
+    enabled: true
