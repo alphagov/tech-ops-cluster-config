@@ -38,7 +38,7 @@ platform-organization: "alphagov"
 platform-pre-release: true
 platform-resource-type: git
 platform-tag-filter: ""
-platform-version: "fix-partial-node-rolling"
+platform-version: "master"
 splunk-enabled: "0"
 splunk-hec-url: "NOTAURL"
 trusted-developer-keys: []
