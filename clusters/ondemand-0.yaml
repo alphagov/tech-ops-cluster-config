@@ -41,7 +41,7 @@ users-trigger: false
 enable-nlb: true
 config-values-path: "clusters/ondemand-0-values.yaml"
 platform-pre-release: true
-platform-version: istio-upgrade
+platform-version: fix-deployer-pipeline-volumes
 platform-resource-type: git
 platform-tag-filter: ""
 config-trigger: true
