@@ -1,0 +1,5 @@
+---
+namespaces:
+- name: concourse-upgrade-main
+  ingress:
+    enabled: true
