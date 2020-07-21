@@ -41,7 +41,7 @@ users-trigger: false
 enable-nlb: true
 config-values-path: "clusters/concourse-upgrade-values.yaml"
 platform-pre-release: true
-platform-version: master
+platform-version: bump-concourse-chart
 platform-resource-type: git
 platform-tag-filter: ""
 config-trigger: true
