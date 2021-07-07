@@ -1,0 +1,103 @@
+---
+global:
+  cloudHsm:
+    enabled: true
+    ip: "10.101.29.134"
+
+egressSafelist:
+- name: sqs
+  service:
+    hosts:
+      - "sqs.eu-west-2.amazonaws.com"
+      - "eu-west-2.queue.amazonaws.com"
+    ports:
+    - name: https
+      number: 443
+      protocol: TLS
+    location: MESH_EXTERNAL
+    resolution: DNS
+- name: verify-connector-sandbox
+  service:
+    hosts:
+      # legacy sandbox stub-connector
+      - test-connector.london.sandbox.govsvc.uk
+      # multi-country stub-connector
+      - stub-connector.eidas.test.london.sandbox.govsvc.uk
+      - stgmteidasnode.gov.mt
+      - eidastest.eesti.ee
+      - testnode.island.is
+      - eidas.difi.no
+      - mteidasnode.gov.mt
+      - acc-eidas.minez.nl
+      - preprod.eidas.autenticacao.gov.pt
+    ports:
+    - name: https
+      number: 443
+      protocol: TLS
+    location: MESH_EXTERNAL
+    resolution: DNS
+- name: verify-integration-connector-sandbox
+  service:
+    hosts: ["test-integration-connector.london.sandbox.govsvc.uk"]
+    ports:
+    - name: https
+      number: 443
+      protocol: TLS
+    location: MESH_EXTERNAL
+    resolution: DNS
+- name: verify-hub-integration
+  service:
+    hosts: ["www.integration.signin.service.gov.uk"]
+    ports:
+    - name: https
+      number: 443
+      protocol: TLS
+    location: MESH_EXTERNAL
+    resolution: DNS
+
+namespaces:
+- name: sandbox-connector-node-metadata
+  owner: alphagov
+  repository: verify-metadata
+  branch: sandbox
+  path: ci/sandbox
+  requiredApprovalCount: 0
+  ingress:
+    enabled: true
+- name: sandbox-main
+  ingress:
+    enabled: true
+- name: sandbox-metadata-controller
+  owner: alphagov
+  repository: verify-metadata-controller
+  branch: sandbox
+  path: ci/sandbox
+  requiredApprovalCount: 0
+  scope: cluster
+  talksToHsm: true
+- name: sandbox-proxy-node-dev
+  owner: alphagov
+  repository: verify-proxy-node
+  branch: sandbox
+  path: ci/sandbox
+  requiredApprovalCount: 0
+  talksToHsm: true
+  ingress:
+    enabled: true
+- name: spike-dcs-mtls
+- name: sandbox-gsp-service-operator-test
+
+extraPermissionsSRE:
+  - apiGroups: ["verify.gov.uk"]
+    resources: ["certificaterequests", "metadata"]
+    verbs:
+    - get
+    - list
+    - watch
+extraPermissionsDev:
+  - apiGroups: ["verify.gov.uk"]
+    resources: ["certificaterequests", "metadata"]
+    verbs:
+    - get
+    - list
+    - watch
